@@ -67,7 +67,7 @@ def createRole():
     # check if the role already exists
     newRole = data["role_name"]
     checkRole = Roles.query.filter_by(role_name=newRole, deleted="no").first()
-    if checkRole and checkRole.deleted=="no":
+    if checkRole and checkRole.deleted!="yes":
             return jsonify(
                 {
                     "message": "Role exists!"
@@ -81,7 +81,7 @@ def createRole():
     #             "message": "Incorrect data format."
     #         }
     #     ), 404
-    role = Roles(**data)
+    role = Roles(**{"role_name":newRole,"deleted":"no"})
 
     try:
         db.session.add(role)
@@ -104,7 +104,7 @@ def createRole():
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 404
+        }), 400
 
 # admin read all roles
 @app.route("/view")
@@ -131,7 +131,7 @@ def updateRole():
                 {
                     "message": "Role exists!"
                 }
-            ), 404
+            ), 400
 
         # if not exists, update accordingly
         code = data['role_id']
@@ -150,13 +150,13 @@ def updateRole():
                 {
                     "message": "Role not found!"
                 }
-            ), 404
+            ), 400
     except Exception:
         return jsonify(
             {
                 "message": "Unexpected Error."
             }
-        ), 500
+        ), 400
 
 # admin delete role (soft delete)
 @app.route("/delete", methods=['PUT'])
@@ -183,6 +183,7 @@ def removeRole():
         )
 
 # admin assign skills, still need changes
+# directly call from http
 @app.route("/assignSkills", methods=['POST'])
 def assignSkill(skillslist, role_id):
     for skill in skillslist:
