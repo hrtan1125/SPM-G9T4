@@ -3,11 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
-<<<<<<< Updated upstream
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-=======
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
->>>>>>> Stashed changes
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -125,18 +121,6 @@ def edit_skill():
 
 @app.route("/delete", methods=['PUT'])
 def delete_skill():  #delete skill
-<<<<<<< Updated upstream
-    data = request.get_json()
-    for todelete in data:
-        skill_code = todelete["skill_code"]
-        deleteskill = Skills.query.filter_by(skill_code = skill_code).first()
-        deleteskill.deleted = "yes"
-            
-    try: 
-        db.session.commit()
-        jsonify({"Message": "Skills deleted successfully"}), 201
-    except Exception:
-=======
     try:
         data = request.get_json()
         skill_code = data["skill_code"]
@@ -144,7 +128,6 @@ def delete_skill():  #delete skill
         roleToDelete.deleted = "yes"
 
         db.session.commit()
->>>>>>> Stashed changes
         return jsonify({
             "message": "Skill has been removed!"
         })

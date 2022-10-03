@@ -13,7 +13,7 @@ const Skills = () => {
       <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
          <div className="app-container">
          <Link to={`/createskill`}> 
-         <Button variant="contained">Create New Role</Button>
+         <Button variant="contained">Create New Skill</Button>
          </Link>
 <table>
   <thead>

@@ -18,7 +18,7 @@ const LearningJourney = () => {
     return (
       <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
          <div className="app-container">
-          {(emptyCheck.indexOf('yes')) ? (
+          {(emptyCheck.includes('yes')) ? (
             <table>
             <thead>
               <tr>
