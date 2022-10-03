@@ -1,8 +1,5 @@
-
 import { useGlobalContext } from '../context';
-
-import React, { useState, Fragment } from "react";
-import { nanoid } from "nanoid";
+import React from "react";
 import "./../App.css";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,10 +7,7 @@ import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Roles = () => {
-  const {roles, deleteRole, role} = useGlobalContext()
-
-  console.log("ROLEESS", roles)
-  console.log("ROLEE", role)
+  const {roles, deleteRole} = useGlobalContext()
 
     return (
       <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
@@ -59,7 +53,6 @@ const Roles = () => {
         
     </Grid>
     </td>
-
     </tr>
   ))}
   </tbody>

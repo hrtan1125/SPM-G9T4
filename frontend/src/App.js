@@ -6,12 +6,11 @@ import Courses from "./pages/Courses";
 import Dashboard from "./pages/Dashboard";
 import Skills from "./pages/Skills";
 import Header from "./components/Header";
-import SelectedRole from "./pages/SelectedRole";
 import LearningJourney from "./pages/LearningJourney";
 import FilterTable from "./pages/FIlterTable";
 import Tables from "./pages/Tables";
-import CreateRole from "./pages/CreateRole";
 import CreateEditRole from "./components/CreateEditRole";
+import CreateEditSkill from "./components/CreateEditSkill";
 
 function App() {
   return (
@@ -23,12 +22,17 @@ function App() {
           <Route path="/courses" element={<Courses />}></Route>
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/roles" element={<Roles />}></Route>
-          <Route path="/skills" element={<Skills />}></Route>
           <Route path="/:role_id" element={<CreateEditRole />} />
+          <Route path="/skills" element={<Skills />}></Route>
+          <Route
+            path="/skill/:skill_code"
+            element={<CreateEditSkill />}
+          ></Route>
           <Route path="/learningjourney" element={<LearningJourney />} />
           {/* <Route path="/table" element={<FilterTable />} />
           <Route path="/tables" element={<Tables />} /> */}
           <Route path="/createrole" element={<CreateEditRole />} />
+          <Route path="/createskill" element={<CreateEditSkill />} />
         </Routes>
       </Router>
     </div>

@@ -124,9 +124,7 @@ def viewSelectedRole():
         # role_id = data["role_id"]
 
         role_id = request.args["role_id"]
-        print(role_id)
         selectedRole = Roles.query.filter_by(role_id=role_id).first()
-        print(selectedRole)
         return jsonify(selectedRole.to_dict()), 201
     except Exception:
         return jsonify(
@@ -180,17 +178,15 @@ def updateRole():
 # admin delete role (soft delete)
 @app.route("/delete", methods=['PUT'])
 def removeRole():
-    # multi-select delete
     try:
         data = request.get_json()
-        print(data)
         role_id = data["role_id"]
         roleToDelete = Roles.query.filter_by(role_id=role_id).first()
         roleToDelete.deleted = "yes"
 
         db.session.commit()
         return jsonify({
-            "message": "Roles have been removed!"
+            "message": "Role has been removed!"
         })
 
     except Exception:

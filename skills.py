@@ -3,7 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
+<<<<<<< Updated upstream
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+=======
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+>>>>>>> Stashed changes
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -65,12 +69,29 @@ def skills():
     if search_skill:
         skill_list = Skills.query.filter(Skills.skill_name.contains(search_skill))
     else:
-        skill_list = Skills.query.filter_by(deleted = "no").all()
+        skill_list = Skills.query.all()
     return jsonify(
         {
             "data": [skill.to_dict() for skill in skill_list]
         }
     ), 200
+
+    # admin read all roles
+@app.route("/viewselectedskill")
+def viewSelectedSkill():
+    try:
+        # data = request.get_json()
+        # role_id = data["role_id"]
+
+        skill_code = request.args["skill_code"]
+        selectedSkill = Skills.query.filter_by(skill_code=skill_code).first()
+        return jsonify(selectedSkill.to_dict()), 201
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        )
 
 
 @app.route("/update", methods=['PUT']) #edit
@@ -104,6 +125,7 @@ def edit_skill():
 
 @app.route("/delete", methods=['PUT'])
 def delete_skill():  #delete skill
+<<<<<<< Updated upstream
     data = request.get_json()
     for todelete in data:
         skill_code = todelete["skill_code"]
@@ -114,9 +136,25 @@ def delete_skill():  #delete skill
         db.session.commit()
         jsonify({"Message": "Skills deleted successfully"}), 201
     except Exception:
+=======
+    try:
+        data = request.get_json()
+        skill_code = data["skill_code"]
+        roleToDelete = Skills.query.filter_by(skill_code=skill_code).first()
+        roleToDelete.deleted = "yes"
+
+        db.session.commit()
+>>>>>>> Stashed changes
         return jsonify({
-            "message": "Unable to delete skill."
-        }), 500
+            "message": "Skill has been removed!"
+        })
+
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        )
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
