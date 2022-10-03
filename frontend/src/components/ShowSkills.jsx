@@ -1,8 +1,14 @@
 import { useGlobalContext } from '../context'
 
 const ShowSkills = () => {
+<<<<<<< Updated upstream
   const { selectedMeal, closeModal } = useGlobalContext()
 
+=======
+  const { selectedMeal, closeModal, role } = useGlobalContext()
+
+  console.log("cuterole", role)
+>>>>>>> Stashed changes
   return <aside className='modal-overlay'>
     <div className='modal-container'>
       {/* <img src={image} className="img modal-img" />

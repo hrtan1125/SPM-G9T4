@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from skills import Skills
+# from skills import Skills
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root' + \
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -67,7 +67,7 @@ def createRole():
     # check if the role already exists
     newRole = data["role_name"]
     checkRole = Roles.query.filter_by(role_name=newRole, deleted="no").first()
-    if checkRole and checkRole.deleted!="yes":
+    if checkRole and checkRole.deleted=="no":
             return jsonify(
                 {
                     "message": "Role exists!"
@@ -81,7 +81,7 @@ def createRole():
     #             "message": "Incorrect data format."
     #         }
     #     ), 404
-    role = Roles(**{"role_name":newRole,"deleted":"no"})
+    role = Roles(**data)
 
     try:
         db.session.add(role)
@@ -104,7 +104,7 @@ def createRole():
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 400
+        }), 404
 
 # admin read all roles
 @app.route("/view")
@@ -115,25 +115,6 @@ def viewRoles():
             "data": [role.to_dict() for role in data]
         }
     ), 200
-
-    # admin read all roles
-@app.route("/viewselectedrole")
-def viewSelectedRole():
-    try:
-        # data = request.get_json()
-        # role_id = data["role_id"]
-
-        role_id = request.args["role_id"]
-        print(role_id)
-        selectedRole = Roles.query.filter_by(role_id=role_id).first()
-        print(selectedRole)
-        return jsonify(selectedRole.to_dict()), 201
-    except Exception:
-        return jsonify(
-            {
-                "message": "Unexpected Error."
-            }
-        )
 
 # admin update a role
 @app.route("/update", methods=['PUT'])
@@ -150,7 +131,7 @@ def updateRole():
                 {
                     "message": "Role exists!"
                 }
-            ), 400
+            ), 404
 
         # if not exists, update accordingly
         code = data['role_id']
@@ -169,13 +150,13 @@ def updateRole():
                 {
                     "message": "Role not found!"
                 }
-            ), 400
+            ), 404
     except Exception:
         return jsonify(
             {
                 "message": "Unexpected Error."
             }
-        ), 400
+        ), 500
 
 # admin delete role (soft delete)
 @app.route("/delete", methods=['PUT'])
@@ -183,10 +164,11 @@ def removeRole():
     # multi-select delete
     try:
         data = request.get_json()
-        print(data)
-        role_id = data["role_id"]
-        roleToDelete = Roles.query.filter_by(role_id=role_id).first()
-        roleToDelete.deleted = "yes"
+        roles = data["roles"]
+        RolesToDelete = Roles.query.filter(Roles.role_id.in_(roles))
+
+        for role in RolesToDelete:
+            role.deleted = "yes"
 
         db.session.commit()
         return jsonify({
@@ -201,7 +183,6 @@ def removeRole():
         )
 
 # admin assign skills, still need changes
-# directly call from http
 @app.route("/assignSkills", methods=['POST'])
 def assignSkill(skillslist, role_id):
     for skill in skillslist:
