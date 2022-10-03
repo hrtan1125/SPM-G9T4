@@ -3,11 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
-<<<<<<< Updated upstream
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-=======
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
->>>>>>> Stashed changes
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -89,10 +85,6 @@ def edit_skill():
                     "message": "Skill already exists!"
                 }), 400
     skill = Skills.query.filter_by(skill_code=skill_code).first()
-<<<<<<< Updated upstream
-=======
-    print("dragonball", skill)
->>>>>>> Stashed changes
     if not skill:
         return jsonify(
             {
@@ -113,7 +105,6 @@ def edit_skill():
 @app.route("/delete", methods=['PUT'])
 def delete_skill():  #delete skill
     data = request.get_json()
-<<<<<<< Updated upstream
     for todelete in data:
         skill_code = todelete["skill_code"]
         deleteskill = Skills.query.filter_by(skill_code = skill_code).first()
@@ -122,32 +113,10 @@ def delete_skill():  #delete skill
     try: 
         db.session.commit()
         jsonify({"Message": "Skills deleted successfully"}), 201
-=======
-    skill_code = data["skill_code"]
-    print(data, "MEOOOQQQQQWW")
-    skill = Skills.query.filter_by(skill_code=skill_code).first()
-    print("teeeheee", skill.deleted)
-    skill.deleted = "yes"
-
-
-    # for todelete in data:
-    #     print(todelete, "KAKAKAKAKAKAKA")
-    #     skill_code = todelete["skill_code"]
-    #     deleteskill = Skills.query.filter_by(skill_code = skill_code).first()
-    #     deleteskill.deleted = "yes"
-            
-    try: 
-        db.session.commit()
-        return jsonify({"Message": "Skills deleted successfully"}), 201
->>>>>>> Stashed changes
     except Exception:
         return jsonify({
             "message": "Unable to delete skill."
         }), 500
 
 if __name__ == '__main__':
-<<<<<<< Updated upstream
     app.run(host='0.0.0.0', port=5000, debug=True)
-=======
-    app.run(host='0.0.0.0', port=5000, debug=True)
->>>>>>> Stashed changes
