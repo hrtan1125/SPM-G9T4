@@ -9,7 +9,10 @@ Make sure SQLALCHEMY_DATABASE_URI is correct, yours might be 'mysql+mysqlconnect
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
                                         '@localhost:3306/projectDB'
                                         
-FRONTEND
+RUN FRONTEND
+
 cd/frontend
+
 npm install
+
 npm start
