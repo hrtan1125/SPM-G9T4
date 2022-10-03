@@ -2,7 +2,7 @@
 
 HOW TO RUN
 
-In Python files:
+In Python files (skills & roles):
 
 Make sure SQLALCHEMY_DATABASE_URI is correct, yours might be 'mysql+mysqlconnector://root:root' (if root is your password)
 
