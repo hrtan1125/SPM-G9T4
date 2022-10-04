@@ -105,10 +105,54 @@ def skill_assigns_course():
     return jsonify(
             {
                 "code": 201,
-                "message": "Course and Skills successfully updated"
+                "message": "Course and Skills successfully created"
             }
         )
-        
+
+@app.route("/skill_assigns_course/delete", methods=['DELETE'])
+def delete_assignment():
+
+     # assumption here is that the course name is given
+    # the skills are given in the body 
+    #   {
+    #       "course_id": "IS226", 
+    #       "skill_code": "CS04"
+    #   }
+
+    data = request.get_json() #py obj
+    skill_code = data['skill_code'] #str
+    course_id = data['course_id'] #str
+
+    try:
+        #check if the combination of course and skill exists
+        if (Course_skills.query.filter_by(course_id=course_id, skill_code=skill_code).first()):
+            # delete 
+            # course_skill = Course_skills(course_id, skill_code)
+            # db.session.delete(course_skill)
+            Course_skills.query.filter_by(course_id=course_id, skill_code=skill_code).delete()
+            db.session.commit()
+            
+
+        else:
+            return jsonify(
+                {
+                    "code": 400,
+                    "message": "skill and course do not exist "
+                }
+            )
+    
+    except SQLAlchemyError as e:
+        print(e)
+    
+    db.session.commit()
+    return jsonify(
+            {
+                "code": 201,
+                "message": "Course " + course_id + " and Skill " + skill_code + " successfully deleted"
+            }
+        )
+            
+
 
 
 if __name__ == '__main__':
