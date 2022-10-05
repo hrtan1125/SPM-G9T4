@@ -2,8 +2,6 @@ from crypt import methods
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from sqlalchemy.orm import relationship
-from skills import Skills
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
@@ -99,7 +97,7 @@ def createRole():
         assignSkill(skillsList,role.role_id)
 
         # commit everything together, to the role table and the skill table
-        # this can be move to be done in the assignSkills function instead as well
+        # this can be moved to the assignSkills function instead
         db.session.commit()
 
         return jsonify(role.to_dict()), 201
@@ -197,6 +195,21 @@ def removeRole():
                 "message": "Unexpected Error."
             }
         )
+
+#to be removed from here
+@app.route("/viewRoleSkills", methods=['GET'])
+def viewRoleSkills():
+    search_skill = request.args.get('role_id')
+    if search_skill:
+        skills = Role_Skills.query.filter_by(role_id=search_skill).all()
+        return jsonify({
+            "data": [skill.skill_code for skill in skills]
+        })
+    else:
+        return jsonify({
+            "message": "Missing Input."
+        }), 400
+
 
 # admin assign skills, still need changes
 # directly call from http

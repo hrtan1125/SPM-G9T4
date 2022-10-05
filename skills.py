@@ -244,11 +244,11 @@ def skill_assigns_course():
     #     ), 400
 
     
-    skill_code = data['skill_code'] #list
+    skills = data['skills'] #list
 
     try:
         
-        for skill in skill_code:
+        for skill in skills:
             #check if the combination of course and skill exists
             if (Course_skills.query.filter_by(course_id=course_id, skill_code=skill).first()):
                 return jsonify(
