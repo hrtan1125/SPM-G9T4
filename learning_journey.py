@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -6,7 +7,7 @@ from roles import Role_Skills
 from skills import *
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -218,18 +219,50 @@ def add_learningjourneycourses(lj_id=0,courses=null):
             for course in courses[skill]:
                 learning_journey_course = Learning_Journey_Courses(**{"lj_id": lj_id,"skill_code":skill, "course_id":course})
                 db.session.add(learning_journey_course)
-        # db.session.add(learning_journey_courses)
-        # db.session.flush()
         db.session.commit()
         # return jsonify(learning_journey_courses.to_dict()), 201
         return jsonify({
-            "message": "Learning Journey successfully created!"
+            "message": "Courses successfully added!"
         })
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
 
+@app.route("/removecourses", methods=['DELETE'])
+def removeCourses():
+    data = request.get_json()
+    id = data['lj_id']
+    course = data['course']#string
+
+
+    try:
+        to_remove = Learning_Journey_Courses.query.filter_by(course_id=course, lj_id=id).first()
+        
+        #for list cases
+        # uncomment if you pass in list of courses
+        # courses = Learning_Journey_Courses.query.filter_by(lj_id=id).all()
+        # for c in courses:
+        #     if c.course_id in course:
+        #         db.session.delete(c)
+        
+        db.session.delete(to_remove)
+
+        #do not comment no matter is string of course or list of courses
+        db.session.commit()
+
+        # uncomment if you pass in list of courses
+        # return jsonify({
+        #     "message": "courses have been successfully removed."
+        # }), 200
+
+        return jsonify({
+            "message": course + " have been successfully removed."
+        }), 200
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
