@@ -6,14 +6,20 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 
+
+
 const Roles = () => {
-  const {roles, deleteRole} = useGlobalContext()
+  const {roles, deleteRole, role, setRole} = useGlobalContext()
+
+  const resetRole = () => {
+    setRole("")
+  }
 
     return (
       <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
          <div className="app-container">
          <Link to={`/createrole`}> 
-         <Button variant="contained">Create New Role</Button>
+         <Button onClick={resetRole} variant="contained">Create New Role</Button>
          </Link>
 <table>
   <thead>
@@ -28,8 +34,10 @@ const Roles = () => {
   </thead>
   <tbody>
   {roles.map((role) => (
-    <tr>
-      <td>
+    <tr key={role.role_id}>
+      {role.deleted === "no" && (
+        <>
+        <td>
       {role.role_id}
       </td>
 
@@ -47,12 +55,14 @@ const Roles = () => {
     </td>
     <td>
     <Grid item xs={8}>
-        <Link to={`/${role.role_id}`}>
+        <Link to={`/${role.role_id}/${role.role_name}`}>
         <EditIcon/>
         </Link>
         
     </Grid>
-    </td>
+    </td></>
+      )}
+      
     </tr>
   ))}
   </tbody>

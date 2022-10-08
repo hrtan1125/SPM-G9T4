@@ -7,13 +7,17 @@ import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Skills = () => {
-  const {skills, deleteSkill} = useGlobalContext()
+  const {skills, deleteSkill, setSkill} = useGlobalContext()
+
+  const resetSkill = () => {
+    setSkill("")
+  }
 
     return (
       <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
          <div className="app-container">
          <Link to={`/createskill`}> 
-         <Button variant="contained">Create New Skill</Button>
+         <Button onClick={resetSkill} variant="contained">Create New Skill</Button>
          </Link>
 <table>
   <thead>
@@ -28,31 +32,36 @@ const Skills = () => {
   </thead>
   <tbody>
   {skills.map((skill) => (
-    <tr>
-      <td>
-      {skill.skill_code}
-      </td>
+    <tr key={skill.skill_code}>
+      {skill.deleted === "no" && (
+        <>
+        <td>
+          {skill.skill_code}
+          </td>
+
+            <td>
+            {skill.skill_name}
+        </td>
+        <td>
+          {skill.deleted === "yes" ? ("Yes"): ("No")}
+        </td>
 
         <td>
-        {skill.skill_name}
-    </td>
-    <td>
-      {skill.deleted === "yes" ? ("Yes"): ("No")}
-    </td>
+        <Grid item xs={8}>
+            <DeleteOutlinedIcon onClick={() => deleteSkill(skill.skill_code)}/>
+        </Grid>
+        </td>
+        <td>
+        <Grid item xs={8}>
+            <Link to={`/skill/${skill.skill_code}/${skill.skill_name}`}>
+            <EditIcon/>
+            </Link>
+            
+        </Grid>
+        </td>
+        </>
+      )}
 
-    <td>
-    <Grid item xs={8}>
-        <DeleteOutlinedIcon onClick={() => deleteSkill(skill.skill_code)}/>
-    </Grid>
-    </td>
-    <td>
-    <Grid item xs={8}>
-        <Link to={`/skill/${skill.skill_code}`}>
-        <EditIcon/>
-        </Link>
-        
-    </Grid>
-    </td>
     </tr>
   ))}
   </tbody>

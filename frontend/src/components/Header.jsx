@@ -69,7 +69,7 @@ function Header(props) {
           </Typography>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {Object.keys(navItems).map((link) => (
-              <Link to={`/${navItems[link]}`}>
+              <Link key={link} to={`/${navItems[link]}`}>
                 <Button key={link} sx={{ mr: 3, color: '#fff' }}>
                         {link}
                     </Button>
