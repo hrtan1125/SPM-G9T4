@@ -1,40 +1,22 @@
 import { Button } from '@mui/material'
 import React from 'react'
 import { useGlobalContext } from '../context'
+import Modal from './Modal'
 
 const LJskills = () => {
-    const {roles, setRoleId, roleId, skills, skillCode, skill, setSkillCode, activeStep, setActiveStep} = useGlobalContext()
-    console.log(skills, "skilllss")
+    const {setSkillCode, relatedSkills, selectSkill, showModal} = useGlobalContext()
+    console.log(relatedSkills, "related skilllss")
 
     const emptyCheck = [];
 
-    skills?.map((skill) => (
+    relatedSkills?.map((skill) => (
     emptyCheck.push(skill.deleted)
 
   ))
 
-  const [formData, setFormData] = React.useState({})
-
-  // const handleSkill = (e, skill_code, skill_name) => {
-  //   e.preventDefault();
-  //   console.log('fkkkrollee', skill_code)
-  //   setSkillCode(skill_code)
-    
-
-  // };
-
-  function handleChange(event) {
-    const {name, value, type, checked} = event.target
-    setFormData(prevFormData => {
-        return {
-            ...prevFormData,
-            [name]: type === "checkbox" ? checked : value
-        }
-    })
-}
-
   return (
     <div >
+          {showModal && <Modal />}
          <div className="app-container">
           {(emptyCheck.includes('no')) ? (
             <table>
@@ -46,7 +28,7 @@ const LJskills = () => {
               </tr>
             </thead>
             <tbody>
-            {skills?.map((skill) => (
+            {relatedSkills?.map((skill) => (
               <tr>
                 {skill.deleted === 'no' && (
                   <>
@@ -54,14 +36,8 @@ const LJskills = () => {
                   {skill.skill_name}
               </td>
               <td>
-              {/* <Button variant="contained" onClick={(e) => handleSkill(e, skill.skill_code, skill.skill_name)}>Select Skill</Button> */}
-              <input 
-                type="checkbox" 
-                id={skill.skill_code}
-                checked={formData.skill_code}
-                onChange={handleChange}
-                name={skill.skill_code}
-            />
+              <Button variant="contained" onClick={() => selectSkill(skill.skill_code)}>Select Skill</Button>
+              
               </td>
               </>
                 )
@@ -71,7 +47,7 @@ const LJskills = () => {
             </tbody>
           </table>
           ) : (
-            <div>All the roles are deleted LMAO</div>
+            <div>All the skills are deleted LMAO</div>
           )}
         </div>
       </div>

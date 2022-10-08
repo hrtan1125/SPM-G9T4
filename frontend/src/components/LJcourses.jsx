@@ -1,63 +1,61 @@
-import { Button } from '@mui/material'
+import { Button, TextField } from '@mui/material'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../context'
 
 const LJcourses = () => {
-    const {skillCode, courses, addCourses, setAddCourses} = useGlobalContext()
-    console.log(courses.data)
+  const { ljCourses } = useGlobalContext()
+  let navigate = useNavigate();
 
-    const handleCourse = (e, course_id, course_name) => {
-      e.preventDefault();
-      setAddCourses(current => [...current, {course_id, course_name}])
-    };
+  const [formData, setFormData] = React.useState(
+    {title: ""}
+)
+
+  function handleChange(event) {
+    setFormData(prevFormData => {
+        return {
+            ...prevFormData,
+            [event.target.name]: event.target.value
+        }
+    })
+}
+
+console.log(ljCourses, "LJJJJ")
+
+const learningjourneyData = {}
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  learningjourneyData["courses"] = ljCourses
+  learningjourneyData["staff_id"] = 140105
+  learningjourneyData["role_id"] = 10
+  learningjourneyData["title"] = formData.title
+  console.log(learningjourneyData, "DATATAT")
+  addPosts(learningjourneyData);
+  navigate(`/learningjourneys`);
+};
+
+const addPosts = async(learningjourneyData) => {
+  try {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(learningjourneyData)
+  };
+  fetch("http://192.168.0.102:5002/createlearningjourney", requestOptions)
+    .then(response => response.json())
+
+} catch (error) {
+    console.log(error.response)
+}
+};
 
   return (
-    <>
-        <div>LJcourses</div>
-        {/* <div>{courses?.data}</div> */}
-        <table>
-            <thead>
-              <tr>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Type</th>
-                <th></th>
-          
-              </tr>
-            </thead>
-            <tbody>
-            {courses?.data.map((course) => (
-              <tr>
-                <td>
-                  {course.course_category}
-                </td>
-                <td>
-                  {course.course_desc}
-                </td>
-                <td>
-                  {course.course_id}
-                </td>
-                <td>
-                  {course.course_name}
-                </td>
-                <td>
-                  {course.course_status}
-                </td>
-                <td>
-                  {course.course_type}
-                </td>
-                <td>
-              <Button variant="contained" onClick={(e) => handleCourse(e, course.course_id, course.course_name)}>Add</Button>
-              </td>
-              </tr>
-            ))}
-            </tbody>
-          </table>
-    </>
-    
+    <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
+      Learning Journey Name: <TextField id="outlined-basic"  variant="outlined" name="title" value={formData.title} onChange={handleChange} />
+      <Button variant="contained" onClick={(e) => handleSubmit(e)}>Create Learning Journey</Button>
+    </div>
   )
 }
 

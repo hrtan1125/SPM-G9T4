@@ -26,6 +26,8 @@ const AppProvider = ({ children }) => {
     const [role, setRole] = useState([])
     const [roleId, setRoleId] = useState('')
     const [skills, setSkills] = useState([])
+    const [relatedSkills, setRelatedSkills] = useState([])
+
     const [skill, setSkill] = useState([])
     const [skillCode, setSkillCode] = useState('')
     // const [showSkills, setShowSkills] = useState(true)
@@ -34,6 +36,13 @@ const AppProvider = ({ children }) => {
 
     const [courses, setCourses] = useState([])
     const [addCourses, setAddCourses] = useState([])
+
+    const [showModal, setShowModal] = useState(false)
+    const [ljCourses, setljCourses] = useState({})
+
+    const closeModal = () => {
+      setShowModal(false)
+    }
 
 
     const fetchRoles = async(url) => {
@@ -56,7 +65,7 @@ const AppProvider = ({ children }) => {
   const fetchRelatedSkills = async(url) => {
     try {
         const {data} = await axios(url)
-        setSkills(data)
+        setRelatedSkills(data.data)
     } catch (error) {
         console.log(error.response)
     }
@@ -67,7 +76,7 @@ const AppProvider = ({ children }) => {
 const fetchRelatedCourses = async(url) => {
   try {
       const {data} = await axios(url)
-      setCourses(data)
+      setCourses(data.data)
   } catch (error) {
       console.log(error.response)
   }
@@ -112,7 +121,7 @@ useEffect(() => {
   if (roleId){
     fetchRelatedSkills(`${viewSkillsByRoleUrl}${roleId}`)
   }
-}, [])
+}, [roleId])
 
 // hahahhahhahahahaa
 
@@ -200,12 +209,18 @@ useEffect(() => {
     }
     }
 
+    const selectSkill = (skill_code) => {
+      setSkillCode(skill_code)
+      setShowModal(true);
+    }
+
     
   
     return (
       <AppContext.Provider
         value={{roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, setSkills,
-          updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, addCourses, setAddCourses
+          updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, addCourses, setAddCourses,
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses
 }}
       >
         {children}

@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useGlobalContext } from '../context';
 
-const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
+const steps = ['Choose a role', 'Choose your course/s', 'Create a title'];
 
 export default function HorizontalLinearStepper() {
     const { activeStep, setActiveStep, skipped, setSkipped, addCourses, } = useGlobalContext()
@@ -65,11 +65,6 @@ export default function HorizontalLinearStepper() {
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
-          if (isStepOptional(index)) {
-            labelProps.optional = (
-              <Typography variant="caption">Optional</Typography>
-            );
-          }
           if (isStepSkipped(index)) {
             stepProps.completed = false;
           }
@@ -95,10 +90,12 @@ export default function HorizontalLinearStepper() {
               Back
             </Button>
             <Box sx={{ flex: '1 1 auto' }} />
-
-            {/* <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button> */}
+            {activeStep !== 0 && (
+                <Button onClick={handleNext}>
+                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+              </Button>
+            )}
+            
           </Box>
         </React.Fragment>
       )}
