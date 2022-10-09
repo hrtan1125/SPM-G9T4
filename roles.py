@@ -104,7 +104,7 @@ def createRole():
 
         # commit everything together, to the role table and the skill table
         # this can be moved to the assignSkills function instead
-        db.session.commit()
+        # db.session.commit()
 
         return jsonify(role.to_dict()), 201
     except Exception:
@@ -221,41 +221,16 @@ def viewRoleSkills():
 # directly call from http
 @app.route("/assignSkills", methods=['POST'])
 def assignSkill(skillslist, role_id):
+    data = request.get_json()
+
+    if data:
+        if all(key in data.keys() for
+                    key in ('role_id', 'skill_code')):
+            print(data['role_id'])            
+            role_id = data["role_id"]
+            skillslist = data["skill_code"]
+
     for skill in skillslist:
-        roleData = Role_Skills(**{"role_id": role_id,"skill_code":skill})
-        db.session.add(roleData)
-    
-    # alternatively, do db.session.commit() here
-    return
-
-### skill assign to role start here###
-@app.route("/role_skill/all", methods=['GET'])
-def get_all():
-    all_role_skill_list = Role_Skills.query.all()
-    if len(all_role_skill_list):
-        return jsonify(
-            {
-                "code":200,
-                "data": {
-                    "role": [role.to_dict() for role in all_role_skill_list]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404, 
-            "message": "No entries found"
-        }
-    ), 404
-
-
-@app.route("/role_skill", methods=['POST'])
-def assign_skills_to_role():
-    data = request.get_json()  # py obj
-    role_id = data['role_id']
-    skills = data['skill_code']
-
-    for skill in skills:
         if (Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()):
             return jsonify(
                 {
@@ -269,10 +244,10 @@ def assign_skills_to_role():
             ), 400
 
         else:
-            role_skill = Role_Skills(role_id, skill)
+            roleData = Role_Skills(**{"role_id": role_id,"skill_code":skill})
 
         try:
-            db.session.add(role_skill)
+            db.session.add(roleData)
 
         except SQLAlchemyError as e:
             print(e)
@@ -297,5 +272,6 @@ def assign_skills_to_role():
         }
     ), 201
 
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
