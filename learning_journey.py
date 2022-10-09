@@ -136,7 +136,7 @@ def viewCourses():
         }), 500   
 
 @app.route("/createlearningjourney", methods=['POST'])
-def create_learningjourney():
+def create_learning_journey():
     data = request.get_json()
 
     ##checking for correct data type
@@ -163,7 +163,7 @@ def create_learningjourney():
         id = learning_journey.lj_id
 
         #call function to add courses to learning journey
-        add_learningjourneycourses(id,courses_list)
+        add_learning_journey_courses(id,courses_list)
         # db.session.commit() <-- this one dont need, cuz you will commit everything in one time at line 142
         return jsonify(learning_journey.to_dict()), 201
     except Exception:
@@ -174,7 +174,7 @@ def create_learningjourney():
 #to handle a list of courses
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
-def add_learningjourneycourses(lj_id=0,courses=null):
+def add_learning_journey_courses(lj_id=0,courses=null):
     data = request.get_json()
     if data:
         if all(key in data.keys() for
