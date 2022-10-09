@@ -88,6 +88,25 @@ class Courses(db.Model):
             result[column] = getattr(self, column)
         return result
 
+# view courses
+@app.route("/viewCourses", methods=['GET'])
+def viewCourses():
+    try:
+        courses = Courses.query.filter_by(course_status="Active").all()
+        if courses:
+            return jsonify({
+                "data": [course.to_dict() for course in courses]
+            }), 200
+        else:
+            return jsonify({
+                "message": "No courses available."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
+
 # after user select a role, show them the skills available
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewRoleSkills():
