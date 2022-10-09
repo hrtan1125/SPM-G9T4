@@ -87,7 +87,7 @@ def create_skill():
                 "message": "Skill code already exist!"
             }
         )
-    #data['deleted']='no'
+    data['deleted']='no'
     skill = Skills(**data)
     try:
         db.session.add(skill)
@@ -158,9 +158,9 @@ def delete_skill():  #delete skill
     try:
         data = request.get_json()
         skill_code = data["skill_code"]
-        roleToDelete = Skills.query.filter_by(skill_code=skill_code).first()
-        if roleToDelete:
-            roleToDelete.deleted = "yes"
+        skillToDelete = Skills.query.filter_by(skill_code=skill_code, deleted="no").first()
+        if skillToDelete:
+            skillToDelete.deleted = "yes"
             db.session.commit()
             return jsonify({
                 "message": "Skill has been removed!"
