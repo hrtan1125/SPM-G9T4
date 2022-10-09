@@ -1,6 +1,7 @@
 from crypt import methods
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -247,23 +248,6 @@ def get_all():
         }
     ), 404
 
-@app.route("/view_skills_to_add_to_role/<id>", methods=['GET'])
-def view_skills_to_add(id):
-    all_skills = Skills.query.filter_by(deleted="no").all()
-    assigned_skills = Role_Skills.query.filter_by(role_id=id).all()
-    dt = [skill.skill_code for skill in assigned_skills]
-
-    #if assigned already then "yes", else then "no"
-    skills_available = {"yes":[],"no":[]}
-    for skill in all_skills:
-        if(skill.skill_code not in dt):
-            skills_available["no"].append(skill.to_dict())
-        else:
-            skills_available["yes"].append(skill.to_dict())
-        print(skills_available)
-    return jsonify({
-        "skills":skills_available
-        }),200
 
 @app.route("/role_skill", methods=['POST'])
 def assign_skills_to_role():
