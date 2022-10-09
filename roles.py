@@ -35,21 +35,26 @@ class Roles(db.Model):
 
 class Role_Skills(db.Model):
     __tablename__ = 'role_skills'
-
     rowid = db.Column(db.Integer, primary_key=True)
-    role_id = db.Column(db.Integer)
-    skill_code = db.Column(db.String(20))
+    role_id = db.Column(db.Integer, nullable=False)
+    skill_code = db.Column(db.String(20), nullable=True)
 
     def to_dict(self):
         """
-        'to_dict' converts the object into a dictionary,
-        in which the keys correspond to database columns
+            'to_dict' converts the object into a dictionary,
+            in which the keys correspond to database columns
         """
+
         columns = self.__mapper__.column_attrs.keys()
         result = {}
         for column in columns:
             result[column] = getattr(self, column)
         return result
+
+    def __init__(self, role_id, skill_code):
+        self.role_id = role_id
+        self.skill_code = skill_code
+
 
 # admin create role
 @app.route("/create", methods=['POST'])
@@ -221,6 +226,92 @@ def assignSkill(skillslist, role_id):
     
     # alternatively, do db.session.commit() here
     return
+
+### skill assign to role start here###
+@app.route("/role_skill/all", methods=['GET'])
+def get_all():
+    all_role_skill_list = Role_Skills.query.all()
+    if len(all_role_skill_list):
+        return jsonify(
+            {
+                "code":200,
+                "data": {
+                    "role": [role.to_dict() for role in all_role_skill_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404, 
+            "message": "No entries found"
+        }
+    ), 404
+
+@app.route("/view_skills_to_add_to_role/<id>", methods=['GET'])
+def view_skills_to_add(id):
+    all_skills = Skills.query.filter_by(deleted="no").all()
+    assigned_skills = Role_Skills.query.filter_by(role_id=id).all()
+    dt = [skill.skill_code for skill in assigned_skills]
+
+    #if assigned already then "yes", else then "no"
+    skills_available = {"yes":[],"no":[]}
+    for skill in all_skills:
+        if(skill.skill_code not in dt):
+            skills_available["no"].append(skill.to_dict())
+        else:
+            skills_available["yes"].append(skill.to_dict())
+        print(skills_available)
+    return jsonify({
+        "skills":skills_available
+        }),200
+
+@app.route("/role_skill", methods=['POST'])
+def assign_skills_to_role():
+    data = request.get_json()  # py obj
+    role_id = data['role_id']
+    skills = data['skill_code']
+
+    for skill in skills:
+        if (Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()):
+            return jsonify(
+                {
+                    "code": 400,
+                    "data": {
+                        "skill_code": skill,
+                        "role_id": role_id
+                    },
+                    "message": "Skill is already assigned to role."
+                }
+            ), 400
+
+        else:
+            role_skill = Role_Skills(role_id, skill)
+
+        try:
+            db.session.add(role_skill)
+
+        except SQLAlchemyError as e:
+            print(e)
+            db.session.rollback()
+            return jsonify(
+                {
+                    "code": 500,
+                    "data": {
+                        "skill_code": skill,
+                        "role_id": role_id
+                    },
+                    "message": "An error occurred when assigning the skill to role."
+                }
+            ), 500
+
+    db.session.commit()
+
+    return jsonify(
+        {
+            "code": 201,
+            "message": "Successful assignment of skill(s) to role"
+        }
+    ), 201
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
