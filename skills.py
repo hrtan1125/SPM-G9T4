@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -87,12 +87,12 @@ def create_skill():
                 "message": "Skill code already exist!"
             }
         )
-    data['deleted']='no'
+    #data['deleted']='no'
     skill = Skills(**data)
     try:
         db.session.add(skill)
         db.session.commit()
-        return jsonify(skill.to_dict()), 201
+        return jsonify(skill.to_dict(), {"message": "Skill created successfully."}), 201
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
@@ -158,7 +158,7 @@ def delete_skill():  #delete skill
     try:
         data = request.get_json()
         skill_code = data["skill_code"]
-        roleToDelete = Skills.query.filter_by(skill_code=skill_code, deleted="no").first()
+        roleToDelete = Skills.query.filter_by(skill_code=skill_code).first()
         if roleToDelete:
             roleToDelete.deleted = "yes"
             db.session.commit()
