@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from crypt import methods
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -80,13 +81,6 @@ def createRole():
                 }
             ), 400
 
-    # if not all(key in data.keys() for
-    #            key in ('role_name', 'deleted')):
-    #     return jsonify(
-    #         {
-    #             "message": "Incorrect data format."
-    #         }
-    #     ), 404
     role = Roles(**{"role_name":newRole,"deleted":"no"})
 
     try:
@@ -110,7 +104,7 @@ def createRole():
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 400
+        }), 500
 
 # admin read all roles
 @app.route("/view")
@@ -137,7 +131,7 @@ def viewSelectedRole():
             {
                 "message": "Unexpected Error."
             }
-        )
+        ),500
 
 # admin update a role
 @app.route("/update", methods=['PUT'])
@@ -179,7 +173,7 @@ def updateRole():
             {
                 "message": "Unexpected Error."
             }
-        ), 400
+        ), 500
 
 # admin delete role (soft delete)
 @app.route("/delete", methods=['PUT'])
@@ -193,14 +187,14 @@ def removeRole():
         db.session.commit()
         return jsonify({
             "message": "Role has been removed!"
-        })
+        }), 200
 
     except Exception:
         return jsonify(
             {
                 "message": "Unexpected Error."
             }
-        )
+        ), 500
 
 #to be removed from here
 @app.route("/viewRoleSkills", methods=['GET'])
@@ -210,17 +204,16 @@ def viewRoleSkills():
         skills = Role_Skills.query.filter_by(role_id=search_skill).all()
         return jsonify({
             "data": [skill.skill_code for skill in skills]
-        })
+        }), 200
     else:
         return jsonify({
             "message": "Missing Input."
         }), 400
 
 
-# admin assign skills, still need changes
-# directly call from http
+#assign skills to role
 @app.route("/assignSkills", methods=['POST'])
-def assignSkill(skillslist, role_id):
+def assignSkill(skillslist=NULL, role_id=0):
     data = request.get_json()
 
     if data:
@@ -248,6 +241,7 @@ def assignSkill(skillslist, role_id):
 
         try:
             db.session.add(roleData)
+            db.session.commit()
 
         except SQLAlchemyError as e:
             print(e)
@@ -262,8 +256,6 @@ def assignSkill(skillslist, role_id):
                     "message": "An error occurred when assigning the skill to role."
                 }
             ), 500
-
-    db.session.commit()
 
     return jsonify(
         {
