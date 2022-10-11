@@ -115,7 +115,7 @@ def viewRoleSkills():
         if search_skill:
             RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
             skills = [skill.skill_code for skill in RoleSkills]
-            skillslist = Skills.query.filter(Skills.skill_code.in_(skills)).all()
+            skillslist = Skills.query.filter(Skills.skill_code.in_(skills),Skills.deleted=="no").all()
 
             return jsonify({
                 "data": [skill.to_dict() for skill in skillslist]
