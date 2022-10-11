@@ -7,8 +7,14 @@ import { useGlobalContext } from '../context';
 import ShowSkills from './ShowSkills';
 
 const CreateEditRole = () => {
+  const { relatedSkills, setRoleId, updateRole, skills } = useGlobalContext()
+  console.log(relatedSkills, "related skills")
+
+  const skill_codes_relatedToRole = [];
+
+  relatedSkills.map((skill) => skill_codes_relatedToRole.push(skill.skill_code))
+
     let navigate = useNavigate();
-    const { setRoleId, updateRole, skills} = useGlobalContext()
     const {role_id, role_name} = useParams()
 
     setRoleId(role_id)
@@ -31,24 +37,6 @@ const CreateEditRole = () => {
 
     console.log(role_id)
 
-    const getSkillsByRoleUrl = "http://127.0.0.1:5001/viewRoleSkills?role_id="
-const [skillsByRole, setSkillsByRole] = useState({})
-
-React.useEffect(() => {
-  let isMounted = true;
-  const fetchData = async () => {
-      try {
-          const response = await axios(`${getSkillsByRoleUrl}${role_id}`)
-            if (isMounted) {
-              setSkillsByRole(response.data)
-            }
-      } catch (error) {
-          console.log(error)
-      }
-  }
-  fetchData()
-  return () => (isMounted = false);
-}, [])
 
 const [checked, setChecked] = useState([]);
 
@@ -105,10 +93,10 @@ const assignSkillsToRole = async(role_id, skill_code) => {
                   </tr>
                 </thead>
                 <tbody>
-                {skillsByRole?.data?.map((skill)=> (
-                  <tr key={skill}>
+                {relatedSkills?.map((skill)=> (
+                  <tr key={skill.skill_code}>
                       <td>
-                    {skill}
+                    {skill.skill_name}
                     </td>
                   </tr>
                 ))}
@@ -127,7 +115,7 @@ const assignSkillsToRole = async(role_id, skill_code) => {
                 <tbody>
                 {skills.map((skill)=> (
                   <tr key={skill.skill_code}>
-                    {!skillsByRole?.data?.includes(skill.skill_code) && (
+                    {!skill_codes_relatedToRole?.includes(skill.skill_code) && (
                       <>
                       <td>
                     {skill.skill_code}
