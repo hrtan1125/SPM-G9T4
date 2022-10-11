@@ -4,7 +4,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
-import axios from 'axios';
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context';
@@ -12,38 +11,18 @@ import { useGlobalContext } from '../context';
 export default function ShowSkills({role_name}) {
   let navigate = useNavigate();
 
-  // const {role_id, setRoles, roles, fetchRoles} = useGlobalContext()
   const [checked, setChecked] = React.useState([]);
-  const [skills, setSkills] = React.useState();
-
-  React.useEffect(() => {
-    let isMounted = true;
-    const fetchData = async () => {
-        try {
-            const response = await axios("http://192.168.0.102:5000/view")
-              if (isMounted) {
-                setSkills(response.data)
-              }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-    fetchData()
-    return () => (isMounted = false);
-  }, [])
-
+  const {skills} = useGlobalContext()
 
   const transformed_skills = [];
 
-  skills?.data.map((skill) => {
+  skills?.map((skill) => {
     return (
       <>
         {skill.deleted === "no" && (
           transformed_skills.push(`${skill.skill_code} - ${skill.skill_name}` )
         )}
-        
       </>
-        
     )
   })
 
@@ -58,8 +37,8 @@ export default function ShowSkills({role_name}) {
     }
     setChecked(newChecked);
   };
-
-  const handleSubmit = (e) => {
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const skill_codes_list = [];
     checked.map((skill) => {
@@ -69,27 +48,24 @@ export default function ShowSkills({role_name}) {
     navigate(`/Roles`);
  };
 
+ console.log(checked, "selected skills")
+
  const addPosts = async(role_name, skills_list) => {
+  console.log(skills_list, "skills list")
+  console.log(role_name, "role_name")
   try {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role_name:  role_name, skills: skills_list})
   };
-  fetch("http://192.168.0.102:5001/create", requestOptions)
+  fetch("http://127.0.0.1:5001/create", requestOptions)
     .then(response => response.json())
 
 } catch (error) {
     console.log(error.response)
 }
-      // const updatedRoles = roles.filter((role) => role.role_id !== role_id);
-      // console.log("UPDATTEE", updatedRoles)
-
-      // const x = await fetchRoles()
-      // console.log(x, "SLEEEEPPP")
 };
-
-  // const testdata = ["a - hello", "b - hihi", "c - kikik"]
   
 
   return (

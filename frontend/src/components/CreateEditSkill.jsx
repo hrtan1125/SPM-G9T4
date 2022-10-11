@@ -37,6 +37,8 @@ const CreateEditSkill = () => {
 };
 
 
+
+
   return (
     <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
 

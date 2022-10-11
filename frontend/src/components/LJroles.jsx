@@ -5,7 +5,7 @@ import "./../App.css";
 import { Button } from '@mui/material';
 
 const LJroles = () => {
-  const {roles, setRoleId, roleId, activeStep, setActiveStep} = useGlobalContext()
+  const {roles, setRoleId, activeStep, setActiveStep} = useGlobalContext()
 
   const emptyCheck = [];
 
@@ -13,7 +13,7 @@ const LJroles = () => {
     emptyCheck.push(role.deleted)
   ))
 
-  const handleRole = (e, role_id, role_name) => {
+  const handleRole = (e, role_id) => {
     e.preventDefault();
     setRoleId(role_id)
     setActiveStep(activeStep + 1)
@@ -34,28 +34,26 @@ const LJroles = () => {
             </thead>
             <tbody>
             {roles.map((role) => (
-              <tr>
+              <tr key={role.role_id}>
                 {role.deleted === 'no' && (
                   <>
                   <td>
                   {role.role_name}
               </td>
               <td>
-              <Button variant="contained" onClick={(e) => handleRole(e, role.role_id, role.role_name)}>Select Role</Button>
+              <Button variant="contained" onClick={(e) => handleRole(e, role.role_id)}>Select Role</Button>
               </td>
               </>
-                )
-          }
+                )}
               </tr>
             ))}
             </tbody>
           </table>
           ) : (
-            <div>All the roles are deleted LMAO</div>
+            <div>All the roles are deleted</div>
           )}
         </div>
       </div>
-     
     );
   };
   

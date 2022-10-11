@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 // const navItems = ['Roles', 'Skills', 'Courses', 'Create Learning Journey', 'Dashboard'];
-const navItems = {roles: 'Roles', skills: 'Skills', learningjourneys: 'learningjourneys'};
+const navItems = {roles: 'Roles', skills: 'Skills', courses:'Courses', learningjourneys: 'learningjourneys'};
 
 function Header(props) {
   const { window } = props;

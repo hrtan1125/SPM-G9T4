@@ -10,7 +10,7 @@ import { useGlobalContext } from '../context';
 const steps = ['Choose a role', 'Choose your course/s', 'Create a title'];
 
 export default function HorizontalLinearStepper() {
-    const { activeStep, setActiveStep, skipped, setSkipped, addCourses, } = useGlobalContext()
+    const { activeStep, setActiveStep, skipped, setSkipped } = useGlobalContext()
 //   const [activeStep, setActiveStep] = React.useState(0);
 //   const [skipped, setSkipped] = React.useState(new Set());
 
@@ -31,9 +31,9 @@ export default function HorizontalLinearStepper() {
 // }
 // }
 
-  const isStepOptional = (step) => {
-    return step === 1;
-  };
+  // const isStepOptional = (step) => {
+  //   return step === 1;
+  // };
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -55,9 +55,9 @@ export default function HorizontalLinearStepper() {
   };
 
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
+  // const handleReset = () => {
+  //   setActiveStep(0);
+  // };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -83,7 +83,7 @@ export default function HorizontalLinearStepper() {
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
-              disabled={activeStep === 0}
+              disabled={activeStep === 0 }
               onClick={handleBack}
               sx={{ mr: 1 }}
             >

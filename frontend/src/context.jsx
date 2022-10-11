@@ -2,43 +2,48 @@
 import React, { useState, useContext, useEffect } from 'react'
 import axios from 'axios'
 const AppContext = React.createContext()
-// const viewRoles = 'http://192.168.0.102:5001/view'
-const rolesUrl = 'http://192.168.0.102:5001/view'
-const skillsUrl = 'http://192.168.0.102:5000/view'
-const deleteRoleUrl = 'http://192.168.0.102:5001/delete'
-const viewSelectedRoleUrl = 'http://192.168.0.102:5001/viewselectedrole?role_id='
-const deleteSkillUrl = 'http://192.168.0.102:5000/delete'
-const viewSelectedSkillUrl = "http://192.168.0.102:5000/viewselectedskill?skill_code="
 
-const updateSkillUrl = 'http://192.168.0.102:5000/update'
-const createSkillUrl = 'http://192.168.0.102:5000/create'
+// Roles
+const rolesUrl = 'http://127.0.0.1:5001/view'
+const viewSelectedRoleUrl = 'http://127.0.0.1:5001/viewselectedrole?role_id='
+const deleteRoleUrl = 'http://127.0.0.1:5001/delete'
+const updateRoleUrl = 'http://127.0.0.1:5001/update'
 
-const updateRoleUrl = 'http://192.168.0.102:5001/update'
+// Skills
+const skillsUrl = 'http://127.0.0.1:5000/view'
+const viewSelectedSkillUrl = "http://127.0.0.1:5000/viewselectedskill?skill_code="
+const viewSkillsByRoleUrl = 'http://127.0.0.1:5002/viewRoleSkills?role_id='
+const updateSkillUrl = 'http://127.0.0.1:5000/update'
+const createSkillUrl = 'http://127.0.0.1:5000/create'
+const deleteSkillUrl = 'http://127.0.0.1:5000/delete'
 
-const viewSkillsByRoleUrl = 'http://192.168.0.102:5002/viewRoleSkills?role_id='
-const viewCoursesBySkillUrl = 'http://192.168.0.102:5002/viewCourses?skill_code='
-
-
+// Courses
+const coursesUrl = 'http://127.0.0.1:5002/viewAllCourses'
+const viewCoursesBySkillUrl = 'http://127.0.0.1:5002/viewCourses?skill_code='
 
 
 const AppProvider = ({ children }) => {
+    // Roles
     const [roles, setRoles] = useState([])
     const [role, setRole] = useState([])
     const [roleId, setRoleId] = useState('')
+
+    // Skills
     const [skills, setSkills] = useState([])
     const [relatedSkills, setRelatedSkills] = useState([])
-
     const [skill, setSkill] = useState([])
     const [skillCode, setSkillCode] = useState('')
-    // const [showSkills, setShowSkills] = useState(true)
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [skipped, setSkipped] = React.useState(new Set());
-
+    
+    // Courses
     const [courses, setCourses] = useState([])
+    const [allCourses, setAllCourses] = useState([])
     const [addCourses, setAddCourses] = useState([])
 
-    const [showModal, setShowModal] = useState(false)
+    // Learning Journey Pages
     const [ljCourses, setljCourses] = useState({})
+    const [showModal, setShowModal] = useState(false)
+    const [activeStep, setActiveStep] = React.useState(0);
+    const [skipped, setSkipped] = React.useState(new Set());
 
     const closeModal = () => {
       setShowModal(false)
@@ -72,7 +77,6 @@ const AppProvider = ({ children }) => {
 }
 
 
-
 const fetchRelatedCourses = async(url) => {
   try {
       const {data} = await axios(url)
@@ -90,6 +94,16 @@ const fetchRelatedCourses = async(url) => {
         console.log(error.response)
     }
 }
+
+const fetchCourses = async(url) => {
+  try {
+      const {data} = await axios(url)
+      setAllCourses(data.data)
+  } catch (error) {
+      console.log(error.response)
+  }
+}
+
 const fetchSkill = async(url) => {
   try {
       const {data} = await axios(url)
@@ -107,29 +121,30 @@ const fetchSkill = async(url) => {
       fetchSkills(skillsUrl)
   }, [])
     useEffect(() => {
-      if (roleId){
-        fetchRole(`${viewSelectedRoleUrl}${roleId}`)
+      fetchCourses(coursesUrl)
+    }, [])
+      useEffect(() => {
+        if (roleId){
+          fetchRole(`${viewSelectedRoleUrl}${roleId}`)
+        }
+    }, [roleId])
+    useEffect(() => {
+      if (skillCode){
+        fetchSkill(`${viewSelectedSkillUrl}${skillCode}`)
       }
-  }, [roleId])
-  useEffect(() => {
-    if (skillCode){
-      fetchSkill(`${viewSelectedSkillUrl}${skillCode}`)
-    }
-}, [skillCode])
+    }, [skillCode])
 
-useEffect(() => {
-  if (roleId){
-    fetchRelatedSkills(`${viewSkillsByRoleUrl}${roleId}`)
-  }
-}, [roleId])
+    useEffect(() => {
+      if (roleId){
+        fetchRelatedSkills(`${viewSkillsByRoleUrl}${roleId}`)
+      }
+    }, [roleId])
 
-// hahahhahhahahahaa
-
-useEffect(() => {
-  if (skillCode){
-    fetchRelatedCourses(`${viewCoursesBySkillUrl}${skillCode}`)
-  }
-}, [skillCode])
+    useEffect(() => {
+      if (skillCode){
+        fetchRelatedCourses(`${viewCoursesBySkillUrl}${skillCode}`)
+      }
+    }, [skillCode])
 
     const deleteRole = async(role_id) => {
       try {
@@ -146,6 +161,7 @@ useEffect(() => {
       const updatedRoles = roles.filter((role) => role.role_id !== role_id);
       setRoles(updatedRoles)
     }
+
     const deleteSkill = async(skill_code) => {
       try {
         const requestOptions = {
@@ -161,6 +177,7 @@ useEffect(() => {
       const updatedSkills = skills.filter((skill) => skill.skill_code !== skill_code);
       setSkills(updatedSkills)
     }
+
     const updateSkill = async(formData) => {
       try {
         const requestOptions = {
@@ -193,7 +210,6 @@ useEffect(() => {
     }
     }
 
-
     const updateRole = async(formData) => {
       try {
         const requestOptions = {
@@ -214,13 +230,11 @@ useEffect(() => {
       setShowModal(true);
     }
 
-    
-  
     return (
       <AppContext.Provider
-        value={{roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, setSkills,
-          updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, addCourses, setAddCourses,
-          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses
+        value={{roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+          updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal
 }}
       >
         {children}

@@ -4,16 +4,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
-import axios from 'axios';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button } from '@mui/material';
 import { useGlobalContext } from '../context';
 
-export default function Modal({role_name}) {
+export default function Modal() {
     const { closeModal, skillCode, courses, ljCourses, setljCourses } = useGlobalContext()
-  let navigate = useNavigate();
 
-  // const {role_id, setRoles, roles, fetchRoles} = useGlobalContext()
   const [checked, setChecked] = React.useState([]);
 
   const transformed_courses = [];
@@ -41,11 +37,7 @@ export default function Modal({role_name}) {
     setChecked(newChecked);
   };
 
-  console.log(checked, "hahhahah")
-
-
-  // const testdata = ["a - hello", "b - hihi", "c - kikik"]
-  console.log(transformed_courses, "dammmm")
+  console.log(transformed_courses, "TRANSFORMED COURSES")
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,20 +46,20 @@ export default function Modal({role_name}) {
     checked.map((skill) => {
         courses_codes_list.push(skill.split(" - ")[0])
     })
-    console.log(courses_codes_list, "IIIII")
+    console.log(courses_codes_list, "COURSES CODES LIST")
     const transformed_courses = [];
     transformed_courses[skillCode] = courses_codes_list
     console.log(transformed_courses, "TRANSFORMERS")
     const finalResult = Object.assign(ljCourses, transformed_courses)
-    console.log(finalResult, "HAHHAHA")
+    console.log(finalResult, "FINAL RESULT")
     setljCourses(finalResult)
  };
 
   return (
     <>
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-        {transformed_courses === [] ? (
-            <div>There is no course related to this skill </div>
+        {transformed_courses.length === 0 ? (
+            <Box sx={{ color: 'warning.main' }}>There is no courses related to this skill </Box>
         ) : (
             <div>
                 <h1>Select your courses</h1>

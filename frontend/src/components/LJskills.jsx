@@ -4,7 +4,7 @@ import { useGlobalContext } from '../context'
 import Modal from './Modal'
 
 const LJskills = () => {
-    const {setSkillCode, relatedSkills, selectSkill, showModal} = useGlobalContext()
+    const { relatedSkills, selectSkill, showModal} = useGlobalContext()
     console.log(relatedSkills, "related skilllss")
 
     const emptyCheck = [];
@@ -29,19 +29,17 @@ const LJskills = () => {
             </thead>
             <tbody>
             {relatedSkills?.map((skill) => (
-              <tr>
+              <tr key={skill.skill_code}>
                 {skill.deleted === 'no' && (
                   <>
                   <td>
-                  {skill.skill_name}
-              </td>
-              <td>
-              <Button variant="contained" onClick={() => selectSkill(skill.skill_code)}>Select Skill</Button>
-              
-              </td>
-              </>
-                )
-          }
+                      {skill.skill_name}
+                  </td>
+                  <td>
+                    <Button variant="contained" onClick={() => selectSkill(skill.skill_code)}>View related courses</Button>
+                  </td>
+                </>
+                )}
               </tr>
             ))}
             </tbody>
@@ -51,7 +49,6 @@ const LJskills = () => {
           )}
         </div>
       </div>
-
   )
 }
 

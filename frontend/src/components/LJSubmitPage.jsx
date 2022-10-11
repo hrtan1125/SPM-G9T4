@@ -3,8 +3,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../context'
 
-const LJcourses = () => {
-  const { ljCourses } = useGlobalContext()
+const LJSubmitPage = () => {
+  const { ljCourses, setActiveStep, setljCourses } = useGlobalContext()
   let navigate = useNavigate();
 
   const [formData, setFormData] = React.useState(
@@ -20,7 +20,7 @@ const LJcourses = () => {
     })
 }
 
-console.log(ljCourses, "LJJJJ")
+console.log(ljCourses, "LJcourses")
 
 const learningjourneyData = {}
 
@@ -28,11 +28,14 @@ const handleSubmit = (e) => {
   e.preventDefault();
   
   learningjourneyData["courses"] = ljCourses
+  // StaffId and RoleID are hard coded for now
   learningjourneyData["staff_id"] = 140105
   learningjourneyData["role_id"] = 10
   learningjourneyData["title"] = formData.title
-  console.log(learningjourneyData, "DATATAT")
+  console.log(learningjourneyData, "Final LJ Data")
   addPosts(learningjourneyData);
+  setActiveStep(0)
+  setljCourses([])
   navigate(`/learningjourneys`);
 };
 
@@ -43,7 +46,7 @@ const addPosts = async(learningjourneyData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(learningjourneyData)
   };
-  fetch("http://192.168.0.102:5002/createlearningjourney", requestOptions)
+  fetch("http://127.0.0.1:5002/createlearningjourney", requestOptions)
     .then(response => response.json())
 
 } catch (error) {
@@ -59,4 +62,4 @@ const addPosts = async(learningjourneyData) => {
   )
 }
 
-export default LJcourses
+export default LJSubmitPage
