@@ -4,6 +4,7 @@ import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 const Course = () => {
     const {course_id} = useParams()
     const getSkillsByCourseUrl = "http://127.0.0.1:5000/view_skills_to_add/"
