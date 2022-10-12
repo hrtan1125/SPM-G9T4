@@ -1,4 +1,3 @@
-import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -88,24 +87,6 @@ class Courses(db.Model):
             result[column] = getattr(self, column)
         return result
 
-# view courses
-@app.route("/viewCourses", methods=['GET'])
-def viewCourses():
-    try:
-        courses = Courses.query.filter_by(course_status="Active").all()
-        if courses:
-            return jsonify({
-                "data": [course.to_dict() for course in courses]
-            }), 200
-        else:
-            return jsonify({
-                "message": "No courses available."
-            }), 400
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit to database"
-        }), 500
-
 
 # after user select a role, show them the skills available
 @app.route("/viewRoleSkills", methods=['GET'])
@@ -138,8 +119,8 @@ def viewCourses():
             CoursesList = Course_skills.query.filter_by(skill_code=skill).all()
             
             CoursesId = [course.course_id for course in CoursesList]
-            print(CoursesId) #to be removed
-            courses =  Courses.query.filter(Courses.course_id.in_(CoursesId)).all()
+            
+            courses =  Courses.query.filter(Courses.course_id.in_(CoursesId),Courses.course_status=="Active").all()
             return jsonify(
                 {
                     "data": [course.to_dict() for course in courses]
@@ -164,7 +145,7 @@ def create_learning_journey():
                        'role_id', 
                        'staff_id', 'courses')):
         return jsonify({
-            "message": "Incorrect JSON object provided."
+            "message": "Incorrect Data Formet."
         }), 500
     title = data["title"]
     role_id = data["role_id"]
@@ -183,7 +164,7 @@ def create_learning_journey():
 
         #call function to add courses to learning journey
         add_learning_journey_courses(id,courses_list)
-        # db.session.commit() <-- this one dont need, cuz you will commit everything in one time at line 142
+
         return jsonify(learning_journey.to_dict()), 201
     except Exception:
         return jsonify({
@@ -193,7 +174,7 @@ def create_learning_journey():
 #to handle a list of courses
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
-def add_learning_journey_courses(lj_id=0,courses=null):
+def add_learning_journey_courses(lj_id=0,courses=[]):
     data = request.get_json()
     if data:
         if all(key in data.keys() for
@@ -202,44 +183,13 @@ def add_learning_journey_courses(lj_id=0,courses=null):
             courses = data["courses"]
             lj_id = data["lj_id"]
 
-    ##checking for correct data type
-    ## can remove this I think
-    # if not all(key in data.keys() for
-    #            key in ('lj_id',
-    #                     'skill_code',
-    #                     'course_id')):
-    #     return jsonify({
-    #         "message": "Incorrect JSON object provided."
-    #     }), 500
-
-    ##check if learning journey already has that course (No need thanks to function in later sprint)
-    # lj_id = data["lj_id"]
-    # skill_code = data["skill_code"]
-    # course_id = data["course_id"]
-
-    # row_id = 11 <-- no need, cuz db will do auto increment
-    # need for loop I guess cuz is list of courses
-    # something like this bah but i haven't test
-    
-
-    # learning_journey_courses = Learning_Journey_Courses(**{"lj_id": lj_id,"skill_code":skill_code, "course_id":course_id})
-    # checkCourse = Learning_Journey_Courses.query.filter_by(lj_id = lj_id, course_id = course_id).first()
-    # if checkRole and checkRole.deleted!="yes":
-    #         return jsonify(
-    #             {
-    #                 "message": "This course is already in the selected learning journey!"
-    #             }
-    #         ), 400
     try:
-        # for loop move here, line 139 can remove
-        # keep line 142 outside the whole for loop
-        # move it to inside the 'try'
         for skill in courses.keys():
             for course in courses[skill]:
                 learning_journey_course = Learning_Journey_Courses(**{"lj_id": lj_id,"skill_code":skill, "course_id":course})
                 db.session.add(learning_journey_course)
         db.session.commit()
-        # return jsonify(learning_journey_courses.to_dict()), 201
+        
         return jsonify({
             "message": "Courses successfully added!"
         })

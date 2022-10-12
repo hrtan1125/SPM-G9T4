@@ -1,12 +1,10 @@
-from asyncio.windows_events import NULL
-from crypt import methods
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
                                         '@localhost:3306/projectDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
@@ -64,7 +62,7 @@ def createRole():
     data = request.get_json()
     
     # check if data format is correct
-    if not "role_name" in data.keys():
+    if not "role_name" in data.keys() or not "skills" in data.keys():
         return jsonify(
             {
                 "message": "Incorrect data format"
@@ -88,10 +86,10 @@ def createRole():
         db.session.flush()
 
         # add the role with skills
-        if not "skills" in data.keys():
-            return jsonify({
-                "message": "missing skills to be assigned."
-            })
+        # if not "skills" in data.keys():
+        #     return jsonify({
+        #         "message": "missing skills to be assigned."
+        #     })
             
         skillsList = data['skills']
         assignSkill(skillsList,role.role_id)
@@ -100,7 +98,7 @@ def createRole():
         # this can be moved to the assignSkills function instead
         # db.session.commit()
 
-        return jsonify(role.to_dict()), 201
+        return jsonify(role.to_dict()), 200
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
@@ -109,7 +107,7 @@ def createRole():
 # admin read all roles
 @app.route("/view")
 def viewRoles():
-    data = Roles.query.all()
+    data = Roles.query.filter_by(deleted="no").all()
     return jsonify(
         {
             "data": [role.to_dict() for role in data]
@@ -196,24 +194,10 @@ def removeRole():
             }
         ), 500
 
-#to be removed from here
-@app.route("/viewRoleSkills", methods=['GET'])
-def viewRoleSkills():
-    search_skill = request.args.get('role_id')
-    if search_skill:
-        skills = Role_Skills.query.filter_by(role_id=search_skill).all()
-        return jsonify({
-            "data": [skill.skill_code for skill in skills]
-        }), 200
-    else:
-        return jsonify({
-            "message": "Missing Input."
-        }), 400
-
 
 #assign skills to role
 @app.route("/assignSkills", methods=['POST'])
-def assignSkill(skillslist=NULL, role_id=0):
+def assignSkill(skillslist=[], role_id=0):
     data = request.get_json()
 
     if data:
