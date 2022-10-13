@@ -260,7 +260,7 @@ def remove_learning_journey():
     if not to_remove:
         return jsonify({
             "message": title + "does not exist in database."
-        }), 500
+        }), 404
 
     try: 
         db.session.delete(to_remove)
