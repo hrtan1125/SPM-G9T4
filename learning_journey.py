@@ -259,8 +259,9 @@ def remove_learning_journey():
     to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
     if not to_remove:
         return jsonify({
-            "message": title "does not exist in database."
+            "message": title + "does not exist in database."
         }), 500
+
     try: 
         db.session.delete(to_remove)
         db.session.commit()
