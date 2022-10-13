@@ -251,5 +251,28 @@ def removeCourses():
             "message": "Unable to commit to database."
         }), 500
 
+@app.route("/removelearningjourney", methods=['DELETE'])
+def remove_learning_journey():
+    data = request.get_json()
+    id = data['lj_id']
+    title = data['title']#string
+    to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
+    if not to_remove:
+        return jsonify({
+            "message": title "does not exist in database."
+        }), 500
+    try: 
+        db.session.delete(to_remove)
+        db.session.commit()
+
+        return jsonify({
+            "message": title + " have been successfully removed."
+        }), 200
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
