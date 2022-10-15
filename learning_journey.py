@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy import null
-from roles import Role_Skills
+from roles import *
 from skills import *
+import math
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
@@ -87,6 +88,30 @@ class Courses(db.Model):
             result[column] = getattr(self, column)
         return result
 
+class Registration(db.Model):
+    __tablename__ = 'registration'
+
+    reg_id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.String(50))
+    staff_id = db.Column(db.Integer)
+    reg_status = db.Column(db.String(15))
+    completion_status = db.Column(db.String(10))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'courses'
+    }
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
 # view courses
 @app.route("/viewAllCourses", methods=['GET'])
 def viewAllCourses():
@@ -99,6 +124,93 @@ def viewAllCourses():
         else:
             return jsonify({
                 "message": "No courses available."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
+# view registration
+@app.route("/viewAllRegistration", methods=['GET'])
+def viewAllRegistration():
+    try:
+        registrations = Registration.query.all()
+        if registrations:
+            return jsonify({
+                "data": [registration.to_dict() for registration in registrations]
+            }), 200
+        else:
+            return jsonify({
+                "message": "No registration available."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
+# view learningjourneys and progress
+@app.route("/viewlearningjourneys", methods=['GET'])
+def viewlearningjourneys():
+    staff_id = request.args.get('staff_id')
+    my_dict = {}
+    try:
+        if staff_id:
+            LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
+            learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+            for learningjourney in learningjourneys:
+                coursesList = Learning_Journey_Courses.query.filter(Learning_Journey_Courses.lj_id == learningjourney.lj_id).all()
+                CoursesId = [course.course_id for course in coursesList]
+                coursesList = Courses.query.filter(Courses.course_id.in_(CoursesId)).all()
+                course_names = [course.course_name for course in coursesList]
+                courses_progress_list = Registration.query.filter(Registration.course_id.in_(CoursesId)).all()
+                role = Roles.query.filter_by(role_id = learningjourney.role_id).first()
+                courses_and_statuses = [[progress.completion_status, progress.course_id] for progress in courses_progress_list]
+                for index in range(len(course_names)):
+                    courses_and_statuses[index].append(course_names[index])
+                total = 0
+                completed = 0
+                for course_and_status in courses_and_statuses:
+                    if (course_and_status[0] == 'Completed'):
+                        completed += 1
+                    total += 1
+                if(total != 0):
+                    final_progress = math.floor(completed/total * 100)
+                temp_dict = {}
+                temp_dict["title"] = learningjourney.title
+                temp_dict["role_id"] = learningjourney.role_id
+                temp_dict["role_name"] = role.role_name
+                temp_dict["staff_id"] = learningjourney.staff_id
+                temp_dict["courses"] = courses_and_statuses
+                temp_dict["progress"] = final_progress
+                my_dict[learningjourney.lj_id] = temp_dict
+            
+            return jsonify({
+                "data" : my_dict
+            }), 200
+        else:
+            return jsonify({
+                "message": "No registration available."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
+# view courses by learning journey
+@app.route("/viewCoursesByLearningJourney", methods=['GET'])
+def viewCoursesByLearningJourney():
+    lj_id = request.args.get('lj_id')
+    try:
+        if lj_id:
+            LJcourses = Learning_Journey_Courses.query.filter_by(lj_id=lj_id).all()
+            courses = [course.course_id for course in LJcourses]
+            coursesList = Courses.query.filter(Courses.course_id.in_(courses),Courses.course_status=="Active").all()
+            return jsonify({
+                "data": [course.to_dict() for course in coursesList]
+            }), 200
+        else:
+            return jsonify({
+                "message": "No registration available."
             }), 400
     except Exception:
         return jsonify({
