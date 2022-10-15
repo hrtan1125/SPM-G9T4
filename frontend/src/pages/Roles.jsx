@@ -5,69 +5,78 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
+import AddIcon from "@mui/icons-material/Add"
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
 
 const Roles = () => {
+  // const {setPaTableHead} = useGlobalContext()
+  // setPaTableHead("Roles")
+
+  //Retitle the header
+  const {setPath} = useGlobalContext()
+  useEffect(()=>setPath("Roles"))
+
   const {rolesUrl, fetchRoles} = useGlobalContext()
   useEffect(() => {
     fetchRoles(rolesUrl)
 }, [])
 
-  const {roles, deleteRole, setRole} = useGlobalContext()
+  const {roles, deleteRole} = useGlobalContext()
 
-  const resetRole = () => {
-    setRole("")
+  const reseTableRowole = () => {
+    console.log("reset")
   }
 
 return (
-  <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
-      <div className="app-container">
-        <Link to={`/createrole`}> 
-          <Button onClick={resetRole} variant="contained">Create New Role</Button>
+  <div style={{display: 'flex', justifyContent: "center"}} >
+      <div className="app-container" style={{display: 'flex',justifyContent:"center"}} >
+      <div style={{display: 'flex', justifyContent: "center"}} >
+        <Link to={`/createrole`} style={{textDecoration:"none"}}> 
+          <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
         </Link>
-      <table>
-        <thead>
-          <tr>
-            <th>Role Id</th>
-            <th>Role Name</th>
-            <th>Deleted?</th>
-            <th>Delete</th>
-            <th>Edit</th>
-            {/* <th>Add Skills</th> */}
-
-          </tr>
-        </thead>
-        <tbody>
-        {roles.map((role) => (
-          <tr key={role.role_id}>
-            {role.deleted === "no" && (
-              <>
-              <td>
+        </div>
+        <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 640, "& td": { border: 0 }}} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Role ID</TableCell>
+            <TableCell align="left">Role Name</TableCell>
+            <TableCell align="center"></TableCell>
+            <TableCell align="center"></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {roles.map((role) => (
+            <TableRow
+              key={role.role_id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell align="left">
                 {role.role_id}
-              </td>
-              <td>
-                {role.role_name}
-              </td>
-              <td>
-                {role.deleted === "yes" ? ("Yes"): ("No")}
-              </td>
-              <td>
-                <Grid item xs={8}>
-                    <DeleteOutlinedIcon onClick={() => deleteRole(role.role_id)}/>
-                </Grid>
-              </td>
-              <td>
-                <Grid item xs={8}>
-                    <Link to={`/${role.role_id}/${role.role_name}`}>
-                      <EditIcon/>
-                    </Link>
-                </Grid>
-              </td> 
-            </>
-            )} 
-          </tr>
-        ))}
-        </tbody>
-      </table>
+              </TableCell>
+              <TableCell align="left">{role.role_name}</TableCell>
+              <TableCell align="center">
+              <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={deleteRole}>
+                  <DeleteOutlinedIcon/>
+              </IconButton>
+              </TableCell>
+              <TableCell align="center">
+              <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/${role.role_id}/${role.role_name}`}>
+                  <EditIcon/>
+              </IconButton>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
       </div>
     </div>
     );

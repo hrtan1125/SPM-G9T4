@@ -7,6 +7,9 @@ import { Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Skills = () => {
+  const {setPath} = useGlobalContext()
+  useEffect(()=>setPath("Skills"))
+
   const {skills, deleteSkill, setSkill, fetchSkills, skillsUrl} = useGlobalContext()
   useEffect(() => {
     fetchSkills(skillsUrl)
