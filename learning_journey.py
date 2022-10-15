@@ -274,6 +274,17 @@ def remove_learning_journey():
             "message": "Unable to commit to database."
         }), 500
 
+# View all learning journeys
+@app.route("/viewlearningjourney")
+def viewLearningJourney():
+    data = request.get_json()
+    id = data['staff_id']
+    data = Learning_Journey.query.filter_by(staff_id=id).all()
+    return jsonify(
+        {
+            "data": [learningJourney.to_dict() for learningJourney in data]
+        }
+    ), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
