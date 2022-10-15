@@ -1,10 +1,12 @@
 import { useGlobalContext } from '../context';
-import React from "react";
+import React, {useEffect} from "react";
 import "./../App.css";
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const Courses = () => {
+  const {setPath} = useGlobalContext()
+  useEffect(()=>setPath("Courses"))
   const {allCourses} = useGlobalContext()
     console.log(allCourses, "ALLLL COURSES")
     return (

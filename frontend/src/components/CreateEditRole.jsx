@@ -115,7 +115,7 @@ const assignSkillsToRole = async(role_id, skill_code) => {
                 <tbody>
                 {skills.map((skill)=> (
                   <tr key={skill.skill_code}>
-                    {!skill_codes_relatedToRole?.includes(skill.skill_code) && skill.deleted && (
+                    {!skill_codes_relatedToRole?.includes(skill.skill_code) && (
                       <>
                       <td>
                     {skill.skill_code}

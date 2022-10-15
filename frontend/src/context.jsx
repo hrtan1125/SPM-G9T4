@@ -23,6 +23,8 @@ const viewCoursesBySkillUrl = 'http://127.0.0.1:5002/viewCourses?skill_code='
 
 
 const AppProvider = ({ children }) => {
+    const [path, setPath] = useState("Learning Journey")
+
     // Roles
     const [roles, setRoles] = useState([])
     const [role, setRole] = useState([])
@@ -232,7 +234,7 @@ const fetchSkill = async(url) => {
 
     return (
       <AppContext.Provider
-        value={{roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+        value={{path,setPath,roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
           closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal
 }}
