@@ -398,5 +398,33 @@ def viewLearningJourney():
         }
     ), 200
 
+# Filter Learning Journey(s) based on role
+@app.route("/filterLearningJourneyByRole", methods=['GET'])
+def filterLearningJourneyByRole():
+    data = request.get_json()
+    id = data['staff_id']
+    role = data['role_id']
+
+    if(Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()):
+        learningJourneys = Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()
+        return jsonify(
+            {
+                "data": [learningJourney.to_dict() for learningJourney in learningJourneys]
+            }
+        ), 200
+    
+    else:
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "staff_id": id,
+                    "role_id": role
+                },
+                "message": "No Learning Journey found for this role."
+            }
+        ), 400
+        
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
