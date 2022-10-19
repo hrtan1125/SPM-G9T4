@@ -367,11 +367,11 @@ def removeCourses():
 def remove_learning_journey():
     data = request.get_json()
     id = data['lj_id']
-    title = data['title']#string
+    title = data["title"]   
     to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
     if not to_remove:
         return jsonify({
-            "message": title + "does not exist in database."
+            "message": "Learning Journey not found."
         }), 404
 
     try: 
@@ -379,7 +379,7 @@ def remove_learning_journey():
         db.session.commit()
 
         return jsonify({
-            "message": title + " have been successfully removed."
+            "message": title + " has been removed successfully."
         }), 200
     except Exception:
         return jsonify({
