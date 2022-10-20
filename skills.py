@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
+from sqlalchemy import and_
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
@@ -104,7 +105,7 @@ def skills():
     if search_skill:
         skill_list = Skills.query.filter(Skills.skill_name.contains(search_skill))
     else:
-        skill_list = Skills.query.all()
+        skill_list = Skills.query.filter_by(deleted="no").all()
     return jsonify(
         {
             "data": [skill.to_dict() for skill in skill_list]
@@ -270,6 +271,30 @@ def skill_assigns_course():
                 "message": "Course and Skills successfully updated"
             }
         )
+
+@app.route("/viewRoleSkills", methods=['GET'])
+def viewSkillsByRole(RoleSkills=[]):
+    # search_skill = request.args.get('role_id')
+    try:
+        if RoleSkills:
+            # RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
+            skills = [skill.skill_code for skill in RoleSkills]
+            skillslist = Skills.query.filter(and_(Skills.skill_code.in_(skills),Skills.deleted=="no")).all()
+            # print("hello")
+            # print(skills)
+            print([skill.skill_code for skill in skillslist])
+            return jsonify({
+                "data": {skill.skill_code:skill.to_dict() for skill in skillslist}
+            }), 200
+            # return skil
+        else:
+            return jsonify({
+                "message": "Missing Input."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
