@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
+from sqlalchemy import and_
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
@@ -32,6 +34,29 @@ class Skills(db.Model):
             result[column] = getattr(self, column)
         return result
 
+class Course_skills(db.Model):
+    __tablename__ = 'course_skills'
+    row_id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.String(20))
+    skill_code = db.Column(db.String(20))
+
+    def to_dict(self):
+       
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+       
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+    def __init__(self, course_id, skill_code):
+        self.course_id = course_id
+        self.skill_code = skill_code
+
 db.create_all()
 
 @app.route("/create", methods=['POST'])  #create skill
@@ -43,17 +68,32 @@ def create_skill():
             "message": "Incorrect JSON object provided."
         }), 500
     new_skill = data["skill_name"]
+    new_code = data['skill_code']
     check_skill = Skills.query.filter_by(skill_name=new_skill, deleted="no").first()
-    if check_skill:
+    check_skill_code = Skills.query.filter_by(skill_code=new_code, deleted="no").first()
+    if check_skill and check_skill_code:
+            return jsonify(
+                {
+                    "message": "Skill code and name already exist!"
+                }
+            )
+    elif check_skill:    
         return jsonify(
                 {
-                    "message": "Skill already exist!"
+                    "message": "Skill name already exist!"
                 }), 400
+    elif check_skill_code:
+        return jsonify(
+            {
+                "message": "Skill code already exist!"
+            }
+        )
+    data['deleted']='no'
     skill = Skills(**data)
     try:
         db.session.add(skill)
         db.session.commit()
-        return jsonify(skill.to_dict()), 201
+        return jsonify(skill.to_dict(), {"message": "Skill created successfully."}), 201
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
@@ -65,13 +105,26 @@ def skills():
     if search_skill:
         skill_list = Skills.query.filter(Skills.skill_name.contains(search_skill))
     else:
-        skill_list = Skills.query.filter_by(deleted = "no").all()
+        skill_list = Skills.query.filter_by(deleted="no").all()
     return jsonify(
         {
             "data": [skill.to_dict() for skill in skill_list]
         }
     ), 200
 
+# admin read all skills
+@app.route("/viewselectedskill")
+def viewSelectedSkill():
+    try:
+        skill_code = request.args["skill_code"]
+        selectedSkill = Skills.query.filter_by(skill_code=skill_code).first()
+        return jsonify(selectedSkill.to_dict()), 201
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        )
 
 @app.route("/update", methods=['PUT']) #edit
 def edit_skill():
@@ -90,8 +143,7 @@ def edit_skill():
             {
                 "message": "Skill code not found!"
             }
-            ), 404
-    
+            ), 404   
     else:
         skill.skill_name = skill_name
     try: 
@@ -104,18 +156,144 @@ def edit_skill():
 
 @app.route("/delete", methods=['PUT'])
 def delete_skill():  #delete skill
-    data = request.get_json()
-    for todelete in data:
-        skill_code = todelete["skill_code"]
-        deleteskill = Skills.query.filter_by(skill_code = skill_code).first()
-        deleteskill.deleted = "yes"
-            
-    try: 
-        db.session.commit()
-        jsonify({"Message": "Skills deleted successfully"}), 201
+    try:
+        data = request.get_json()
+        skill_code = data["skill_code"]
+        skillToDelete = Skills.query.filter_by(skill_code=skill_code, deleted="no").first()
+        if skillToDelete:
+            skillToDelete.deleted = "yes"
+            db.session.commit()
+            return jsonify({
+                "message": "Skill has been removed!"
+            }),200
+        
+        return jsonify({
+            "message": "Skill no longer available."
+        }), 400
+
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        ),400
+
+### assign course start here###
+@app.route("/skill_assigns_course/all", methods=['GET'])
+def get_all():
+    all_list = Course_skills.query.all()
+    if len(all_list):
+        return jsonify(
+            {
+                "code":200,
+                "data": {
+                    "course": [course.to_dict() for course in all_list]
+                }
+            }
+        ),200
+    return jsonify(
+        {
+            "code": 404, 
+            "message": "There is no entry"
+        }
+    ), 404
+
+#list all skills available to be added to the course
+#check if the skills already assigned to the course
+#split out the skills which already assigned
+@app.route("/view_skills_to_add/<id>", methods=['GET'])
+def view_skills_to_add(id):
+    all_skills = Skills.query.filter_by(deleted="no").all()
+    assigned_skills = Course_skills.query.filter_by(course_id=id).all()
+    dt = [skill.skill_code for skill in assigned_skills]
+
+    #if assigned already then "yes", else then "no"
+    skills_available = {"yes":[],"no":[]}
+    for skill in all_skills:
+        if(skill.skill_code not in dt):
+            skills_available["no"].append(skill.to_dict())
+        else:
+            skills_available["yes"].append(skill.to_dict())
+        print(skills_available)
+    return jsonify({
+        "skills":skills_available
+        }),200
+
+
+@app.route("/skill_assigns_course", methods=['POST'])
+def skill_assigns_course():
+
+    # assumption here is that the course name is given
+    # the skills are given in the body 
+    #   {
+    #       "course_id": "IS226", 
+    #       "skill_code": ["CS04", "DA04", "CM04"] 
+    #   }
+
+    #check if exists
+    data = request.get_json() #py obj
+    course_id = data['course_id']
+    # if (Course_skills.query.filter_by(course_id=course_id).first()):
+    #     return jsonify(
+    #         {
+    #             "code": 400, 
+    #             "data": {
+    #                 "course_id": course_id
+    #             }, 
+    #             "message": "Course already exist"
+    #         }
+    #     ), 400
+
+    
+    skills = data['skills'] #list
+
+    try:
+        
+        for skill in skills:
+            #check if the combination of course and skill exists
+            if (Course_skills.query.filter_by(course_id=course_id, skill_code=skill).first()):
+                return jsonify(
+                    {
+                        "code": 400,
+                        "message": "skill for this course already exist"
+                    }
+                )
+            course_skill = Course_skills(course_id, skill)
+            db.session.add(course_skill)
+        db.session.commit()         
+
+    except SQLAlchemyError as e:
+        print(e)
+
+    return jsonify(
+            {
+                "code": 201,
+                "message": "Course and Skills successfully updated"
+            }
+        )
+
+@app.route("/viewRoleSkills", methods=['GET'])
+def viewSkillsByRole(RoleSkills=[]):
+    # search_skill = request.args.get('role_id')
+    try:
+        if RoleSkills:
+            # RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
+            skills = [skill.skill_code for skill in RoleSkills]
+            skillslist = Skills.query.filter(and_(Skills.skill_code.in_(skills),Skills.deleted=="no")).all()
+            # print("hello")
+            # print(skills)
+            print([skill.skill_code for skill in skillslist])
+            return jsonify({
+                "data": {skill.skill_code:skill.to_dict() for skill in skillslist}
+            }), 200
+            # return skil
+        else:
+            return jsonify({
+                "message": "Missing Input."
+            }), 400
     except Exception:
         return jsonify({
-            "message": "Unable to delete skill."
+            "message": "Unable to commit to database."
         }), 500
 
 if __name__ == '__main__':
