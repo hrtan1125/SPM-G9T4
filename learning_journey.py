@@ -153,7 +153,6 @@ def viewAllRegistration():
 def viewlearningjourneys():
     staff_id = request.args.get('staff_id')
     my_dict = {}
-    # my_array = []
     try:
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
@@ -183,8 +182,6 @@ def viewlearningjourneys():
                 temp_dict["staff_id"] = learningjourney.staff_id
                 temp_dict["courses"] = courses_and_statuses
                 temp_dict["progress"] = final_progress
-                # temp_dict["lj_id"] = learningjourney.lj_id
-                # my_array.push(temp_dict)
                 my_dict[learningjourney.lj_id] = temp_dict
             
             return jsonify({
@@ -220,30 +217,6 @@ def viewCoursesByLearningJourney():
             "message": "Unable to commit to database"
         }), 500
 
-
-# after user select a role, show them the skills available
-# @app.route("/viewRoleSkills", methods=['GET'])
-# def viewRoleSkills():
-#     search_skill = request.args.get('role_id')
-#     try:
-#         if search_skill:
-#             RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
-#             skills = [skill.skill_code for skill in RoleSkills]
-#             skillslist = Skills.query.filter(and_(Skills.skill_code.in_(skills),Skills.deleted=="no")).all()
-#             print("hello")
-#             print(skills)
-#             print([skill.skill_code for skill in skillslist])
-#             return jsonify({
-#                 "data": {skill.skill_code:skill.to_dict() for skill in skillslist}
-#             }), 200
-#         else:
-#             return jsonify({
-#                 "message": "Missing Input."
-#             }), 400
-#     except Exception:
-#         return jsonify({
-#             "message": "Unable to commit to database."
-#         }), 500
 
 #and then show then the courses available based on the selected skill
 @app.route("/viewCourses", methods=['GET'])
@@ -372,11 +345,11 @@ def removeCourses():
 def remove_learning_journey():
     data = request.get_json()
     id = data['lj_id']
-    title = data['title']#string
+    title = data["title"]   
     to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
     if not to_remove:
         return jsonify({
-            "message": title + "does not exist in database."
+            "message": "Learning Journey not found."
         }), 404
 
     try: 
@@ -384,7 +357,7 @@ def remove_learning_journey():
         db.session.commit()
 
         return jsonify({
-            "message": title + " have been successfully removed."
+            "message": title + " has been removed successfully."
         }), 200
     except Exception:
         return jsonify({
@@ -402,6 +375,35 @@ def viewLearningJourney():
             "data": [learningJourney.to_dict() for learningJourney in data]
         }
     ), 200
+
+# Filter Learning Journey(s) based on role
+@app.route("/filterLearningJourneyByRole", methods=['GET'])
+def filterLearningJourneyByRole():
+    data = request.get_json()
+    id = data['staff_id']
+    role = data['role_id']
+
+    if(Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()):
+        learningJourneys = Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()
+        return jsonify(
+            {
+                "data": [learningJourney.to_dict() for learningJourney in learningJourneys]
+            }
+        ), 200
+    
+    else:
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "staff_id": id,
+                    "role_id": role
+                },
+                "message": "No Learning Journey found for this role."
+            }
+        ), 400
+        
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
