@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from sqlalchemy import null
+from sqlalchemy import *
 from roles import *
 from skills import *
 import math
@@ -218,28 +218,6 @@ def viewCoursesByLearningJourney():
         }), 500
 
 
-# after user select a role, show them the skills available
-@app.route("/viewRoleSkills", methods=['GET'])
-def viewRoleSkills():
-    search_skill = request.args.get('role_id')
-    try:
-        if search_skill:
-            RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
-            skills = [skill.skill_code for skill in RoleSkills]
-            skillslist = Skills.query.filter(Skills.skill_code.in_(skills),Skills.deleted=="no").all()
-
-            return jsonify({
-                "data": [skill.to_dict() for skill in skillslist]
-            }), 200
-        else:
-            return jsonify({
-                "message": "Missing Input."
-            }), 400
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
-
 #and then show then the courses available based on the selected skill
 @app.route("/viewCourses", methods=['GET'])
 def viewCourses():
@@ -425,6 +403,7 @@ def filterLearningJourneyByRole():
             }
         ), 400
         
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
