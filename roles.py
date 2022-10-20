@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import and_
 from flask_cors import CORS
+from skills import viewSkillsByRole 
+# import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
@@ -32,7 +35,6 @@ class Roles(db.Model):
             result[column] = getattr(self, column)
         return result
 
-
 class Role_Skills(db.Model):
     __tablename__ = 'role_skills'
     rowid = db.Column(db.Integer, primary_key=True)
@@ -60,7 +62,7 @@ class Role_Skills(db.Model):
 @app.route("/create", methods=['POST'])
 def createRole():
     data = request.get_json()
-    
+    # print(data)
     # check if data format is correct
     if not "role_name" in data.keys() or not "skills" in data.keys():
         return jsonify(
@@ -248,6 +250,22 @@ def assignSkill(skillslist=[], role_id=0):
         }
     ), 201
 
+@app.route("/viewRoleSkills", methods=['GET'])
+def viewRoleSkills():
+    search_skill = request.args.get('role_id')
+    try:
+        if search_skill:
+            RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
+            skills = viewSkillsByRole(RoleSkills)
+            return skills
+        else:
+            return jsonify({
+                "message": "Missing Input."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
