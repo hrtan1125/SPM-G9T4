@@ -59,7 +59,7 @@ const addPosts = async(learningjourneyData) => {
   return (
     <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
       Learning Journey Name: <TextField id="outlined-basic"  variant="outlined" name="title" value={formData.title} onChange={handleChange} />
-      <Button variant="contained" onClick={(e) => handleSubmit(e)}>Create Learning Journey</Button>
+      <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={(e) => handleSubmit(e)}>Create Learning Journey</Button>
     </div>
   )
 }

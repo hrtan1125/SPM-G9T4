@@ -41,7 +41,7 @@ const LJroles = () => {
                   {role.role_name}
               </td>
               <td>
-              <Button variant="contained" onClick={(e) => handleRole(e, role.role_id)}>Select Role</Button>
+              <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={(e) => handleRole(e, role.role_id)}>Select Role</Button>
               </td>
               </>
                 )}

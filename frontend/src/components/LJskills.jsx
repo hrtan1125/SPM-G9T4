@@ -36,7 +36,7 @@ const LJskills = () => {
                       {relatedSkills[skill_code].skill_name}
                   </td>
                   <td>
-                    <Button variant="contained" onClick={() => selectSkill(skill_code)}>View related courses</Button>
+                    <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={() => selectSkill(skill_code)}>View related courses</Button>
                   </td>
                 </>
                 )}

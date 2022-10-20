@@ -90,7 +90,7 @@ export default function Modal() {
       
     </List>
     {/* <Button variant="contained" color="error" onClick={closeModal}>Close</Button> */}
-    <Button variant="contained" onClick={(e) => handleSubmit(e)}>Add Courses</Button>
+    <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={(e) => handleSubmit(e)}>Add Courses</Button>
     </>
   );
 }
