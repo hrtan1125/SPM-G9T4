@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../context'
 
 const LJSubmitPage = () => {
-  const { ljCourses, setActiveStep, setljCourses } = useGlobalContext()
+  const { ljCourses, setActiveStep, setljCourses, roleId } = useGlobalContext()
   let navigate = useNavigate();
 
   const [formData, setFormData] = React.useState(
@@ -20,6 +20,8 @@ const LJSubmitPage = () => {
     })
 }
 
+console.log(roleId)
+
 console.log(ljCourses, "LJcourses")
 
 const learningjourneyData = {}
@@ -28,14 +30,14 @@ const handleSubmit = (e) => {
   e.preventDefault();
   
   learningjourneyData["courses"] = ljCourses
-  // StaffId and RoleID are hard coded for now
-  learningjourneyData["staff_id"] = 140105
-  learningjourneyData["role_id"] = 10
+  // StaffID hard coded for now
+  learningjourneyData["staff_id"] = 130001
+  learningjourneyData["role_id"] = roleId
   learningjourneyData["title"] = formData.title
   console.log(learningjourneyData, "Final LJ Data")
   addPosts(learningjourneyData);
   setActiveStep(0)
-  setljCourses([])
+  setljCourses({})
   navigate(`/learningjourneys`);
 };
 

@@ -101,7 +101,7 @@ const MyChip = ({skills,related}) => {
 }
 
 const CreateEditRole = () =>{
-  const { relatedSkills, setRoleId, updateRole, skills, setPath } = useGlobalContext()
+  const { relatedSkills, setRoleId, updateRole, skills, setPath, role } = useGlobalContext()
   useEffect(()=>setPath("Roles"),[])
   console.log(relatedSkills, "related skills")
   console.log(count++,"runs")
@@ -112,15 +112,14 @@ const CreateEditRole = () =>{
     useEffect(()=>{
       if (role_id){
         setRoleId(role_id) 
+        setRoleName(role.role_name)
       }else{
         setRoleId(0)
       }
       
-    },[])
-    
+    },[role])
 
-    const [roleName, setRoleName] = useState(role_name)
-
+    const [roleName, setRoleName] = useState()
 
     function handleChange(event) {
         setRoleName(event.target.value)
@@ -206,7 +205,7 @@ const handleSubmit = (e) => {
     if (roleName != role_name) {
       console.log("Role Name has been changed to", roleName)
       handleUpdateSubmit(e)
-      refreshPage();
+      // refreshPage();
     }
   }
   

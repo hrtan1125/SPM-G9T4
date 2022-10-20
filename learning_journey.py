@@ -153,6 +153,7 @@ def viewAllRegistration():
 def viewlearningjourneys():
     staff_id = request.args.get('staff_id')
     my_dict = {}
+    
     try:
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
@@ -176,6 +177,7 @@ def viewlearningjourneys():
                 if(total != 0):
                     final_progress = math.floor(completed/total * 100)
                 temp_dict = {}
+                
                 temp_dict["title"] = learningjourney.title
                 temp_dict["role_id"] = learningjourney.role_id
                 temp_dict["role_name"] = role.role_name
@@ -183,7 +185,7 @@ def viewlearningjourneys():
                 temp_dict["courses"] = courses_and_statuses
                 temp_dict["progress"] = final_progress
                 my_dict[learningjourney.lj_id] = temp_dict
-            
+                
             return jsonify({
                 "data" : my_dict
             }), 200
