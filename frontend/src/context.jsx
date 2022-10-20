@@ -12,7 +12,7 @@ const updateRoleUrl = 'http://127.0.0.1:5001/update'
 // Skills
 const skillsUrl = 'http://127.0.0.1:5000/view'
 const viewSelectedSkillUrl = "http://127.0.0.1:5000/viewselectedskill?skill_code="
-const viewSkillsByRoleUrl = 'http://127.0.0.1:5002/viewRoleSkills?role_id='
+const viewSkillsByRoleUrl = 'http://127.0.0.1:5001/viewRoleSkills?role_id='
 const updateSkillUrl = 'http://127.0.0.1:5000/update'
 const createSkillUrl = 'http://127.0.0.1:5000/create'
 const deleteSkillUrl = 'http://127.0.0.1:5000/delete'
@@ -21,6 +21,23 @@ const deleteSkillUrl = 'http://127.0.0.1:5000/delete'
 const coursesUrl = 'http://127.0.0.1:5002/viewAllCourses'
 const viewCoursesBySkillUrl = 'http://127.0.0.1:5002/viewCourses?skill_code='
 
+
+// const SkillsProvider = ({children}) =>{
+//    const [skills, setSkills] = useState(async(url) => {
+//     try {
+//         const {data} = await axios(url)
+//         return data.data
+//     } catch (error) {
+//         console.log("my error",error.response)
+//     }
+// })
+
+// return(
+//   <SkillsContext value={{skills, setSkills}}>
+// {children}
+//   </SkillsContext>
+// )
+// }
 
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
@@ -35,6 +52,8 @@ const AppProvider = ({ children }) => {
     const [relatedSkills, setRelatedSkills] = useState([])
     const [skill, setSkill] = useState([])
     const [skillCode, setSkillCode] = useState('')
+    // const [chipData,setChipData] = useState([])
+    // const [variantData,setVariant] = useState({})
     
     // Courses
     const [courses, setCourses] = useState([])
@@ -73,6 +92,7 @@ const AppProvider = ({ children }) => {
     try {
         const {data} = await axios(url)
         setRelatedSkills(data.data)
+        console.log("RS:",data.data)
     } catch (error) {
         console.log(error.response)
     }
@@ -91,7 +111,14 @@ const fetchRelatedCourses = async(url) => {
   const fetchSkills = async(url) => {
     try {
         const {data} = await axios(url)
-        setSkills(data.data)
+        setSkills(()=>{return data.data})
+        console.log(skills)
+        // const skills_list = data.data
+        // setChipData(skills_list.map((skill)=>{
+        //   let key = skill.skill_code
+        //   let label = skill.skill_name
+        //   return {key:key,label:label};
+        // }))
     } catch (error) {
         console.log(error.response)
     }
@@ -118,6 +145,7 @@ const fetchSkill = async(url) => {
 }
     useEffect(() => {
         fetchRoles(rolesUrl)
+        console.log("test fetch role")
     }, [])
     useEffect(() => {
       fetchSkills(skillsUrl)
@@ -126,18 +154,22 @@ const fetchSkill = async(url) => {
       fetchCourses(coursesUrl)
     }, [])
       useEffect(() => {
+        setRelatedSkills(()=>[])
         if (roleId){
+          
           fetchRole(`${viewSelectedRoleUrl}${roleId}`)
         }
     }, [roleId])
     useEffect(() => {
       if (skillCode){
+        
         fetchSkill(`${viewSelectedSkillUrl}${skillCode}`)
       }
     }, [skillCode])
 
     useEffect(() => {
       if (roleId){
+        console.log("retrieving data",roleId)
         fetchRelatedSkills(`${viewSkillsByRoleUrl}${roleId}`)
       }
     }, [roleId])
@@ -247,4 +279,6 @@ const fetchSkill = async(url) => {
   export const useGlobalContext = () =>{ 
     return useContext(AppContext)
   }
+
+
   export {AppContext, AppProvider}

@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import "./../App.css";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, Grid } from '@mui/material';
+import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddIcon from "@mui/icons-material/Add"
 import Table from '@mui/material/Table';
@@ -20,8 +20,9 @@ const Roles = () => {
   // setPaTableHead("Roles")
 
   //Retitle the header
-  const {setPath} = useGlobalContext()
-  useEffect(()=>setPath("Roles"))
+  const {setPath, setRoleId} = useGlobalContext()
+  useEffect(()=>setPath("Roles"),[])
+  useEffect(()=>setRoleId(0),[])
 
   const {rolesUrl, fetchRoles} = useGlobalContext()
   useEffect(() => {
@@ -42,7 +43,7 @@ return (
           <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
         </Link>
         </div>
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} elevation={3}>
       <Table sx={{ minWidth: 640, "& td": { border: 0 }}} aria-label="simple table">
         <TableHead>
           <TableRow>

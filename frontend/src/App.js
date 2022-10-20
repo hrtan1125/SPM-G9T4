@@ -30,7 +30,7 @@ const theme= createTheme({
 export default function App() {
   const {path} = useGlobalContext()
   return (
-    <ThemeProvider theme={theme} className="App">
+    <ThemeProvider theme={theme}>
       <Router>
         <Box sx={{ display: 'flex' }}>
         <AppBar

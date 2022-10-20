@@ -9,16 +9,16 @@ const LJskills = () => {
 
     const emptyCheck = [];
 
-    relatedSkills?.map((skill) => (
-    emptyCheck.push(skill.deleted)
+  //   Object.keys(relatedSkills)?.map((skill) => (
+  //   emptyCheck.push(skill.deleted)
 
-  ))
+  // ))
 
   return (
     <div >
           {showModal && <Modal />}
          <div className="app-container">
-          {(emptyCheck.includes('no')) ? (
+          {(Object.keys(relatedSkills).length!==0) ? (
             <table>
             <thead>
               <tr>
@@ -28,15 +28,15 @@ const LJskills = () => {
               </tr>
             </thead>
             <tbody>
-            {relatedSkills?.map((skill) => (
-              <tr key={skill.skill_code}>
-                {skill.deleted === 'no' && (
+            {Object.keys(relatedSkills)?.map((skill_code) => (
+              <tr key={skill_code}>
+                {relatedSkills[skill_code].deleted === 'no' && (
                   <>
                   <td>
-                      {skill.skill_name}
+                      {relatedSkills[skill_code].skill_name}
                   </td>
                   <td>
-                    <Button variant="contained" onClick={() => selectSkill(skill.skill_code)}>View related courses</Button>
+                    <Button variant="contained" onClick={() => selectSkill(skill_code)}>View related courses</Button>
                   </td>
                 </>
                 )}

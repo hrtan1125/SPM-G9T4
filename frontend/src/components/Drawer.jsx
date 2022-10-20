@@ -11,18 +11,18 @@ const drawerWidth = 240;
 
 export default function PermanentDrawerLeft(){
     
-    const url = window.location.pathname
-    let path = ""
-    console.log(url)
-    if (url.includes("learningjourneys")){
-        path = "Learning Journey"
-    }else if(url.includes("courses")){
-        path = "Courses"
-    }else if(url.includes("roles")){
-        path = "Roles"
-    }else{
-        path = "Skills"
-    }
+    // const url = window.location.pathname
+    // let path = ""
+    // console.log(url)
+    // if (url.includes("learningjourneys")){
+    //     path = "Learning Journey"
+    // }else if(url.includes("courses")){
+    //     path = "Courses"
+    // }else if(url.includes("roles")){
+    //     path = "Roles"
+    // }else{
+    //     path = "Skills"
+    // }
     return(
         <>
         {/* <AppBar
@@ -53,7 +53,7 @@ export default function PermanentDrawerLeft(){
         <Divider />
         <List>
           {['Roles', 'Skills', 'Courses', 'Learning Journeys'].map((text) => (
-            <ListItem key={text} component={Link} to={`/${text=="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
               <ListItemButton >
                 <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
               </ListItemButton>
