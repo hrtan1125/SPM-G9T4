@@ -31,6 +31,12 @@ const Roles = () => {
 
   const {roles, deleteRole} = useGlobalContext()
 
+  const toDelete = (id) =>{
+    console.log("deleting",id)
+    deleteRole(id)
+    window.location.reload(false)
+  }
+
   const reseTableRowole = () => {
     console.log("reset")
   }
@@ -64,7 +70,7 @@ return (
               </TableCell>
               <TableCell align="left">{role.role_name}</TableCell>
               <TableCell align="center">
-              <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={deleteRole}>
+              <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(role.role_id)}>
                   <DeleteOutlinedIcon/>
               </IconButton>
               </TableCell>
