@@ -153,6 +153,8 @@ def viewAllRegistration():
 @app.route("/viewlearningjourneys", methods=['GET'])
 def viewlearningjourneys():
     staff_id = request.args.get('staff_id')
+    data= request.get_json()
+    staff_id = data["staff_id"]
     my_dict = {}
     try:
         if staff_id:
@@ -422,6 +424,33 @@ def viewTeamMembers():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500         
+@app.route("/viewTeamlearningjourneys", methods=['GET'])
+def viewTeamlearningjourneys():
+    data= request.get_json()
+    dept = data["dept"]
+    my_dict = {}
+    try:
+        if dept:
+            team_members = Staff.query.filter_by(Dept=dept).all()
+            team_mems = [team_mem for team_mem in team_members]
+            for team_mem in team_mems:
+                LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
+                learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+                for learningjourney in learningjourneys:
+                    temp_dict = view_learningjourney_By_LJid(learningjourney)
+                    my_dict[learningjourney.lj_id] = temp_dict
+
+            return jsonify({
+                "data" : my_dict
+            }), 200
+        else:
+            return jsonify({
+                "message": "No registration available."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
