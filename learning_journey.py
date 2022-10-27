@@ -94,6 +94,27 @@ class Registration(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+class Staff(db.Model):
+    __tablename__ = 'staff'
+    Staff_ID = db.Column(db.Integer, primary_key=True)
+    Staff_FName = db.Column(db.String(50))
+    Staff_LName = db.Column(db.String(50))
+    Dept = db.Column(db.String(50))
+    Email = db.Column(db.String(50))
+    Role = db.Column(db.Integer)
+    __mapper_args__ = {
+        'polymorphic_identity': 'staff'
+    }
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
 # view courses
 @app.route("/viewAllCourses", methods=['GET'])
 def viewAllCourses():
@@ -380,7 +401,27 @@ def filterLearningJourneyByRole():
                 "message": "No Learning Journey found for this role."
             }
         ), 400
-        
+@app.route("/viewTeamMembers", methods=['GET'])
+def viewTeamMembers():
+    data = request.get_json()
+    dept =  data['dept']
+    try:
+        if dept:
+            team_members = Staff.query.filter_by(Dept=dept).all()
+            
+            return jsonify(
+                {
+                    "data": [team_member.to_dict() for team_member in team_members]
+                }
+            ), 200
+        else:
+            return jsonify({
+                "message": "Missing Input."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500         
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
