@@ -153,8 +153,6 @@ def viewAllRegistration():
 @app.route("/viewlearningjourneys", methods=['GET'])
 def viewlearningjourneys():
     staff_id = request.args.get('staff_id')
-    data= request.get_json()
-    staff_id = data["staff_id"]
     my_dict = {}
     try:
         if staff_id:
