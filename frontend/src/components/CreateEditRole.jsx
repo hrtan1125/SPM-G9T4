@@ -1,125 +1,31 @@
 import { Button, TextField, Grid, Chip } from '@mui/material';
-import { margin } from '@mui/system';
-import axios from 'axios';
 import { useEffect } from 'react';
-import {React,useContext} from 'react'
+import {React,} from 'react'
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGlobalContext } from '../context';
-import ShowSkills from './ShowSkills';
 
 var count=0;
 var toUpdateSkills = [];
 var toDeleteSkills = [];
 
-const MyVar = ({VariantValue, skills, handleUpdate}) => {
-  console.log("final stage", skills.length, Object.keys(VariantValue).length)
-  console.log(VariantValue)
-  return (
-    <div>
-    {skills.map((skill)=>(
-      <Chip key={skill.skill_code} label={skill.skill_name} sx={{margin:1}} onClick={()=>handleUpdate(skill.skill_code)} variant={VariantValue[skill.skill_code]}/>
-    ))}
-    
-    </div>
-  )
-}
-
-const MyChip = ({skills,related}) => {
-  const [VarValue, setVar] = useState({})
-  console.log("my skills", skills)
-
-  const myF = (skill,relatedSkills) =>
-    new Promise(resolve => 
-      setTimeout(()=>{
-        let tempDict = {}
-        tempDict[skill.skill_code] = Object.keys(relatedSkills).includes(skill.skill_code)?"contained":"outlined"
-        resolve(tempDict)},1000)
-      )
-
-  const testF = skills =>
-        new Promise(resolve =>
-          setTimeout(async()=>{
-            let VarValues = {}
-            for(let skill of skills){
-              let tempDict = await myF(skill,related)
-              let cV = VarValues
-              VarValues = Object.assign({},cV,tempDict)
-            }
-            resolve(VarValues)
-          }),1000)
-
-  const handleUpdate = async(key) =>{
-  if (!toUpdateSkills.includes(key) && (toDeleteSkills.includes(key) || !Object.keys(related).includes(key))){
-    if(toDeleteSkills.includes(key)){
-      let idx = toDeleteSkills.indexOf(key)
-      toDeleteSkills.splice(idx,1);
-    }
-    
-    if(!Object.keys(related).includes(key)){
-      toUpdateSkills.push(key);
-    }
-    
-    let updateV = {}
-    updateV = {[key]:"contained"}
-    setVar(VariantValue=>({
-      ...VariantValue,
-      ...updateV
-    }));
-  }else{
-    console.log("unassigning the skills")
-    if(toUpdateSkills.includes(key)){
-      let idx = toUpdateSkills.indexOf(key)
-      toUpdateSkills.splice(idx,1);
-    }
-    
-    if(Object.keys(related).includes(key)){
-      toDeleteSkills.push(key)
-    }
-    
-    let updateV = {}
-  
-    updateV = {[key]:"outlined"}
-    setVar(VariantValue=>({
-      ...VariantValue,
-      ...updateV
-    }));
-  }
-  console.log(toUpdateSkills)
-  }
-  useEffect(()=>{
-    const mySkills = async() =>{
-      let VarValues = await testF(skills)
-      setVar(()=>VarValues)
-    }
-    mySkills()
-  },[])
-
-  return(<>
-  {Object.keys(VarValue).length === skills.length && <MyVar VariantValue={VarValue} skills={skills} handleUpdate={handleUpdate}/>}
-  </>)
-}
-
 const CreateEditRole = () =>{
-  const { relatedSkills, setRoleId, updateRole, skills, setPath, role } = useGlobalContext()
+
+  const { relatedSkills, setRoleId, updateRole, skills, setPath } = useGlobalContext()
   useEffect(()=>setPath("Roles"),[])
-  console.log(relatedSkills, "related skills")
   console.log(count++,"runs")
-  // let BtnName = ""
 
     let navigate = useNavigate();
     const {role_id, role_name} = useParams()
     useEffect(()=>{
       if (role_id){
         setRoleId(role_id) 
-        setRoleName(role.role_name)
       }else{
         setRoleId(0)
       }
-      
-    },[role])
-
-    const [roleName, setRoleName] = useState()
+    },[])
+    
+    const [roleName, setRoleName] = useState(role_name)
 
     function handleChange(event) {
         setRoleName(event.target.value)
@@ -137,24 +43,37 @@ const CreateEditRole = () =>{
     console.log(role_id)
 
 
-// const [checked, setChecked] = useState([]);
-
-
-//remove this
-// const handleCheck = (event) => {
-//   var updatedList = [...checked];
-//   if (event.target.checked) {
-//     updatedList = [...checked, event.target.value];
-//   } else {
-//     updatedList.splice(checked.indexOf(event.target.value), 1);
-//   }
-//   setChecked(updatedList);
-// };
-
-
 function refreshPage() {
   window.location.reload(false);
   navigate(`/${role_id}/${roleName}`)
+}
+
+function handleUpdate(e,key){
+  if(Object.keys(relatedSkills).includes(key)){
+    if (toDeleteSkills.includes(key)){
+      let idx = toDeleteSkills.indexOf(key)
+      toDeleteSkills.splice(idx,1);
+      e.currentTarget.style.backgroundColor="#e6e6e6";
+      e.currentTarget.style.border="0px";
+    }else{
+      toDeleteSkills.push(key);
+      e.currentTarget.style.backgroundColor="#ffffff";
+      e.currentTarget.style.border="1px solid #bfbfbf";
+    }
+  }else{
+    if(toUpdateSkills.includes(key)){
+      let idx = toUpdateSkills.indexOf(key)
+      toUpdateSkills.splice(idx,1);
+      e.currentTarget.style.backgroundColor="#ffffff";
+      e.currentTarget.style.border="1px solid #bfbfbf";
+    }else{
+      toUpdateSkills.push(key);
+      e.currentTarget.style.backgroundColor="#e6e6e6";
+      e.currentTarget.style.border="0px";
+    }
+  }
+  console.log("these will be updated",toUpdateSkills)
+  console.log("these will be deleted",toDeleteSkills)
 }
 
 const createNewRole=async(roleName,skillsToAssign)=>{
@@ -177,7 +96,7 @@ const createNewRole=async(roleName,skillsToAssign)=>{
 const handleSubmit = (e) => {
   e.preventDefault();
   console.log("Event is", e.target.textContent)
-  if(e.target.textContent=="Create"){
+  if(e.target.textContent==="Create"){
     if (!roleName){
       alert("Role Name cannot be empty")
     }else if (toUpdateSkills.length === 0){
@@ -189,7 +108,7 @@ const handleSubmit = (e) => {
     
   }else{
     if (toDeleteSkills.length !== 0) {
-      if(toUpdateSkills.length==0 && (toDeleteSkills.length == Object.keys(relatedSkills).length)){
+      if(toUpdateSkills.length===0 && (toDeleteSkills.length === Object.keys(relatedSkills).length)){
         alert("Deletion Failed! A role should have at least one skill!")
       }else{
         console.log("these are to be deleted", toDeleteSkills)
@@ -202,10 +121,10 @@ const handleSubmit = (e) => {
       assignSkillsToRole(role_id, toUpdateSkills)
     }
 
-    if (roleName != role_name) {
+    if (roleName !== role_name) {
       console.log("Role Name has been changed to", roleName)
       handleUpdateSubmit(e)
-      // refreshPage();
+      refreshPage();
     }
   }
   
@@ -265,7 +184,8 @@ const deleteSkillsFromRole = async(role_id, skill_code) => {
     Selects skills to add....  
     </Grid>
     <Grid container spacing={2} marginTop={1}>
-{(Object.keys(relatedSkills).length!=0 || typeof(role_id)==="undefined") && skills.length!=0  && <MyChip skills={skills} related={relatedSkills}/>}
+{(Object.keys(relatedSkills).length!==0 || typeof(role_id)==="undefined") && skills.length!==0  && skills.map((skill)=>(
+  <Chip key={skill.skill_code} label={skill.skill_name} sx={{margin:1}} onClick={(e)=>handleUpdate(e,skill.skill_code)} variant={Object.keys(relatedSkills).includes(skill.skill_code)?"filled":"outlined"}/>))}
   </Grid>
   </>
   )
