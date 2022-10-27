@@ -42,9 +42,9 @@ const Skills = () => {
               <TableRow>
                 <TableCell>Skill Code</TableCell>
                 <TableCell>Skill Name</TableCell>
-                <TableCell>Deleted?</TableCell>
-                <TableCell>Delete</TableCell>
-                <TableCell>Edit</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
