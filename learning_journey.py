@@ -8,7 +8,7 @@ import math
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                        '@localhost:3306/projectDB'
+                                        '@localhost:3306/testDB'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -64,7 +64,7 @@ class Learning_Journey_Courses(db.Model):
         return result
 
 class Courses(db.Model):
-    __tablename__ = 'courses'
+    __tablename__ = 'course'
 
     course_id = db.Column(db.String(20), primary_key=True)
     course_name = db.Column(db.String(50))
