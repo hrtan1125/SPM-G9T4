@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 from sqlalchemy import and_
+from learning_journey import * 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
@@ -295,6 +296,24 @@ def viewSkillsByRole(RoleSkills=[]):
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
+# still working on it
+@app.route("/viewTeamMembersSkills", methods=['GET'])
+def managerViewTeamMembersSkills():
+    return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+    # try:
+    #     return jsonify({
+    #         "message": "OKAY"
+    #     })
+
+    # except Exception:
+    #     return jsonify({
+    #         "message": "Unable to commit to database."
+    #     }), 500
+    
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
