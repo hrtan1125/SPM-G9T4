@@ -149,6 +149,7 @@ def viewAllRegistration():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
+        
 # view learningjourneys and progress
 @app.route("/viewlearningjourneys", methods=['GET'])
 def viewlearningjourneys():
@@ -159,7 +160,7 @@ def viewlearningjourneys():
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
             learningjourneys = [learningjourney for learningjourney in LearningJourneys]
             for learningjourney in learningjourneys:
-                temp_dict = view_learningjourney_By_LJid(learningjourney)
+                temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
                 my_dict[learningjourney.lj_id] = temp_dict
                 
             return jsonify({
@@ -175,9 +176,18 @@ def viewlearningjourneys():
         }), 500
 #View learning journey by LJ id
 @app.route("/viewlearningjourneyByLJid")
-def view_learningjourney_By_LJid(learningjourney):
+def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
+    print("viewing by id")
+    print(staff_id)
+    print(type(staff_id))
+    if isinstance(staff_id,int):
+        learningjourney=request.args.get('lj_id')
+        staff_id=request.args.get('staff_id')
+        print(learningjourney)
+        print(staff_id)
+        #fix in progress
     try:
-        lj_courses_and_status = viewCoursesByLearningJourney(learningjourney.lj_id)
+        lj_courses_and_status = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
         role = Roles.query.filter_by(role_id = learningjourney.role_id).first()
         lj_courses_and_status["title"] = learningjourney.title
         lj_courses_and_status["role_id"] = learningjourney.role_id
@@ -192,11 +202,12 @@ def view_learningjourney_By_LJid(learningjourney):
         }), 500
 # View Courses Statuses and progress
 @app.route("/viewcoursesstatuses")
-def view_courses_status_by_courses_ids(courses_ids_list):
+def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
     
     coursesList = Courses.query.filter(Courses.course_id.in_(courses_ids_list)).all()
     course_names = [course.course_name for course in coursesList]
-    courses_progress_list = Registration.query.filter(Registration.course_id.in_(courses_ids_list)).all()
+    print("view courses in progress")
+    courses_progress_list = Registration.query.filter(Registration.course_id.in_(courses_ids_list),Registration.staff_id==staff_id).all()
     
     courses_and_statuses = [[progress.completion_status, progress.course_id] for progress in courses_progress_list]
     for index in range(len(course_names)):
@@ -215,16 +226,17 @@ def view_courses_status_by_courses_ids(courses_ids_list):
 
 # view courses by learning journey
 @app.route("/viewCoursesByLearningJourney", methods=['GET'])
-def viewCoursesByLearningJourney(lj_id=""):
+def viewCoursesByLearningJourney(lj_id="",staff_id=0):
     if lj_id == "":
         lj_id = request.args.get('lj_id')
+        staff_id=request.args.get('staff_id')
     try:
         if lj_id:
             LJcourses = Learning_Journey_Courses.query.filter_by(lj_id=lj_id).all()
             courses = [course.course_id for course in LJcourses]
             coursesList = Courses.query.filter(Courses.course_id.in_(courses),Courses.course_status=="Active").all()
             CoursesIdList = [course.course_id for course in coursesList]
-            courses_and_progress = view_courses_status_by_courses_ids(CoursesIdList)
+            courses_and_progress = view_courses_status_by_courses_ids(CoursesIdList,staff_id)
             return courses_and_progress
         else:
             return jsonify({
@@ -345,6 +357,7 @@ def removeCourses():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+        
 @app.route("/removelearningjourney", methods=['DELETE'])
 def remove_learning_journey():
     data = request.get_json()
@@ -376,6 +389,7 @@ def viewLearningJourney():
             "data": [learningJourney.to_dict() for learningJourney in data]
         }
     ), 200
+
 # Filter Learning Journey(s) based on role
 @app.route("/filterLearningJourneyByRole", methods=['GET'])
 def filterLearningJourneyByRole():
