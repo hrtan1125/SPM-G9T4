@@ -416,9 +416,12 @@ def filterLearningJourneyByRole():
             }
         ), 400
 @app.route("/viewTeamMembers", methods=['GET'])
-def viewTeamMembers():
-    data = request.get_json()
-    dept =  data['dept']
+def viewTeamMembers(dept=""):
+    #data = request.get_json()
+    #dept =  data['dept']
+    if request.get_json():
+        data = request.get_json()
+        dept = data['dept']
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
