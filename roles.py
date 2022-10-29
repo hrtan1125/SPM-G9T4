@@ -37,7 +37,7 @@ class Roles(db.Model):
 
 class Role_Skills(db.Model):
     __tablename__ = 'role_skills'
-    rowid = db.Column(db.Integer, primary_key=True)
+    row_id = db.Column(db.Integer, primary_key=True)
     role_id = db.Column(db.Integer, nullable=False)
     skill_code = db.Column(db.String(20), nullable=True)
 
@@ -257,6 +257,7 @@ def viewRoleSkills():
         if search_skill:
             RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
             skills = viewSkillsByRole(RoleSkills)
+
             return skills
         else:
             return jsonify({
