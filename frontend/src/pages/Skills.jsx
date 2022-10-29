@@ -8,10 +8,12 @@ import { Link } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import AddIcon from "@mui/icons-material/Add"
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
 
 
 const Skills = () => {
@@ -28,11 +30,11 @@ const Skills = () => {
   }
 
     return (
-      <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
+      <div style={{display: 'flex', justifyContent: "center"}} >
         <div className="app-container" style={{display: 'flex',justifyContent:"center"}}>
           <div style={{display: 'flex', justifyContent: "center"}}>
             <Link to={`/createskill`} style={{textDecoration:"none"}}> 
-            <Button onClick={resetSkill} style={{backgroundColor:"#5289B5"}} variant="contained">Create New Skill</Button>
+            <Button onClick={resetSkill} style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} variant="contained">Create New Skill</Button>
             </Link>
           </div>
           <TableContainer component={Paper}>
@@ -42,9 +44,9 @@ const Skills = () => {
               <TableRow>
                 <TableCell>Skill Code</TableCell>
                 <TableCell>Skill Name</TableCell>
-                <TableCell>Deleted?</TableCell>
-                <TableCell>Delete</TableCell>
-                <TableCell>Edit</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -59,20 +61,15 @@ const Skills = () => {
                   {skill.skill_name}
                 </TableCell>
                 <TableCell>
-                  {skill.deleted === "yes" ? ("Yes"): ("No")}
+                  <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>deleteSkill(skill.skill_code)}>
+                  <DeleteOutlinedIcon/>
+              </IconButton>
                 </TableCell>
-                <TableCell>
-                  <Grid item xs={8}>
-                    <DeleteOutlinedIcon onClick={() => deleteSkill(skill.skill_code)}/>
-                  </Grid>
-                </TableCell>
-                <TableCell>
-                  <Grid item xs={8}>
-                    <Link to={`/skill/${skill.skill_code}/${skill.skill_name}`}>
-                      <EditIcon/>
-                    </Link>
-                  </Grid>
-                </TableCell>
+                <TableCell align="center">
+              <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/skill/${skill.skill_code}/${skill.skill_name}`}>
+                  <EditIcon/>
+              </IconButton>
+              </TableCell>
                 </>
               )}
             </TableRow>

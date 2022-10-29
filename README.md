@@ -7,7 +7,7 @@ In Python files (skills & roles & learning journey):
 Make sure SQLALCHEMY_DATABASE_URI is correct, yours might be 'mysql+mysqlconnector://root:root' (if root is your password)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                        '@localhost:3306/projectDB'
+                                        '@localhost:3306/testDB'
                                         
 RUN FRONTEND
 
