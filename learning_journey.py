@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -32,6 +33,20 @@ class Learning_Journey(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+    def calculate_progress(courses_and_statuses):
+        total_courses = 0
+        completed_courses = 0
+        progress = 0
+        for course_and_status in courses_and_statuses:
+            if (course_and_status[0] == 'Completed'):
+                completed_courses += 1
+            total_courses += 1
+        if total_courses == 0:
+            raise Exception ("There is no course in this learning journey")
+        progress = completed_courses/total_courses*100
+        return progress
+        
+            
 class Learning_Journey_Courses(db.Model):
     __tablename__ = 'learning_journey_courses'
     lj_id = db.Column(db.Integer)
@@ -51,10 +66,8 @@ class Learning_Journey_Courses(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
 class Courses(db.Model):
     __tablename__ = 'course'
-
     course_id = db.Column(db.String(20), primary_key=True)
     course_name = db.Column(db.String(50))
     course_desc = db.Column(db.String(255))
@@ -212,18 +225,24 @@ def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
     courses_and_statuses = [[progress.completion_status, progress.course_id] for progress in courses_progress_list]
     for index in range(len(course_names)):
         courses_and_statuses[index].append(course_names[index])
-    total = 0
-    completed = 0
-    final_progress = 0
-    for course_and_status in courses_and_statuses:
-        if (course_and_status[0] == 'Completed'):
-            completed += 1
-        total += 1
-    if(total != 0):
-        final_progress = math.floor(completed/total * 100)
+    # total = 0
+    # completed = 0
+    # final_progress = 0
+    # for course_and_status in courses_and_statuses:
+    #     if (course_and_status[0] == 'Completed'):
+    #         completed += 1
+    #     total += 1
+    try:
+        print(courses_and_statuses, "III")
+        final_progress = Learning_Journey.calculate_progress(courses_and_statuses)
+    except Exception:
+        return jsonify({
+            "message": "The total number of courses is currently 0."
+        }), 500
+    # if(total != 0):
+    #     final_progress = math.floor(completed/total * 100)
     return {"courses" : courses_and_statuses, "progress": final_progress}
     
-
 # view courses by learning journey
 @app.route("/viewCoursesByLearningJourney", methods=['GET'])
 def viewCoursesByLearningJourney(lj_id="",staff_id=0):
@@ -246,7 +265,6 @@ def viewCoursesByLearningJourney(lj_id="",staff_id=0):
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
-
 #and then show then the courses available based on the selected skill
 @app.route("/viewCourses", methods=['GET'])
 def viewCourses():
@@ -332,7 +350,6 @@ def removeCourses():
     data = request.get_json()
     id = data['lj_id']
     course = data['course']#string
-
     try:
         to_remove = Learning_Journey_Courses.query.filter_by(course_id=course, lj_id=id).first()
         
@@ -389,7 +406,6 @@ def viewLearningJourney():
             "data": [learningJourney.to_dict() for learningJourney in data]
         }
     ), 200
-
 # Filter Learning Journey(s) based on role
 @app.route("/filterLearningJourneyByRole", methods=['GET'])
 def filterLearningJourneyByRole():
@@ -451,7 +467,6 @@ def viewTeamlearningjourneys():
                 for learningjourney in learningjourneys:
                     temp_dict = view_learningjourney_By_LJid(learningjourney)
                     my_dict[learningjourney.lj_id] = temp_dict
-
             return jsonify({
                 "data" : my_dict
             }), 200
@@ -463,6 +478,5 @@ def viewTeamlearningjourneys():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
