@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from flask_cors import CORS
-from skills import viewSkillsByRole 
+
 # import json
 
 app = Flask(__name__)
@@ -255,6 +255,7 @@ def assignSkill(skillslist=[], role_id=0):
 
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewRoleSkills():
+    from skills import viewSkillsByRole
     search_skill = request.args.get('role_id')
     try:
         if search_skill:
