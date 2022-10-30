@@ -62,7 +62,7 @@ jobs:
           python role_unit_test.py
           python skill_unit_test.py
           python learning_journey_unit_test.py
-
+          
       - name: Test with integration tests
         # runs integration test
         run: |
