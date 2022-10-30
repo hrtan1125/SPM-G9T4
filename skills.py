@@ -61,8 +61,6 @@ class Course_skills(db.Model):
         self.course_id = course_id
         self.skill_code = skill_code
 
-db.create_all()
-
 @app.route("/create", methods=['POST'])  #create skill
 def create_skill():
     data = request.get_json()
