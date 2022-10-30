@@ -1,6 +1,6 @@
-
 import unittest
-from learning_journey import Learning_Journey, Learning_Journey_Courses, Courses, Registration, Staff
+from learning_journey import Learning_Journey
+
 class TestLearningJourney(unittest.TestCase):
     def test_to_dict(self):
         p1 = Learning_Journey(title='Test Title', role_id='3', staff_id='150166')
@@ -10,6 +10,7 @@ class TestLearningJourney(unittest.TestCase):
             'role_id': '3',
             'staff_id': '150166'}
         )
+
 class TestLearningJourneyProgress(unittest.TestCase):
     def test_progress(self):
         courses_and_statuses = [['Completed', 'COR002', 'Lean Six Sigma Green Belt Certification'], ['', 'FIN001', 'Data Collection and Analysis']]
