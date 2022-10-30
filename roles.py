@@ -3,15 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from flask_cors import CORS
-from skills import viewSkillsByRole 
+
 # import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                        '@localhost:3306/testDB'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
-                                           'pool_recycle': 280}
+if __name__ == "__main__":
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+                                            '@localhost:3306/testDB'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
+                                            'pool_recycle': 280}
+else:
+     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 
 db = SQLAlchemy(app)
 
@@ -37,7 +40,7 @@ class Roles(db.Model):
 
 class Role_Skills(db.Model):
     __tablename__ = 'role_skills'
-    rowid = db.Column(db.Integer, primary_key=True)
+    row_id = db.Column(db.Integer, primary_key=True)
     role_id = db.Column(db.Integer, nullable=False)
     skill_code = db.Column(db.String(20), nullable=True)
 
@@ -252,6 +255,7 @@ def assignSkill(skillslist=[], role_id=0):
 
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewRoleSkills():
+    from skills import viewSkillsByRole
     search_skill = request.args.get('role_id')
     try:
         if search_skill:
