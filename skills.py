@@ -313,7 +313,7 @@ def managerViewTeamMembersSkills():
     #     }), 500
     
 
-#Admin views Learner's Skills
+#Admin views Learner's Skills Function
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
     staff_id = request.args.get('staff_id')
