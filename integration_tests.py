@@ -111,6 +111,15 @@ class testViewRoles(TestApp):
             ]
         })
 
+    def test_view_roles_no_available(self):
+        response = self.client.get("/view", content_type="application/json")
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message":"No role available."
+        })
+
+
 #update role
 
 #delete role
