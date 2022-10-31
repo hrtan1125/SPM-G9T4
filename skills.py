@@ -136,6 +136,16 @@ def skills():
         }
     ), 200
 
+def viewSkillsByCodes(skill_code_list):
+    try:
+        skills = Skills.query.filter(Skills.skill_code.in_(skill_code_list),deleted='no').all()
+        skills_dict = {skill.skill_code:skill.skill_name for skill in skills}
+        return skills_dict
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error."
+        }), 500
+
 # admin read all skills
 @app.route("/viewselectedskill")
 def viewSelectedSkill():
@@ -343,30 +353,31 @@ def managerViewTeamMembersSkills():
     return empty_dict
 
 #Admin views Learner's Skills Function
-# @app.route("/adminViewLearnersSkills", methods=['GET'])
-# def adminViewLearnersSkills():
-#     staff_id = request.args.get('staff_id')
-#     my_dict = {}
-#     try:
-#         if staff_id:
-#             staff_role = Staff.query.filter_by(staff_id=staff_id).all()
-#             staff_roles = [role for role in staff_role]
-#             for role in staff_roles:
-#                 temp_dict = viewSkillsByRole(role)
-#                 temp_dict.update(my_dict)
-#             return jsonify({
-#                 "data" : my_dict
-#             }), 200
-#         else:
-#             return jsonify({
-#                 "message": "No skills available."
-#             }), 400
+@app.route("/adminViewLearnersSkills", methods=['GET'])
+def adminViewLearnersSkills():
+    from learning_journey import Staff
+    staff_id = request.args.get('staff_id')
+    my_dict = {}
+    try:
+        if staff_id:
+            staff_role = Staff.query.filter_by(staff_id=staff_id).all()
+            staff_roles = [role for role in staff_role]
+            for role in staff_roles:
+                temp_dict = viewSkillsByRole(role)
+                temp_dict.update(my_dict)
+            return jsonify({
+                "data" : my_dict
+            }), 200
+        else:
+            return jsonify({
+                "message": "No skills available."
+            }), 400
         
 
-#     except Exception:
-#         return jsonify({
-#             "message": "Unable to commit to database"
-#         }), 500
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
 
 
 if __name__ == '__main__':
