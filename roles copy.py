@@ -112,12 +112,24 @@ def createRole():
 # admin read all roles
 @app.route("/view")
 def viewRoles():
-    data = Roles.query.filter_by(deleted="no").all()
-    return jsonify(
-        {
-            "data": [role.to_dict() for role in data]
-        }
-    ), 200
+    try:
+        data = Roles.query.filter_by(deleted="no").all()
+        if data:
+            return jsonify(
+                {
+                    "data": [role.to_dict() for role in data]
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "message": "No role available."
+                }
+            ), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
     # admin read all roles
 @app.route("/viewselectedrole")
