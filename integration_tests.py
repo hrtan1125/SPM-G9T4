@@ -26,7 +26,7 @@ class testCreateRole(TestApp):
             'skills':['COR002','PD012']
         }
 
-        response = self.client.post("/create",
+        response = self.client.post("/createrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -49,7 +49,7 @@ class testCreateRole(TestApp):
             'skills':['COR002','PD012']
         }
 
-        response = self.client.post("/create",
+        response = self.client.post("/createrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -69,7 +69,7 @@ class testCreateRole(TestApp):
             'skills':['COR002','PD012']
         }
 
-        response = self.client.post("/create",
+        response = self.client.post("/createrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -91,7 +91,7 @@ class testViewRoles(TestApp):
         db.session.add(r3)
         db.session.commit()
 
-        response = self.client.get("/view", content_type="application/json")
+        response = self.client.get("/viewroles", content_type="application/json")
 
         self.assertEqual(response.status_code,200)
         self.assertDictEqual(response.json, {
@@ -110,7 +110,7 @@ class testViewRoles(TestApp):
         })
 
     def test_view_roles_no_available(self):
-        response = self.client.get("/view", content_type="application/json")
+        response = self.client.get("/viewroles", content_type="application/json")
 
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json, {
@@ -129,7 +129,7 @@ class testUpdateRole(TestApp):
             'role_name':'Chief Executive Officer'
         }
 
-        response = self.client.put("/update",
+        response = self.client.put("/updaterole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -151,7 +151,7 @@ class testUpdateRole(TestApp):
             'role_name':'Chief Executive Officer'
         }
 
-        response = self.client.put("/update",
+        response = self.client.put("/updaterole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -171,7 +171,7 @@ class testUpdateRole(TestApp):
             'role_name':'Chief Executive Officer'
         }
 
-        response = self.client.put("/update",
+        response = self.client.put("/updaterole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -192,7 +192,7 @@ class testDeleteRole(TestApp):
             'role_id':'1'
         }
 
-        response = self.client.put("/delete",
+        response = self.client.put("/deleterole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
