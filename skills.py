@@ -59,6 +59,30 @@ class Course_skills(db.Model):
         self.course_id = course_id
         self.skill_code = skill_code
 
+class Skills_acquired(db.Model):
+    __tablename__ = 'skills_acquired'
+    row_id = db.Column(db.Integer, primary_key=True)
+    staff_id = db.Column(db.String(20))
+    skill_code = db.Column(db.String(20))
+
+    def to_dict(self):
+       
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+       
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+    def __init__(self, staff_id, skill_code):
+        self.staff_id = staff_id
+        self.skill_code = skill_code
+
+
 @app.route("/create", methods=['POST'])  #create skill
 def create_skill():
     data = request.get_json()
@@ -282,7 +306,7 @@ def viewSkillsByRole(RoleSkills=[]):
             "message": "Unable to commit to database."
         }), 500
 
-# still working on it
+# need to add skill name 
 @app.route("/viewTeamMembersSkills", methods=['GET'])
 def managerViewTeamMembersSkills():
 
@@ -295,7 +319,6 @@ def managerViewTeamMembersSkills():
         data = request.get_json()
         dept =  data['dept']
 
-
     # get the the list of team members
     team_members_json = viewTeamMembers(dept)
     team_members = json.loads(team_members_json[0].data)
@@ -305,38 +328,45 @@ def managerViewTeamMembersSkills():
     for team_member in team_members_list:
         if team_member['Role'] != 3:
             my_list.append(team_member['Staff_ID'])
+    # return jsonify(my_list) 
 
+    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
+    skills_acquired_list = [code.to_dict() for code in all_list]
+    # return jsonify(skills_acquired_list) 
 
-    # print(type(team_members_json[0].data))
-    # list_of_team_members = team_members[0].data
-    return jsonify(my_list)
-
+    empty_dict = {}
+    for skills_acquired_obj in skills_acquired_list:
+        if skills_acquired_obj['staff_id'] in empty_dict.keys():
+            empty_dict[skills_acquired_obj['staff_id']].append(skills_acquired_obj['skill_code'])
+        else:
+            empty_dict[skills_acquired_obj['staff_id']]=[skills_acquired_obj['skill_code']]
+    return empty_dict
 
 #Admin views Learner's Skills Function
-@app.route("/adminViewLearnersSkills", methods=['GET'])
-def adminViewLearnersSkills():
-    staff_id = request.args.get('staff_id')
-    my_dict = {}
-    try:
-        if staff_id:
-            staff_role = Staff.query.filter_by(staff_id=staff_id).all()
-            staff_roles = [role for role in staff_role]
-            for role in staff_roles:
-                temp_dict = viewSkillsByRole(role)
-                temp_dict.update(my_dict)
-            return jsonify({
-                "data" : my_dict
-            }), 200
-        else:
-            return jsonify({
-                "message": "No skills available."
-            }), 400
+# @app.route("/adminViewLearnersSkills", methods=['GET'])
+# def adminViewLearnersSkills():
+#     staff_id = request.args.get('staff_id')
+#     my_dict = {}
+#     try:
+#         if staff_id:
+#             staff_role = Staff.query.filter_by(staff_id=staff_id).all()
+#             staff_roles = [role for role in staff_role]
+#             for role in staff_roles:
+#                 temp_dict = viewSkillsByRole(role)
+#                 temp_dict.update(my_dict)
+#             return jsonify({
+#                 "data" : my_dict
+#             }), 200
+#         else:
+#             return jsonify({
+#                 "message": "No skills available."
+#             }), 400
         
 
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit to database"
-        }), 500
+#     except Exception:
+#         return jsonify({
+#             "message": "Unable to commit to database"
+#         }), 500
 
 
 if __name__ == '__main__':
