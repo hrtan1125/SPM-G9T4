@@ -18,9 +18,9 @@ class TestApp(flask_testing.TestCase):
         db.session.remove()
         db.drop_all()
 
+#create role
 class testCreateRole(TestApp):
     def test_create_role(self):
-        print("testing create new role")
         request_body = {
             'role_name':'Chief Technology Officer',
             'skills':['COR002','PD012']
@@ -37,7 +37,6 @@ class testCreateRole(TestApp):
         })
     
     def test_create_role_with_exist_role_name(self):
-        print("testing create new role with existed name")
 
         #create the first role
         r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
@@ -59,9 +58,7 @@ class testCreateRole(TestApp):
         })
 
     def test_create_role_with_deleted_role_name(self):
-        print("testing create new role with existed name")
-
-        #create the first role
+        #create the first role with deleted = yes
         r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="yes")
         db.session.add(r1)
         db.session.commit()
@@ -82,6 +79,7 @@ class testCreateRole(TestApp):
             'deleted': 'no'
         })
 
+#view roles
 class testViewRoles(TestApp):
     def test_view_role(self):
         r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
@@ -119,10 +117,89 @@ class testViewRoles(TestApp):
             "message":"No role available."
         })
 
-
 #update role
+class testUpdateRole(TestApp):
+    def test_update_role(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+        db.session.add(r1)
+        db.session.commit()
+
+        request_body = {
+            'role_id':'1',
+            'role_name':'Chief Executive Officer'
+        }
+
+        response = self.client.put("/update",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "message": "Role updated successfully."
+        })
+
+    def test_update_role_with_existing_role_name(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+        r2 = Roles(role_id=2, role_name="Chief Executive Officer", deleted="no")
+
+        db.session.add(r1)
+        db.session.add(r2)
+        db.session.commit()
+
+        request_body = {
+            'role_id':'1',
+            'role_name':'Chief Executive Officer'
+        }
+
+        response = self.client.put("/update",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json,{
+            "message": "Role exists!"
+        })
+
+    def test_update_role_with_invalid_role_id(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+
+        db.session.add(r1)
+        db.session.commit()
+
+        request_body = {
+            'role_id':'2',
+            'role_name':'Chief Executive Officer'
+        }
+
+        response = self.client.put("/update",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json,{
+            "message": "Role not found!"
+        })
 
 #delete role
+class testDeleteRole(TestApp):
+    def test_delete_role(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+
+        db.session.add(r1)
+        db.session.commit()
+
+        request_body = {
+            'role_id':'1'
+        }
+
+        response = self.client.put("/delete",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "message": "Role has been removed!"
+        })
 
 if __name__ == '__main__':
     unittest.main()
