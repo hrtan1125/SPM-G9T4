@@ -296,5 +296,48 @@ def viewSkillsByRole(RoleSkills=[]):
             "message": "Unable to commit to database."
         }), 500
 
+# still working on it
+@app.route("/viewTeamMembersSkills", methods=['GET'])
+def managerViewTeamMembersSkills():
+    return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+    # try:
+    #     return jsonify({
+    #         "message": "OKAY"
+    #     })
+
+    # except Exception:
+    #     return jsonify({
+    #         "message": "Unable to commit to database."
+    #     }), 500
+    
+
+#Admin views Learner's Skills
+@app.route("/adminViewLearnersSkills", methods=['GET'])
+def adminViewLearnersSkills():
+    staff_id = request.args.get('staff_id')
+    my_dict = {}
+    try:
+        if staff_id:
+            staff_role = Staff.query.filter_by(staff_id=staff_id).all()
+            staff_roles = [role for role in staff_role]
+            for role in staff_roles:
+                temp_dict = viewSkillsByRole(role)
+                temp_dict.update(my_dict)
+            return jsonify({
+                "data" : my_dict
+            }), 200
+        else:
+            return jsonify({
+                "message": "No skills available."
+            }), 400
+        
+
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
