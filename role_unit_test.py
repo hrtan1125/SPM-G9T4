@@ -23,7 +23,7 @@ class TestRoleSkills(unittest.TestCase):
 
     def test_to_dict(self):
         result = self.rs1.to_dict()
-        self.assertDictEqual(result, {"role_id":1, "skill_code": "COR002"})
+        self.assertDictEqual(result, {"row_id":None, "role_id":1, "skill_code": "COR002"})
 
 if __name__ == "__main__":
     unittest.main()
