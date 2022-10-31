@@ -3,13 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 from sqlalchemy import and_
+from learning_journey import * 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                        '@localhost:3306/projectDB'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
-                                           'pool_recycle': 280}
+if __name__ == "__main__":
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+                                            '@localhost:3306/testDB'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
+                                            'pool_recycle': 280}
+else:
+     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 
 db = SQLAlchemy(app)
 
@@ -56,8 +60,6 @@ class Course_skills(db.Model):
     def __init__(self, course_id, skill_code):
         self.course_id = course_id
         self.skill_code = skill_code
-
-db.create_all()
 
 @app.route("/create", methods=['POST'])  #create skill
 def create_skill():
@@ -313,31 +315,6 @@ def managerViewTeamMembersSkills():
     #     }), 500
     
 
-#Admin views Learner's Skills
-@app.route("/adminViewLearnersSkills", methods=['GET'])
-def adminViewLearnersSkills():
-    staff_id = request.args.get('staff_id')
-    my_dict = {}
-    try:
-        if staff_id:
-            staff_role = Staff.query.filter_by(staff_id=staff_id).all()
-            staff_roles = [role for role in staff_role]
-            for role in staff_roles:
-                temp_dict = viewSkillsByRole(role)
-                temp_dict.update(my_dict)
-            return jsonify({
-                "data" : my_dict
-            }), 200
-        else:
-            return jsonify({
-                "message": "No skills available."
-            }), 400
-        
-
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit to database"
-        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
