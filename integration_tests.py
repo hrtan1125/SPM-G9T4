@@ -82,6 +82,39 @@ class testCreateRole(TestApp):
             'deleted': 'no'
         })
 
+class testViewRoles(TestApp):
+    def test_view_role(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+        r2 = Roles(role_id=2, role_name="Supervisor", deleted="no")
+        r3 = Roles(role_id=3, role_name="Project Design Executive", deleted="yes")
+
+        db.session.add(r1)
+        db.session.add(r2)
+        db.session.add(r3)
+        db.session.commit()
+
+        response = self.client.get("/view", content_type="application/json")
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json, {
+            "data": [
+                {
+                "role_id":1,
+                "role_name": "Chief Technology Officer",
+                "deleted": "no"
+                },
+                {
+                "role_id":2,
+                "role_name": "Supervisor",
+                "deleted": "no"
+                }
+            ]
+        })
+
+#update role
+
+#delete role
+
 if __name__ == '__main__':
     unittest.main()
 

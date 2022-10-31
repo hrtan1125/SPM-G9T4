@@ -112,8 +112,9 @@ def createRole():
 # admin read all roles
 @app.route("/view")
 def viewRoles():
-    try:
+    try: 
         data = Roles.query.filter_by(deleted="no").all()
+
         if data:
             return jsonify(
                 {
