@@ -1,5 +1,5 @@
 import unittest
-from roles import Roles
+from roles import Role_Skills, Roles
 
 class TestRoles(unittest.TestCase):
     def setUp(self):
@@ -14,6 +14,16 @@ class TestRoles(unittest.TestCase):
         result = self.r2.to_dict()
         self.assertDictEqual(result, {"role_id":2, "role_name":"President", "deleted": "no"})
 
+class TestRoleSkills(unittest.TestCase):
+    def setUp(self):
+        self.rs1 = Role_Skills(row_id=1,role_id=1,skill_code="COR002")
+
+    def tearDown(self):
+        self.rs1 = None
+
+    def test_to_dict(self):
+        result = self.rs1.to_dict()
+        self.assertDictEqual(result, {"row_id":1, "role_id":1, "skill_code": "COR002"})
 
 if __name__ == "__main__":
     unittest.main()
