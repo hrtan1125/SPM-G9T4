@@ -59,8 +59,6 @@ class Course_skills(db.Model):
         self.course_id = course_id
         self.skill_code = skill_code
 
-db.create_all()
-
 @app.route("/create", methods=['POST'])  #create skill
 def create_skill():
     data = request.get_json()
@@ -313,6 +311,8 @@ def managerViewTeamMembersSkills():
     # list_of_team_members = team_members[0].data
     return jsonify(my_list)
 
+
+#Admin views Learner's Skills Function
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
     staff_id = request.args.get('staff_id')
@@ -337,6 +337,7 @@ def adminViewLearnersSkills():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
