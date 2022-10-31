@@ -62,7 +62,7 @@ class Role_Skills(db.Model):
 
 
 # admin create role
-@app.route("/create", methods=['POST'])
+@app.route("/createrole", methods=['POST'])
 def createRole():
     data = request.get_json()
     # print(data)
@@ -110,7 +110,7 @@ def createRole():
         }), 500
 
 # admin read all roles
-@app.route("/view")
+@app.route("/viewroles")
 def viewRoles():
     try:
         data = Roles.query.filter_by(deleted="no").all()
@@ -149,7 +149,7 @@ def viewSelectedRole():
         ),500
 
 # admin update a role
-@app.route("/update", methods=['PUT'])
+@app.route("/updaterole", methods=['PUT'])
 def updateRole():
     try:
         data = request.get_json()
@@ -191,7 +191,7 @@ def updateRole():
         ), 500
 
 # admin delete role (soft delete)
-@app.route("/delete", methods=['PUT'])
+@app.route("/deleterole", methods=['PUT'])
 def removeRole():
     try:
         data = request.get_json()
