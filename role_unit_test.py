@@ -16,14 +16,14 @@ class TestRoles(unittest.TestCase):
 
 class TestRoleSkills(unittest.TestCase):
     def setUp(self):
-        self.rs1 = Role_Skills(row_id=1,role_id=1,skill_code="COR002")
+        self.rs1 = Role_Skills(role_id=1,skill_code="COR002")
 
     def tearDown(self):
         self.rs1 = None
 
     def test_to_dict(self):
         result = self.rs1.to_dict()
-        self.assertDictEqual(result, {"row_id":1, "role_id":1, "skill_code": "COR002"})
+        self.assertDictEqual(result, {"role_id":1, "skill_code": "COR002"})
 
 if __name__ == "__main__":
     unittest.main()
