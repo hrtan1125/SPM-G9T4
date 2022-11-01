@@ -3,17 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 from sqlalchemy import and_
-from learning_journey import * 
+import json
+# from learning_journey import * 
 
 app = Flask(__name__)
-if __name__ == "__main__":
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                            '@localhost:3306/testDB'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
-                                            'pool_recycle': 280}
-else:
-     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+                                        '@localhost:3306/testDB'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
+                                           'pool_recycle': 280}
 
 db = SQLAlchemy(app)
 
@@ -60,6 +58,30 @@ class Course_skills(db.Model):
     def __init__(self, course_id, skill_code):
         self.course_id = course_id
         self.skill_code = skill_code
+
+class Skills_acquired(db.Model):
+    __tablename__ = 'skills_acquired'
+    row_id = db.Column(db.Integer, primary_key=True)
+    staff_id = db.Column(db.String(20))
+    skill_code = db.Column(db.String(20))
+
+    def to_dict(self):
+       
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+       
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+    def __init__(self, staff_id, skill_code):
+        self.staff_id = staff_id
+        self.skill_code = skill_code
+
 
 @app.route("/create", methods=['POST'])  #create skill
 def create_skill():
@@ -113,6 +135,16 @@ def skills():
             "data": [skill.to_dict() for skill in skill_list]
         }
     ), 200
+
+def viewSkillsByCodes(skill_code_list):
+    try:
+        skills = Skills.query.filter(Skills.skill_code.in_(skill_code_list),deleted='no').all()
+        skills_dict = {skill.skill_code:skill.skill_name for skill in skills}
+        return skills_dict
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error."
+        }), 500
 
 # admin read all skills
 @app.route("/viewselectedskill")
@@ -235,17 +267,6 @@ def skill_assigns_course():
     #check if exists
     data = request.get_json() #py obj
     course_id = data['course_id']
-    # if (Course_skills.query.filter_by(course_id=course_id).first()):
-    #     return jsonify(
-    #         {
-    #             "code": 400, 
-    #             "data": {
-    #                 "course_id": course_id
-    #             }, 
-    #             "message": "Course already exist"
-    #         }
-    #     ), 400
-
     
     skills = data['skills'] #list
 
@@ -282,13 +303,10 @@ def viewSkillsByRole(RoleSkills=[]):
             # RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
             skills = [skill.skill_code for skill in RoleSkills]
             skillslist = Skills.query.filter(and_(Skills.skill_code.in_(skills),Skills.deleted=="no")).all()
-            # print("hello")
-            # print(skills)
             print([skill.skill_code for skill in skillslist])
             return jsonify({
                 "data": {skill.skill_code:skill.to_dict() for skill in skillslist}
             }), 200
-            # return skil
         else:
             return jsonify({
                 "message": "Missing Input."
@@ -298,27 +316,46 @@ def viewSkillsByRole(RoleSkills=[]):
             "message": "Unable to commit to database."
         }), 500
 
-# still working on it
+# need to add skill name 
 @app.route("/viewTeamMembersSkills", methods=['GET'])
 def managerViewTeamMembersSkills():
-    return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
-    # try:
-    #     return jsonify({
-    #         "message": "OKAY"
-    #     })
 
-    # except Exception:
-    #     return jsonify({
-    #         "message": "Unable to commit to database."
-    #     }), 500
-    
+    from learning_journey import viewTeamMembers
+    # {
+    #     dept:'Ops'
+    # }
 
+    if request.get_json():
+        data = request.get_json()
+        dept =  data['dept']
+
+    # get the the list of team members
+    team_members_json = viewTeamMembers(dept)
+    team_members = json.loads(team_members_json[0].data)
+    team_members_list = team_members["data"]
+
+    my_list = []
+    for team_member in team_members_list:
+        if team_member['Role'] != 3:
+            my_list.append(team_member['Staff_ID'])
+    # return jsonify(my_list) 
+
+    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
+    skills_acquired_list = [code.to_dict() for code in all_list]
+    # return jsonify(skills_acquired_list) 
+
+    empty_dict = {}
+    for skills_acquired_obj in skills_acquired_list:
+        if skills_acquired_obj['staff_id'] in empty_dict.keys():
+            empty_dict[skills_acquired_obj['staff_id']].append(skills_acquired_obj['skill_code'])
+        else:
+            empty_dict[skills_acquired_obj['staff_id']]=[skills_acquired_obj['skill_code']]
+    return empty_dict
 
 #Admin views Learner's Skills Function
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
+    from learning_journey import Staff
     staff_id = request.args.get('staff_id')
     my_dict = {}
     try:
