@@ -1,5 +1,5 @@
 import unittest
-from learning_journey import Learning_Journey, Registration
+from learning_journey import Learning_Journey, Registration, Staff
 
 class TestLearningJourney(unittest.TestCase):
     def test_to_dict(self):
@@ -27,6 +27,25 @@ class TestLearningJourneyProgress(unittest.TestCase):
             courses_and_statuses = []
             progress = Learning_Journey.calculate_progress(courses_and_statuses)
 
+class TestStaff(unittest.TestCase):
+    def setUp(self):
+        self.staff1 = Staff(Staff_ID=130001,Staff_FName="John",Staff_LName="Sim",
+        Dept="Chairman",Email="jack.sim@allinone.com.sg",Role=1)
+
+    def tearDown(self):
+        self.staff1 = None
+
+    def test_to_dict(self):
+        self.assertDictEqual(self.staff1.to_dict(),{
+            "Staff_ID": 130001,
+            "Staff_FName":"John",
+            "Staff_LName": "Sim",
+            "Dept": "Chairman",
+            "Email": "jack.sim@allinone.com.sg",
+            "Role": 1 
+        })
+
+
 class TestRegistration(unittest.TestCase):
     def setUp(self):
         self.reg1 = Registration(reg_id=1,course_id="COR002",staff_id=130001,reg_status="Registered", completion_status="Completed")
@@ -42,6 +61,6 @@ class TestRegistration(unittest.TestCase):
             "reg_status":"Registered",
             "completion_status":"Completed"
         })
-    
+        
 if __name__ == "__main__":
     unittest.main()
