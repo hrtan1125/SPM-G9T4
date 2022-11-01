@@ -1,5 +1,5 @@
 import unittest
-from learning_journey import Learning_Journey, Registration
+from learning_journey import Learning_Journey, Registration, Staff
 
 class TestLearningJourney(unittest.TestCase):
     def test_to_dict(self):
