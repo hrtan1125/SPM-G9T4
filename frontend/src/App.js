@@ -30,7 +30,12 @@ const theme = createTheme({
 });
 
 export default function App() {
-  const { path } = useGlobalContext();
+  const { path, userRole } = useGlobalContext();
+  const roles_id_role_name = {
+    1: "Admin",
+    2: "User",
+    3: "Manager",
+  };
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -49,8 +54,17 @@ export default function App() {
                 noWrap
                 component="div"
                 style={{ fontWeight: "bold" }}
+                sx={{ flexGrow: 1 }}
               >
                 {path}
+              </Typography>
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                style={{ fontWeight: "bold" }}
+              >
+                Logged in as {roles_id_role_name[userRole]}
               </Typography>
             </Toolbar>
           </AppBar>
