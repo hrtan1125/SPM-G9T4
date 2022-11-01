@@ -11,12 +11,12 @@ const deleteRoleUrl = 'http://127.0.0.1:5001/delete'
 const updateRoleUrl = 'http://127.0.0.1:5001/update'
 
 // Skills
-const skillsUrl = 'http://127.0.0.1:5000/view'
+const skillsUrl = 'http://127.0.0.1:5000/viewroles'
 const viewSelectedSkillUrl = "http://127.0.0.1:5000/viewselectedskill?skill_code="
 const viewSkillsByRoleUrl = 'http://127.0.0.1:5001/viewRoleSkills?role_id='
-const updateSkillUrl = 'http://127.0.0.1:5000/update'
-const createSkillUrl = 'http://127.0.0.1:5000/create'
-const deleteSkillUrl = 'http://127.0.0.1:5000/delete'
+const updateSkillUrl = 'http://127.0.0.1:5000/updaterole'
+const createSkillUrl = 'http://127.0.0.1:5000/createrole'
+const deleteSkillUrl = 'http://127.0.0.1:5000/deleterole'
 
 // Courses
 const coursesUrl = 'http://127.0.0.1:5002/viewAllCourses'
