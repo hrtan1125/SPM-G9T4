@@ -3,15 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import and_
 from flask_cors import CORS
-from skills import viewSkillsByRole 
+
 # import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                        '@localhost:3306/testDB'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
-                                           'pool_recycle': 280}
+if __name__ == "__main__":
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
+                                            '@localhost:3306/testDB'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
+                                            'pool_recycle': 280}
+else:
+     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
 
 db = SQLAlchemy(app)
 
@@ -37,7 +40,7 @@ class Roles(db.Model):
 
 class Role_Skills(db.Model):
     __tablename__ = 'role_skills'
-    rowid = db.Column(db.Integer, primary_key=True)
+    row_id = db.Column(db.Integer, primary_key=True)
     role_id = db.Column(db.Integer, nullable=False)
     skill_code = db.Column(db.String(20), nullable=True)
 
@@ -59,7 +62,7 @@ class Role_Skills(db.Model):
 
 
 # admin create role
-@app.route("/create", methods=['POST'])
+@app.route("/createrole", methods=['POST'])
 def createRole():
     data = request.get_json()
     # print(data)
@@ -107,14 +110,27 @@ def createRole():
         }), 500
 
 # admin read all roles
-@app.route("/view")
+@app.route("/viewroles")
 def viewRoles():
-    data = Roles.query.filter_by(deleted="no").all()
-    return jsonify(
-        {
-            "data": [role.to_dict() for role in data]
-        }
-    ), 200
+    try: 
+        data = Roles.query.filter_by(deleted="no").all()
+
+        if data:
+            return jsonify(
+                {
+                    "data": [role.to_dict() for role in data]
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "message": "No role available."
+                }
+            ), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
     # admin read all roles
 @app.route("/viewselectedrole")
@@ -134,7 +150,7 @@ def viewSelectedRole():
         ),500
 
 # admin update a role
-@app.route("/update", methods=['PUT'])
+@app.route("/updaterole", methods=['PUT'])
 def updateRole():
     try:
         data = request.get_json()
@@ -176,7 +192,7 @@ def updateRole():
         ), 500
 
 # admin delete role (soft delete)
-@app.route("/delete", methods=['PUT'])
+@app.route("/deleterole", methods=['PUT'])
 def removeRole():
     try:
         data = request.get_json()
@@ -252,11 +268,13 @@ def assignSkill(skillslist=[], role_id=0):
 
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewRoleSkills():
+    from skills import viewSkillsByRole
     search_skill = request.args.get('role_id')
     try:
         if search_skill:
             RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
             skills = viewSkillsByRole(RoleSkills)
+
             return skills
         else:
             return jsonify({
