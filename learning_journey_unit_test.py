@@ -2,13 +2,21 @@ import unittest
 from learning_journey import Learning_Journey, Registration, Staff
 
 class TestLearningJourney(unittest.TestCase):
+    def setUp(self):
+        self.lj1 = Learning_Journey(lj_id=1, title="Learning Journey 1", role_id="3", staff_id="170166")
+        self.lj2 = Learning_Journey(lj_id=2, title="My Learning Journey", role_id="1", staff_id="150166")
+
+    def tearDown(self):
+        self.lj1 = None
+        self.lj2 = None
+
     def test_to_dict(self):
-        p1 = Learning_Journey(title='Test Title', role_id='3', staff_id='150166')
-        self.assertEqual(p1.to_dict(), {
-            'lj_id': None,
-            'title': 'Test Title',
+        result = self.lj1.to_dict()
+        self.assertEqual(result, {
+            'lj_id': 1,
+            'title': 'Learning Journey 1',
             'role_id': '3',
-            'staff_id': '150166'}
+            'staff_id': '170166'}
         )
 
 # class TestLearningJourneyProgress(unittest.TestCase):
