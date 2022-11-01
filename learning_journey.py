@@ -74,7 +74,7 @@ class Learning_Journey_Courses(db.Model):
         for id in courses.keys():
             if (courses[id]["completion_status"] == 'Completed'):
                 completed_courses += 1
-        progress = completed_courses/total_courses*100
+        progress = math.floor(completed_courses/total_courses*100)
         return progress
 
     def to_dict(self):
