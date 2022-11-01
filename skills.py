@@ -136,16 +136,6 @@ def skills():
         }
     ), 200
 
-def viewSkillsByCodes(skill_code_list):
-    try:
-        skills = Skills.query.filter(Skills.skill_code.in_(skill_code_list),deleted='no').all()
-        skills_dict = {skill.skill_code:skill.skill_name for skill in skills}
-        return skills_dict
-    except Exception:
-        return jsonify({
-            "message": "Unexpected Error."
-        }), 500
-
 # admin read all skills
 @app.route("/viewselectedskill")
 def viewSelectedSkill():
@@ -318,7 +308,7 @@ def viewSkillsByRole(RoleSkills=[]):
 
 # need to add skill name 
 @app.route("/viewTeamMembersSkills", methods=['GET'])
-def managerViewTeamMembersSkills():
+def managerViewTeamMembersSkills(dept=''):
 
     from learning_journey import viewTeamMembers
     # {
@@ -328,34 +318,59 @@ def managerViewTeamMembersSkills():
     if request.get_json():
         data = request.get_json()
         dept =  data['dept']
+    
+    try: 
 
-    # get the the list of team members
-    team_members_json = viewTeamMembers(dept)
-    team_members = json.loads(team_members_json[0].data)
-    team_members_list = team_members["data"]
+        # get the the list of team members
+        team_members_json = viewTeamMembers(dept)
+        team_members = json.loads(team_members_json[0].data)
+        team_members_list = team_members["data"]
 
-    my_list = []
-    for team_member in team_members_list:
-        if team_member['Role'] != 3:
-            my_list.append(team_member['Staff_ID'])
-    # return jsonify(my_list) 
+        my_list = []
+        for team_member in team_members_list:
+            if team_member['Role'] != 3:
+                my_list.append(team_member['Staff_ID'])
+            # return jsonify(my_list) 
 
-    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
-    skills_acquired_list = [code.to_dict() for code in all_list]
-    # return jsonify(skills_acquired_list) 
+        all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
+        skills_acquired_list = [code.to_dict() for code in all_list]
+        skills_list = [skill.skill_code for skill in all_list]
+            # return jsonify(skills_acquired_list) 
 
-    empty_dict = {}
-    for skills_acquired_obj in skills_acquired_list:
-        if skills_acquired_obj['staff_id'] in empty_dict.keys():
-            empty_dict[skills_acquired_obj['staff_id']].append(skills_acquired_obj['skill_code'])
-        else:
-            empty_dict[skills_acquired_obj['staff_id']]=[skills_acquired_obj['skill_code']]
-    return empty_dict
+        empty_dict = {}
+        skills_dict = viewSkillsByCodes(skills_list)
+        for skills_acquired_obj in skills_acquired_list:
+            sc = skills_acquired_obj["skill_code"]
+            if skills_acquired_obj['staff_id'] in empty_dict.keys():
+                empty_dict[skills_acquired_obj['staff_id']][sc] = skills_dict[sc]
+            else:
+                # empty_dict[skills_acquired_list]
+                empty_dict[skills_acquired_obj['staff_id']]= {sc:skills_dict[sc]}
+        return jsonify({
+                "data" : empty_dict
+            }), 200
+    
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error."
+        }), 500
+
+def viewSkillsByCodes(skill_code_list):
+    try:
+        print("h1")
+        my_skills = Skills.query.filter(and_(Skills.skill_code.in_(skill_code_list),Skills.deleted=="no")).all()
+        print("h2")
+        skills_dict = {skill.skill_code:skill.skill_name for skill in my_skills}
+        print(skills_dict)
+        return skills_dict
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error."
+        }), 500
 
 #Admin views Learner's Skills Function
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
-    from learning_journey import Staff
     staff_id = request.args.get('staff_id')
     my_dict = {}
     try:
@@ -378,6 +393,56 @@ def adminViewLearnersSkills():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
+
+# TBC, work in progress
+@app.route("/viewTeamMembersCourses", methods=['GET'])
+def managerViewTeamMembersCourses():
+
+    from learning_journey import Registration
+
+    # {
+    #     dept:'Ops'
+    # }
+
+    if request.get_json():
+        data = request.get_json()
+        dept =  data['dept']
+
+    team_members_skills_json = managerViewTeamMembersSkills(dept)
+    team_members_skill = json.loads(team_members_skills_json[0].data)
+    team_members_skill_obj = team_members_skill["data"]
+    print(team_members_skill_obj)
+    # return jsonify(team_members_skill_obj)
+
+    for member_id in team_members_skill_obj:
+        print (member_id)
+        all_list = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
+        print(all_list)
+    return jsonify("test")
+
+
+    # staff_id = "150075"
+    # all_list = Registration.query.filter_by(staff_id=staff_id, completion_status ='Completed').all()
+    # staff_roles = [role.to_dict() for role in all_list]
+    # print(staff_roles) # a list of obj 
+    # return jsonify(staff_roles)
+   
+    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
+    skills_acquired_list = [code.to_dict() for code in all_list]
+    skills_list = [skill.skill_code for skill in all_list]
+
+    if request.get_json():
+        data = request.get_json()
+        dept =  data['dept']
+
+    # get the the list of team members
+    team_members_skills_json = managerViewTeamMembersSkills(dept)
+    team_members_skill = json.loads(team_members_skills_json[0].data)
+    team_members_skill_list = team_members_skill["data"]
+    return jsonify(team_members_skill_list)
+
+
+
 
 
 if __name__ == '__main__':
