@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 
 
 const Skills = () => {
-  const {setPath} = useGlobalContext()
+  const {setPath, userRole} = useGlobalContext()
   useEffect(()=>setPath("Skills"))
 
   const {skills, deleteSkill, setSkill, fetchSkills, skillsUrl} = useGlobalContext()
@@ -29,24 +29,34 @@ const Skills = () => {
     setSkill("")
   }
 
+  var width = 500;
+  if (userRole == 1) {
+    width = 640;
+  }
+
     return (
       <div style={{display: 'flex', justifyContent: "center"}} >
         <div className="app-container" style={{display: 'flex',justifyContent:"center"}}>
+        {userRole == 1 &&
           <div style={{display: 'flex', justifyContent: "center"}}>
             <Link to={`/createskill`} style={{textDecoration:"none"}}> 
             <Button onClick={resetSkill} style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} variant="contained">Create New Skill</Button>
             </Link>
-          </div>
+          </div>    
+          }
           <TableContainer component={Paper}>
           {/* TableContainer */}
-          <Table sx={{ minWidth: 640, "& td": { border: 0 }}} aria-label="simple table">
+          <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Skill Code</TableCell>
                 <TableCell>Skill Name</TableCell>
+                {userRole == 1 && <>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
+                </>}
+                
               </TableRow>
             </TableHead>
             <TableBody>
@@ -60,16 +70,20 @@ const Skills = () => {
                 <TableCell>
                   {skill.skill_name}
                 </TableCell>
+                {userRole == 1 && 
+                <>
                 <TableCell>
                   <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>deleteSkill(skill.skill_code)}>
-                  <DeleteOutlinedIcon/>
-              </IconButton>
+                      <DeleteOutlinedIcon/>
+                  </IconButton>
                 </TableCell>
                 <TableCell align="center">
-              <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/skill/${skill.skill_code}/${skill.skill_name}`}>
+                  <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/skill/${skill.skill_code}/${skill.skill_name}`}>
                   <EditIcon/>
-              </IconButton>
-              </TableCell>
+                </IconButton>
+                </TableCell>
+                </>}
+                
                 </>
               )}
             </TableRow>

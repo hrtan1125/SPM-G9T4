@@ -74,7 +74,7 @@ function handleUpdate(e,key){
 //submit new role to database
 const createNewRole=async(roleName,skillsToAssign)=>{
   console.log("Creating new Role")
-  fetch('http://127.0.0.1:5001/create',{
+  fetch('http://127.0.0.1:5001/createrole',{
     method:"POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

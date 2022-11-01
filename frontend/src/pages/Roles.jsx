@@ -16,7 +16,7 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 
 const Roles = () => {
-  const {setPath, setRoleId} = useGlobalContext()
+  const {setPath, setRoleId, userRole} = useGlobalContext()
   useEffect(()=>setPath("Roles"),[])
   useEffect(()=>setRoleId(0),[])
 
@@ -37,22 +37,30 @@ const Roles = () => {
     console.log("reset")
   }
 
+  var width = 500;
+  if (userRole == 1) {
+    width = 640;
+  }
+
 return (
   <div style={{display: 'flex', justifyContent: "center"}} >
       <div className="app-container" style={{display: 'flex',justifyContent:"center"}} >
-      <div style={{display: 'flex', justifyContent: "center"}} >
+
+        {userRole == 1 && <div style={{display: 'flex', justifyContent: "center"}} >
         <Link to={`/createrole`} style={{textDecoration:"none"}}> 
           <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
         </Link>
-        </div>
+        </div>}
+      
         <TableContainer component={Paper} elevation={3}>
-      <Table sx={{ minWidth: 640, "& td": { border: 0 }}} aria-label="simple table">
+      <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Role ID</TableCell>
             <TableCell align="left">Role Name</TableCell>
-            <TableCell align="center"></TableCell>
-            <TableCell align="center"></TableCell>
+            {userRole == 1 && <><TableCell align="center"></TableCell>
+            <TableCell align="center"></TableCell></>}
+            
           </TableRow>
         </TableHead>
         <TableBody>
@@ -65,7 +73,8 @@ return (
                 {role.role_id}
               </TableCell>
               <TableCell align="left">{role.role_name}</TableCell>
-              <TableCell align="center">
+              
+              {userRole == 1 && <><TableCell align="center">
               <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(role.role_id)}>
                   <DeleteOutlinedIcon/>
               </IconButton>
@@ -74,7 +83,8 @@ return (
               <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/role/${role.role_id}/${role.role_name}`}>
                   <EditIcon/>
               </IconButton>
-              </TableCell>
+              </TableCell></>}
+              
             </TableRow>
           ))}
         </TableBody>

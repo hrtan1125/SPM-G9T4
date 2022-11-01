@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -6,10 +7,11 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-
+import { useGlobalContext } from '../context';
 const drawerWidth = 240;
-
 export default function PermanentDrawerLeft(){
+  const {userRole} = useGlobalContext()
+  console.log(userRole, "USERROLLEE")
     
     // const url = window.location.pathname
     // let path = ""
@@ -51,8 +53,10 @@ export default function PermanentDrawerLeft(){
         {/* <Toolbar /> */}
         <h2 style={{color:"#1F3541" ,textAlign:"left", marginLeft:"15px"}}>LJPS</h2>
         <Divider />
-        <List>
-          {['Roles', 'Skills', 'Courses', 'Learning Journeys'].map((text) => (
+        {
+          (userRole == 1) &&
+          <List>
+          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
             <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
               <ListItemButton >
                 <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
@@ -60,6 +64,31 @@ export default function PermanentDrawerLeft(){
             </ListItem>
           ))}
         </List>
+        }
+        {
+          (userRole == 2) &&
+          <List>
+          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
+            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+              <ListItemButton >
+                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        }
+        {
+          (userRole == 3) &&
+          <List>
+          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
+            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+              <ListItemButton >
+                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        }
         {/* <Divider />
         <List>
           {['All mail', 'Trash', 'Spam'].map((text, index) => (
