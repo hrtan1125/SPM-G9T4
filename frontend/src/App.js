@@ -18,6 +18,7 @@ import CreateEditSkill from "./components/CreateEditSkill";
 import CreateLJ from "./pages/CreateLJ";
 import Courses from "./pages/Courses";
 import Course from "./pages/Course";
+import LJDetails from "./pages/LJdetails";
 
 const drawerWidth = 240;
 
@@ -61,7 +62,8 @@ export default function App() {
 
           <Route path="/roles" element={<Roles />}></Route>
           <Route path="/createrole" element={<CreateEditRole />} />
-          <Route path="/:role_id/:role_name" element={<CreateEditRole />} />
+          <Route path="/role/:role_id/:role_name" element={<CreateEditRole />} />
+          <Route path="/learningjourney/:id" element={<LJDetails/>}></Route>
 
           <Route path="/skills" element={<Skills />}></Route>
           <Route path="/createskill" element={<CreateEditSkill />} />

@@ -38,7 +38,7 @@ const CreateEditRole = () =>{
 
 
 function refreshPage() {
-  navigate(`/${role_id}/${roleRef.current.value}`)
+  navigate(`/role/${role_id}/${roleRef.current.value}`)
   window.location.reload(false);
 }
 
@@ -170,7 +170,7 @@ const deleteSkillsFromRole = async(role_id, skill_code) => {
     <Grid container spacing={2} >
       <Grid item sx={{display:"flex", alignItems:"center"}}> 
       Role Name:   &nbsp;
-        <TextField size="small" id="outlined-basic"  variant="outlined" defaultValue={role_name} inputRef={roleRef}/>  
+        <TextField size="small" id="outlined-basic" style={{width:"400px"}} variant="outlined" defaultValue={role_name} inputRef={roleRef}/>  
       </Grid>
       <Grid item sx={{display:"flex", alignItems:"center"}}>
       <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={(e) => handleSubmit(e)}>{role_id?"Edit":"Create"}</Button>

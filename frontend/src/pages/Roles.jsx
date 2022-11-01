@@ -16,10 +16,6 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 
 const Roles = () => {
-  // const {setPaTableHead} = useGlobalContext()
-  // setPaTableHead("Roles")
-
-  //Retitle the header
   const {setPath, setRoleId} = useGlobalContext()
   useEffect(()=>setPath("Roles"),[])
   useEffect(()=>setRoleId(0),[])
@@ -75,7 +71,7 @@ return (
               </IconButton>
               </TableCell>
               <TableCell align="center">
-              <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/${role.role_id}/${role.role_name}`}>
+              <IconButton aria-label="edit" style={{color:"#5289B5"}} href={`/role/${role.role_id}/${role.role_name}`}>
                   <EditIcon/>
               </IconButton>
               </TableCell>

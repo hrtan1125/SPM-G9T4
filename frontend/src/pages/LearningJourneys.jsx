@@ -69,7 +69,7 @@ const Cards = ({ljs})=>{
       {ljs[lj_id].title}
       </Typography>
       <Typography variant="body2" >
-        You have completed {ljs[lj_id].progress}%
+        Completed {ljs[lj_id].progress}%
       </Typography>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
