@@ -433,19 +433,19 @@ def managerViewTeamMembersCourses():
     # print(staff_roles) # a list of obj 
     # return jsonify(staff_roles)
    
-    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
-    skills_acquired_list = [code.to_dict() for code in all_list]
-    skills_list = [skill.skill_code for skill in all_list]
+    # all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
+    # skills_acquired_list = [code.to_dict() for code in all_list]
+    # skills_list = [skill.skill_code for skill in all_list]
 
-    if request.get_json():
-        data = request.get_json()
-        dept =  data['dept']
+    # if request.get_json():
+    #     data = request.get_json()
+    #     dept =  data['dept']
 
-    # get the the list of team members
-    team_members_skills_json = managerViewTeamMembersSkills(dept)
-    team_members_skill = json.loads(team_members_skills_json[0].data)
-    team_members_skill_list = team_members_skill["data"]
-    return jsonify(team_members_skill_list)
+    # # get the the list of team members
+    # team_members_skills_json = managerViewTeamMembersSkills(dept)
+    # team_members_skill = json.loads(team_members_skills_json[0].data)
+    # team_members_skill_list = team_members_skill["data"]
+    # return jsonify(team_members_skill_list)
 
 
 
