@@ -28,14 +28,29 @@ const viewLJsUrl = 'http://127.0.0.1:5002/viewlearningjourneys?staff_id='
 
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
-    const [user, setUser] = useState(150166)
+    
+    // const [user, setUser] = useState(150166)
     var userRoleSaved = ""
+    var userDeptSaved = ""
+    var userSaved = ""
+
     if (localStorage.getItem("userRole")){
       userRoleSaved = localStorage.getItem("userRole")
     }
+    // if (localStorage.getItem("dept")){
+    //   userDeptSaved = localStorage.getItem("dept")
+    // }
+    // if (localStorage.getItem("user")){
+    //   userDeptSaved = localStorage.getItem("user")
+    // }
 
     const [userRole, setUserRole] = useState(userRoleSaved)
+    const [userDept, setUserDept] = useState(userDeptSaved)
+    const [user, setUser] = useState(userSaved)
 
+    useEffect(()=>setUser(localStorage.getItem("user")),[user])
+    // useEffect(()=>setUserDept(localStorage.getItem("userDept")),[userDept])
+    // useEffect(()=>setUserRole(localStorage.getItem("userRole")),[userRole])
     
 
     // Roles
@@ -256,7 +271,8 @@ const fetchSkill = async(url) => {
       <AppContext.Provider
         value={{path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
-          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole, user, setUser
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole, user, setUser,
+          userDept, setUserDept
 }}
       >
         {children}

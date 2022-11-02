@@ -163,8 +163,10 @@ def checkRole():
         # print(staff_id)
         if staff_role:
             staff_rid = staff_role.Role
+            staff_dept = staff_role.Dept
             return jsonify({
-                "role": staff_rid
+                "role": staff_rid,
+                "dept": staff_dept
             }),200
         else:
             return jsonify({
@@ -476,10 +478,10 @@ def filterLearningJourneyByRole():
         ), 400
 @app.route("/viewTeamMembers", methods=['GET'])
 def viewTeamMembers(dept=''):
-
-    if request.get_json():
-        data = request.get_json()
-        dept =  data['dept']
+    dept = request.args["dept"]
+    # if request.get_json():
+    #     data = request.get_json()
+    #     dept =  data['dept']
 
     try:
         if dept:
@@ -503,13 +505,16 @@ def viewTeamlearningjourneys():
     data= request.get_json()
     dept = data["dept"]
     my_dict = {}
+    print(dept, "DEPPTT")
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
             team_mems = [team_mem for team_mem in team_members]
+            print(team_members, "TEAMMMMM")
             for team_mem in team_mems:
                 LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+                print(learningjourneys, "LJSSS")
                 for learningjourney in learningjourneys:
                     temp_dict = view_learningjourney_By_LJid(learningjourney)
                     my_dict[learningjourney.lj_id] = temp_dict

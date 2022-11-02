@@ -20,6 +20,7 @@ import Courses from "./pages/Courses";
 import Course from "./pages/Course";
 import LJDetails from "./pages/LJdetails";
 import Login from "./pages/Login";
+import TeamMembers from "./pages/TeamMembers";
 
 const drawerWidth = 240;
 
@@ -70,10 +71,8 @@ export default function App() {
                 component="div"
                 style={{ fontWeight: "bold" }}
               >
-                {userRole !== "" ? (
+                {userRole !== "" && (
                   <>Logged in as {roles_id_role_name[userRole]}</>
-                ) : (
-                  <>Log In&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</>
                 )}
               </Typography>
             </Toolbar>
@@ -114,6 +113,8 @@ export default function App() {
 
               <Route path="/courses" element={<Courses />} />
               <Route path="/course/:course_id" element={<Course />} />
+
+              <Route path="/teammembers" element={<TeamMembers />} />
             </Routes>
           </Box>
         </Box>

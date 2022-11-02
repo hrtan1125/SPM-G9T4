@@ -34,7 +34,7 @@ export default function PermanentDrawerLeft(){
     }
 
     const manager_drawer = {
-      learningjourneys : 'Learning Journeys', roles: 'Roles', skills : 'Skills', courses: 'Courses',  login: 'Logout'
+      learningjourneys : 'Learning Journeys', roles: 'Roles', skills : 'Skills', courses: 'Courses',  teammembers: 'Team Members', login: 'Logout'
     }
     return(
         <>
