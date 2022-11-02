@@ -1,9 +1,9 @@
 import { useGlobalContext } from '../context';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./../App.css";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button } from '@mui/material';
+import { Button, Pagination } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddIcon from "@mui/icons-material/Add"
 import Table from '@mui/material/Table';
@@ -27,6 +27,10 @@ const Roles = () => {
 
   const {roles, deleteRole} = useGlobalContext()
 
+  const [page, setPage] = useState(1);
+
+  
+
   const toDelete = (id) =>{
     console.log("deleting",id)
     deleteRole(id)
@@ -42,10 +46,26 @@ const Roles = () => {
     width = 640;
   }
 
+  function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+  }
+
+  const roles_chunks = sliceIntoChunks(roles, 20)
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
+
 return (
   <div style={{display: 'flex', justifyContent: "center"}} >
       <div className="app-container" style={{display: 'flex',justifyContent:"center"}} >
-
+        <Pagination count={roles_chunks.length} page={page} onChange={handleChange} />
         {userRole == 1 && <div style={{display: 'flex', justifyContent: "center"}} >
         <Link to={`/createrole`} style={{textDecoration:"none"}}> 
           <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
@@ -64,7 +84,7 @@ return (
           </TableRow>
         </TableHead>
         <TableBody>
-          {roles.map((role) => (
+          {roles_chunks[page - 1]?.map((role) => (
             <TableRow
               key={role.role_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

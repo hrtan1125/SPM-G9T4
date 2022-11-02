@@ -29,7 +29,7 @@ const viewLJsUrl = 'http://127.0.0.1:5002/viewlearningjourneys?staff_id='
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
     const [user, setUser] = useState(150166)
-    var userRoleSaved = "1"
+    var userRoleSaved = ""
     if (localStorage.getItem("userRole")){
       userRoleSaved = localStorage.getItem("userRole")
     }
@@ -256,7 +256,7 @@ const fetchSkill = async(url) => {
       <AppContext.Provider
         value={{path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
-          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole, user, setUser
 }}
       >
         {children}

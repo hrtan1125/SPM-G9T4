@@ -25,6 +25,17 @@ export default function PermanentDrawerLeft(){
     // }else{
     //     path = "Skills"
     // }
+    const admin_drawer = {
+      learningjourneys : 'Learning Journeys', roles: 'Manage Roles', skills : 'Manage Skills', courses: 'Manage Courses',  login: 'Logout'
+    }
+
+    const user_drawer = {
+      learningjourneys : 'Learning Journeys', roles: 'Roles', skills : 'Skills', courses: 'Courses',  login: 'Logout'
+    }
+
+    const manager_drawer = {
+      learningjourneys : 'Learning Journeys', roles: 'Roles', skills : 'Skills', courses: 'Courses',  login: 'Logout'
+    }
     return(
         <>
         {/* <AppBar
@@ -56,10 +67,10 @@ export default function PermanentDrawerLeft(){
         {
           (userRole == 1) &&
           <List>
-          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
-            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+          {Object.keys(admin_drawer).map((key, index) => (
+            <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
               <ListItemButton >
-                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
+                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={admin_drawer[key]} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -68,10 +79,10 @@ export default function PermanentDrawerLeft(){
         {
           (userRole == 2) &&
           <List>
-          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
-            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+          {Object.keys(user_drawer).map((key, index) => (
+            <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
               <ListItemButton >
-                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
+                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={user_drawer[key]} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -80,10 +91,10 @@ export default function PermanentDrawerLeft(){
         {
           (userRole == 3) &&
           <List>
-          {['Roles', 'Skills', 'Courses', 'Learning Journeys', 'Login'].map((text) => (
-            <ListItem key={text} component={Link} to={`/${text==="Learning Journeys"? "learningjourneys":text}`} disablePadding>
+          {Object.keys(manager_drawer).map((key, index) => (
+            <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
               <ListItemButton >
-                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={text} />
+                <ListItemText style={{color:"#5289B5", fontWeight:"bold"}} primary={manager_drawer[key]} />
               </ListItemButton>
             </ListItem>
           ))}

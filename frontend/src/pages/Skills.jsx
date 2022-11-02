@@ -1,9 +1,9 @@
 import { useGlobalContext } from '../context';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./../App.css";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, Pagination } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -19,6 +19,7 @@ import IconButton from '@mui/material/IconButton';
 const Skills = () => {
   const {setPath, userRole} = useGlobalContext()
   useEffect(()=>setPath("Skills"))
+  const [page, setPage] = useState(1);
 
   const {skills, deleteSkill, setSkill, fetchSkills, skillsUrl} = useGlobalContext()
   useEffect(() => {
@@ -34,9 +35,25 @@ const Skills = () => {
     width = 640;
   }
 
+  function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+  }
+
+  const skills_chunks = sliceIntoChunks(skills, 20)
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
     return (
       <div style={{display: 'flex', justifyContent: "center"}} >
         <div className="app-container" style={{display: 'flex',justifyContent:"center"}}>
+        <Pagination count={skills_chunks.length} page={page} onChange={handleChange} />
         {userRole == 1 &&
           <div style={{display: 'flex', justifyContent: "center"}}>
             <Link to={`/createskill`} style={{textDecoration:"none"}}> 
@@ -44,7 +61,7 @@ const Skills = () => {
             </Link>
           </div>    
           }
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} elevation={3}>
           {/* TableContainer */}
           <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
             <TableHead>
@@ -60,7 +77,7 @@ const Skills = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {skills.map((skill) => (
+              {skills_chunks[page-1]?.map((skill) => (
               <TableRow key={skill.skill_code} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               {skill.deleted === "no" && (
                 <>

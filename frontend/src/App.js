@@ -36,6 +36,11 @@ export default function App() {
     2: "User",
     3: "Manager",
   };
+
+  const sx = {
+    width: userRole !== "" && `calc(100% - ${drawerWidth}px)`,
+    ml: userRole !== "" && `${drawerWidth}px`,
+  };
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -43,10 +48,11 @@ export default function App() {
           <AppBar
             elevation={0}
             style={{ backgroundColor: "#AFD8F2", color: "#1F3541" }}
-            sx={{
-              width: `calc(100% - ${drawerWidth}px)`,
-              ml: `${drawerWidth}px`,
-            }}
+            // sx={{
+            //   width: `calc(100% - ${drawerWidth}px)`,
+            //   ml: `${drawerWidth}px`,
+            // }}
+            // sx={sx}
           >
             <Toolbar>
               <Typography
@@ -64,17 +70,23 @@ export default function App() {
                 component="div"
                 style={{ fontWeight: "bold" }}
               >
-                Logged in as {roles_id_role_name[userRole]}
+                {userRole !== "" ? (
+                  <>Logged in as {roles_id_role_name[userRole]}</>
+                ) : (
+                  <>Log In&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</>
+                )}
               </Typography>
             </Toolbar>
           </AppBar>
-          <PermanentDrawerLeft />
+          {userRole != "" && <PermanentDrawerLeft />}
+
           <Box
             style={{ margin: "60px" }}
             component="main"
             sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
           >
             <Routes>
+              <Route path="/" element={<Login />}></Route>
               <Route path="/Login" element={<Login />}></Route>
               <Route
                 path="/learningjourneys"

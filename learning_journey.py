@@ -153,6 +153,28 @@ class Staff(db.Model):
             result[column] = getattr(self, column)
         return result
 
+# check user's role
+@app.route("/checkrole", methods=['GET'])
+def checkRole():
+    try:
+        staff_id = request.args.get('staff_id')
+        # print(staff_id)
+        staff_role = Staff.query.filter_by(Staff_ID=staff_id).first()
+        # print(staff_id)
+        if staff_role:
+            staff_rid = staff_role.Role
+            return jsonify({
+                "role": staff_rid
+            }),200
+        else:
+            return jsonify({
+                "message": "Invalid staff ID!"
+            }),400
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error"
+        }),500
+
 # view courses
 @app.route("/viewAllCourses", methods=['GET'])
 def viewAllCourses():
@@ -200,10 +222,8 @@ def viewlearningjourneys():
             for learningjourney in learningjourneys:
                 # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
                 res = view_learningjourney_By_LJid(learningjourney,staff_id)
-                print("hello testing again")
+               
                 my_dict[learningjourney.lj_id] = json.loads(res[0].data)
-                print("hello successful")
-                print(my_dict)
                 
             return jsonify({
                 "data" : my_dict
@@ -220,9 +240,7 @@ def viewlearningjourneys():
 #View learning journey by LJ id
 @app.route("/viewlearningjourneyByLJid")
 def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
-    print("viewing by id")
-    print(staff_id)
-    print(type(staff_id))
+
     if isinstance(staff_id,int):
         learningjourney=request.args.get('lj_id')
         staff_id=request.args.get('staff_id')
@@ -347,6 +365,7 @@ def create_learning_journey():
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
 def add_learning_journey_courses(lj_id=0,courses=[]):
+    print("hello adding")
     data = request.get_json()
     print(data)
     if data:
