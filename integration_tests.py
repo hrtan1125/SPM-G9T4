@@ -72,7 +72,7 @@ class testCreateRole(TestApp):
         response = self.client.post("/createrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
-
+        self.assertEqual(response.status_code,200)
         self.assertDictEqual(response.json, {
             'role_id': 2,
             'role_name': 'Chief Technology Officer',
