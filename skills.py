@@ -4,6 +4,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 from sqlalchemy import and_
 import json
+
+from roles import Role_Skills
 # from learning_journey import * 
 
 app = Flask(__name__)
@@ -371,15 +373,20 @@ def viewSkillsByCodes(skill_code_list):
 #Admin views Learner's Skills Function
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
-    staff_id = request.args.get('staff_id')
+    from learning_journey import Staff
+    receivedRequest = request.json
+    staff_id = receivedRequest["staff_id"]
+    skill_list = []
     my_dict = {}
     try:
         if staff_id:
-            staff_role = Staff.query.filter_by(staff_id=staff_id).all()
-            staff_roles = [role for role in staff_role]
-            for role in staff_roles:
-                temp_dict = viewSkillsByRole(role)
-                temp_dict.update(my_dict)
+            staff = Staff.query.filter_by(Staff_ID=staff_id).first()
+            staff_role = staff.Role
+            temp = Role_Skills.query.filter_by(role_id=staff_role).all()
+            for item in temp:
+                skill = item.skill_code
+                skill_list.append(skill)
+            my_dict = viewSkillsByCodes(skill_list)
             return jsonify({
                 "data" : my_dict
             }), 200
@@ -387,8 +394,6 @@ def adminViewLearnersSkills():
             return jsonify({
                 "message": "No skills available."
             }), 400
-        
-
     except Exception:
         return jsonify({
             "message": "Unable to commit to database"
