@@ -374,8 +374,9 @@ def viewSkillsByCodes(skill_code_list):
 @app.route("/adminViewLearnersSkills", methods=['GET'])
 def adminViewLearnersSkills():
     from learning_journey import Staff
-    receivedRequest = request.json
-    staff_id = receivedRequest["staff_id"]
+    # receivedRequest = request.json
+    # staff_id = receivedRequest["staff_id"]
+    staff_id = request.args.get('staff_id')
     skill_list = []
     my_dict = {}
     try:
