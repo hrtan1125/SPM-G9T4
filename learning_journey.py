@@ -478,8 +478,9 @@ def viewTeamMembers():
         }), 500         
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
-    data= request.get_json()
-    dept = data["dept"]
+    #data= request.get_json()
+    #dept = data["dept"]
+    dept = request.args.get('dept')
     my_dict = {}
     try:
         if dept:
@@ -489,8 +490,8 @@ def viewTeamlearningjourneys():
                 LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
                 for learningjourney in learningjourneys:
-                    temp_dict = view_learningjourney_By_LJid(learningjourney)
-                    my_dict[learningjourney.lj_id] = temp_dict
+                    res = view_learningjourney_By_LJid(learningjourney,team_mem.Staff_ID)
+                    my_dict[learningjourney.lj_id] = json.loads(res[0].data)
             return jsonify({
                 "data" : my_dict
             }), 200
