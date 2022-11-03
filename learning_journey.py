@@ -530,5 +530,29 @@ def viewTeamlearningjourneys():
             "message": "Unable to commit to database"
         }), 500
 
+@app.route("/AdminViewLearners", methods=['GET'])
+def adminViewLearners():
+    staff_id=request.args.get('staff_id')
+    my_list = []
+    try:
+        if staff_id:
+            staff = Staff.query.all()
+            for i in staff:
+                obj_Staff_Id = i.Staff_ID
+                admin_Staff_Id = int(staff_id)
+                if obj_Staff_Id != admin_Staff_Id:
+                    my_list.append(i)
+            return jsonify({
+                "data" : [learner.to_dict() for learner in my_list]
+            }), 200
+        else:
+            return jsonify({
+                "message": "There are no learners available"
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database"
+        }), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
