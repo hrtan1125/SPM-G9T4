@@ -400,15 +400,11 @@ def adminViewLearnersSkills():
             "message": "Unable to commit to database"
         }), 500
 
-# TBC, work in progress
+# pretty much done, work in progress to add the name in
 @app.route("/viewTeamMembersCourses", methods=['GET'])
 def managerViewTeamMembersCourses():
 
     from learning_journey import Registration
-
-    # {
-    #     dept:'Ops'
-    # }
 
     if request.get_json():
         data = request.get_json()
@@ -417,39 +413,13 @@ def managerViewTeamMembersCourses():
     team_members_skills_json = managerViewTeamMembersSkills(dept)
     team_members_skill = json.loads(team_members_skills_json[0].data)
     team_members_skill_obj = team_members_skill["data"]
-    print(team_members_skill_obj)
-    # return jsonify(team_members_skill_obj)
 
-    for member_id in team_members_skill_obj:
-        print (member_id)
-        all_list = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
-        print(all_list)
-    return jsonify("test")
-
-
-    # staff_id = "150075"
-    # all_list = Registration.query.filter_by(staff_id=staff_id, completion_status ='Completed').all()
-    # staff_roles = [role.to_dict() for role in all_list]
-    # print(staff_roles) # a list of obj 
-    # return jsonify(staff_roles)
-   
-    all_list = Skills_acquired.query.filter(Skills_acquired.staff_id.in_(my_list)).all()
-    skills_acquired_list = [code.to_dict() for code in all_list]
-    skills_list = [skill.skill_code for skill in all_list]
-
-    if request.get_json():
-        data = request.get_json()
-        dept =  data['dept']
-
-    # get the the list of team members
-    team_members_skills_json = managerViewTeamMembersSkills(dept)
-    team_members_skill = json.loads(team_members_skills_json[0].data)
-    team_members_skill_list = team_members_skill["data"]
-    return jsonify(team_members_skill_list)
-
-
-
-
+    temp_dict = {}
+    for member_id in team_members_skill_obj.keys():
+        reg_list_from_staff_id = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
+        staff_roles = [reg.to_dict() for reg in reg_list_from_staff_id]
+        temp_dict[member_id] = staff_roles
+    return temp_dict
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
