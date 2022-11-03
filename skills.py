@@ -400,11 +400,10 @@ def adminViewLearnersSkills():
             "message": "Unable to commit to database"
         }), 500
 
-# pretty much done, work in progress to add the name in
 @app.route("/viewTeamMembersCourses", methods=['GET'])
 def managerViewTeamMembersCourses():
 
-    from learning_journey import Registration
+    from learning_journey import Registration, Courses
 
     if request.get_json():
         data = request.get_json()
@@ -414,12 +413,29 @@ def managerViewTeamMembersCourses():
     team_members_skill = json.loads(team_members_skills_json[0].data)
     team_members_skill_obj = team_members_skill["data"]
 
-    temp_dict = {}
+    empty_dict = {}
     for member_id in team_members_skill_obj.keys():
         reg_list_from_staff_id = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
         staff_roles = [reg.to_dict() for reg in reg_list_from_staff_id]
-        temp_dict[member_id] = staff_roles
-    return temp_dict
+        empty_dict[member_id] = staff_roles
+
+    name_temp_dict = {}
+    for member_obj in empty_dict:
+        for attr in empty_dict[member_obj]:
+            course_id = attr['course_id']
+            course = Courses.query.filter_by(course_id=course_id).first()
+            course_id = course.course_id
+            course_name = course.course_name
+            name_temp_dict[course_id] = course_name
+
+    for member_obj in empty_dict:
+        list_of_obj = empty_dict[member_obj]
+        for obj in list_of_obj:
+            if obj['course_id'] in name_temp_dict.keys():
+                course_id = obj['course_id']
+                obj['course_name'] = name_temp_dict[course_id]
+
+    return empty_dict
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
