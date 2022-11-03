@@ -97,14 +97,14 @@ class testViewRoles(TestApp):
         self.assertDictEqual(response.json, {
             "data": [
                 {
-                "role_id":1,
-                "role_name": "Chief Technology Officer",
-                "deleted": "no"
+                    "role_id":1,
+                    "role_name": "Chief Technology Officer",
+                    "deleted": "no"
                 },
                 {
-                "role_id":2,
-                "role_name": "Supervisor",
-                "deleted": "no"
+                    "role_id":2,
+                    "role_name": "Supervisor",
+                    "deleted": "no"
                 }
             ]
         })

@@ -41,21 +41,7 @@ class Learning_Journey(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
-    # def calculate_progress(courses_and_statuses):
-    #     total_courses = 0
-    #     completed_courses = 0
-    #     progress = 0
-    #     for course_and_status in courses_and_statuses:
-    #         if (course_and_status[0] == 'Completed'):
-    #             completed_courses += 1
-    #         total_courses += 1
-    #     if total_courses == 0:
-    #         raise Exception ("There is no course in this learning journey")
-    #     progress = completed_courses/total_courses*100
-    #     return progress
-        
-            
+              
 class Learning_Journey_Courses(db.Model):
     __tablename__ = 'learning_journey_courses'
     lj_id = db.Column(db.Integer)
@@ -96,9 +82,11 @@ class Courses(db.Model):
     course_status = db.Column(db.String(15))
     course_type = db.Column(db.String(10))
     course_category = db.Column(db.String(50))
+
     __mapper_args__ = {
         'polymorphic_identity': 'courses'
     }
+
     def to_dict(self):
         """
         'to_dict' converts the object into a dictionary,
@@ -344,6 +332,7 @@ def create_learning_journey():
         return jsonify({
             "message": "Incorrect Data Formet."
         }), 500
+
     title = data["title"]
     role_id = data["role_id"]
     staff_id = data["staff_id"]
@@ -359,10 +348,12 @@ def create_learning_journey():
         #call function to add courses to learning journey
         add_learning_journey_courses(id,courses_list)
         return jsonify(learning_journey.to_dict()), 201
+
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
 #to handle a list of courses
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
@@ -390,6 +381,7 @@ def add_learning_journey_courses(lj_id=0,courses=[]):
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
 @app.route("/removecourses", methods=['DELETE'])
 def removeCourses():
     data = request.get_json()
@@ -451,6 +443,7 @@ def viewLearningJourney():
             "data": [learningJourney.to_dict() for learningJourney in data]
         }
     ), 200
+
 # Filter Learning Journey(s) based on role
 @app.route("/filterLearningJourneyByRole", methods=['GET'])
 def filterLearningJourneyByRole():
@@ -476,6 +469,7 @@ def filterLearningJourneyByRole():
                 "message": "No Learning Journey found for this role."
             }
         ), 400
+
 @app.route("/viewTeamMembers", methods=['GET'])
 def viewTeamMembers(dept=''):
     dept = request.args["dept"]
@@ -499,13 +493,14 @@ def viewTeamMembers(dept=''):
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 500         
+        }), 500      
+
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
     data= request.get_json()
     dept = data["dept"]
     my_dict = {}
-    print(dept, "DEPPTT")
+
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
@@ -518,6 +513,7 @@ def viewTeamlearningjourneys():
                 for learningjourney in learningjourneys:
                     temp_dict = view_learningjourney_By_LJid(learningjourney)
                     my_dict[learningjourney.lj_id] = temp_dict
+            
             return jsonify({
                 "data" : my_dict
             }), 200
