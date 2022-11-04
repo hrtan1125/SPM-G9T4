@@ -41,19 +41,6 @@ class Learning_Journey(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
-    # def calculate_progress(courses_and_statuses):
-    #     total_courses = 0
-    #     completed_courses = 0
-    #     progress = 0
-    #     for course_and_status in courses_and_statuses:
-    #         if (course_and_status[0] == 'Completed'):
-    #             completed_courses += 1
-    #         total_courses += 1
-    #     if total_courses == 0:
-    #         raise Exception ("There is no course in this learning journey")
-    #     progress = completed_courses/total_courses*100
-    #     return progress
         
             
 class Learning_Journey_Courses(db.Model):
@@ -74,7 +61,7 @@ class Learning_Journey_Courses(db.Model):
         for id in courses.keys():
             if (courses[id]["completion_status"] == 'Completed'):
                 completed_courses += 1
-        progress = completed_courses/total_courses*100
+        progress = math.floor(completed_courses/total_courses*100)
         return progress
 
     def to_dict(self):
@@ -170,6 +157,7 @@ def viewAllCourses():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
+
 # view registration
 @app.route("/viewAllRegistration", methods=['GET'])
 def viewAllRegistration():
@@ -221,8 +209,6 @@ def viewlearningjourneys():
 #View learning journey by LJ id
 @app.route("/viewlearningjourneyByLJid")
 def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
-    print("viewing by id")
-    print(staff_id)
     if "lj_id" in request.args:
         lj_id=request.args.get('lj_id')
         staff_id=request.args.get('staff_id')
@@ -230,7 +216,6 @@ def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
         print(learningjourney)
         print(staff_id)
     try:
-        print("lj_id is", learningjourney.lj_id)
         response = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
         lj_courses_and_status = json.loads(response[0].data)
         print("courses",lj_courses_and_status)
@@ -246,6 +231,7 @@ def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
         return jsonify({
             "message": "Unable to view learning journey details."
         }), 500
+
 # View Courses Statuses and progress
 @app.route("/viewcoursesstatuses")
 def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
@@ -253,14 +239,10 @@ def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
         coursesList = Courses.query.filter(Courses.course_id.in_(courses_ids_list)).all()
         # course_names = [course.course_name for course in coursesList]
         courses_dict = {course.course_id:{"course_name":course.course_name,"completion_status":""} for course in coursesList}
-        print("view courses in progress")
         courses_progress_list = Registration.query.filter(Registration.course_id.in_(courses_ids_list),Registration.staff_id==staff_id).all()
         
         for progress in courses_progress_list:
             courses_dict[progress.course_id]["completion_status"] = progress.completion_status
-
-        print("printing courses dict")
-        print(courses_dict)
         final_progress = Learning_Journey_Courses.calculate_progress(courses_dict)
         return jsonify({"courses" : courses_dict, "progress": final_progress}), 200
     except Exception:
@@ -329,7 +311,6 @@ def create_learning_journey():
     role_id = data["role_id"]
     staff_id = data["staff_id"]
     courses_list = data["courses"]
-    # {skill_code1:[courses], skill_code2:[courses]}
     learning_journey = Learning_Journey(**{"title": title,"role_id":role_id, "staff_id":staff_id})
     
     try:
@@ -402,11 +383,8 @@ def removeCourses():
             "message": "Unable to commit to database."
         }), 500
         
-@app.route("/removelearningjourney", methods=['DELETE'])
-def remove_learning_journey():
-    data = request.get_json()
-    id = data['lj_id']
-    title = data["title"]   
+@app.route("/removelearningjourney/<int:id>", methods=['DELETE'])
+def remove_learning_journey(id):
     to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
     if not to_remove:
         return jsonify({
@@ -415,8 +393,9 @@ def remove_learning_journey():
     try: 
         db.session.delete(to_remove)
         db.session.commit()
+        print(id)
         return jsonify({
-            "message": title + " has been removed successfully."
+            "message": "Learning Journey has been removed successfully."
         }), 200
     except Exception:
         return jsonify({
@@ -485,8 +464,6 @@ def viewTeamMembers():
 
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
-    #data= request.get_json()
-    #dept = data["dept"]
     dept = request.args.get('dept')
     my_dict = {}
     try:
