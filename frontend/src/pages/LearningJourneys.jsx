@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, {useEffect, useState} from 'react'
 import { useGlobalContext } from '../context';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Grid from "@mui/material/Grid"
 import {Card} from "@mui/material"
 import { Typography } from '@mui/material';
@@ -40,6 +40,8 @@ const viewDetails = (e) =>{
 
 
 
+
+
 const Cards = ({ljs})=>{
   const {setOpen, lid, ltitle, setLid, setLTitle} = useGlobalContext()
 
@@ -48,17 +50,6 @@ const Cards = ({ljs})=>{
     setLTitle(title)
     setLid(id)
     setOpen(true)
-    // fetch("http://127.0.0.1:5002/removelearningjourney",{
-    //   method:"DELETE",
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     "lj_id":id,
-    //     "title":title
-    //   })
-    // }).then(res=>{
-    //   res.json()
-    //   window.location.reload(false);
-    // })
   }
   
   return (<>{Object.keys(ljs).map((lj_id)=>(
@@ -100,18 +91,21 @@ const Cards = ({ljs})=>{
 
 
 const LearningJourneys = () => {
-  const {setPath} = useGlobalContext()
+
+  const {setPath, userDetails} = useGlobalContext()
+
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
 
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${150166}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${userDetails.staff_id}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
       console.log(data.data)
     });
-  },[])
+  },[userDetails.staff_id])
+
   
   return (
     <div>

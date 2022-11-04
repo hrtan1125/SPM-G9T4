@@ -13,12 +13,16 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 
 const Courses = () => {
-  const {setPath, userRole} = useGlobalContext()
+  const {setPath, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Courses"))
   const {allCourses} = useGlobalContext()
   var width = 500;
-  if (userRole == 1) {
+
+  var marginTop = 0;
+  if (userDetails.role == 1) {
     width = 640;
+    marginTop = 50;
+
   }
     return (
         <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
@@ -30,7 +34,7 @@ const Courses = () => {
           <TableRow>
             <TableCell>Course ID</TableCell>
             <TableCell align="left">Course Name</TableCell>
-            {userRole == 1 && 
+            {userDetails.role == 1 && 
             <TableCell align="center"></TableCell>}
           </TableRow>
         </TableHead>
@@ -44,7 +48,7 @@ const Courses = () => {
                 {course.course_id}
               </TableCell>
               <TableCell align="left">{course.course_name}</TableCell>
-              {userRole == 1 && 
+              {userDetails.role == 1 && 
               <>
                 <TableCell align="center">
                   <div style={{display: 'flex', justifyContent: "center"}} >
@@ -60,7 +64,6 @@ const Courses = () => {
         </TableBody>
       </Table>
     </TableContainer>
-
         </div>
       </div> 
       );
