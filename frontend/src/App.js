@@ -121,7 +121,7 @@ export default function App() {
                 element={<CreateEditRole />}
               />
               <Route
-                path="/learningjourney/:id"
+                path="/learningjourney/:id/:sid"
                 element={<LJDetails />}
               ></Route>
 

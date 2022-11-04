@@ -20,25 +20,25 @@ const LJDetails = () => {
   const {setPath, userDetails} = useGlobalContext()
   const [courses,setCourses] = useState(null)
   const [ljs, setLJs] = useState(null)
-  const {id} = useParams()
+  const {id, sid} = useParams()
   useEffect(()=>setPath("Learning Journey"),[])
 
 
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewCoursesByLearningJourney?staff_id=${userDetails.staff_id}&lj_id=${id}`)
+    fetch(`http://127.0.0.1:5002/viewCoursesByLearningJourney?staff_id=${sid}&lj_id=${id}`)
     .then(res=> {return res.json()})
     .then(data => {
       setCourses(data.courses);
       console.log(data)
     });
 
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${userDetails.staff_id}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
       console.log(data.data)
     });
-  },[userDetails.staff_id])
+  },[sid])
 
   function toDelete(cid,id){
     console.log(cid,id)

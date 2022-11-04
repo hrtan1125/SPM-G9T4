@@ -19,7 +19,8 @@ import AlertDialog from "../components/DeleteConfirmation"
 
 
 
-const Cards = ({ljs})=>{
+const Cards = ({ljs,staff})=>{
+  console.log("staff is", staff)
   const {setOpen, setLid, setLTitle} = useGlobalContext()
   const navigate = useNavigate()
   const deleteLJ = (id,title) =>{
@@ -39,7 +40,7 @@ const Cards = ({ljs})=>{
   <React.Fragment>
     <CardContent>
       {(window.location.href.indexOf('team')>-1)?<></>:<Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
-      <IconButton href={`/learningjourney/${lj_id}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
+      <IconButton href={`/learningjourney/${lj_id}/${staff}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
       </Box>}
       
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -78,12 +79,13 @@ const LearningJourneys = () => {
   const {staff_id} = useParams()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
-  var sid = ""
-  if(window.location.href.indexOf('team')>-1){
-    sid = staff_id
-  }else{
-    sid = userDetails.staff_id
-  }
+  var sid = (window.location.href.indexOf('team')>-1)?staff_id:userDetails.staff_id;
+  console.log("sid",sid)
+  // if(window.location.href.indexOf('team')>-1){
+  //   sid = staff_id
+  // }else{
+  //   sid = userDetails.staff_id
+  // }
   useEffect(()=>{
     
     fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
@@ -103,8 +105,7 @@ const LearningJourneys = () => {
         </Link>
       </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        
-        {ljs && <Cards ljs={ljs}/>}
+        {ljs && <Cards ljs={ljs} staff={sid}/>}
       </Grid>
     
     </div> 
