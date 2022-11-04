@@ -69,9 +69,9 @@ const Learners = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {teamMembers_chunks[page-1]?.map((member) => (
+            {teamMembers_chunks[page-1]?.map((member, index) => (
               <TableRow
-                key={member.Staff_id}
+                key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell align="left">
