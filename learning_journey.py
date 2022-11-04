@@ -500,23 +500,23 @@ def viewTeamMembers(dept=''):
 
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
-    data= request.get_json()
-    dept = data["dept"]
+    dept = request.args.get('dept')
     my_dict = {}
 
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
             team_mems = [team_mem for team_mem in team_members]
-            print(team_members, "TEAMMMMM")
             for team_mem in team_mems:
+                print("team member is ",team_mem.Staff_ID)
                 LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
-                print(learningjourneys, "LJSSS")
+
                 for learningjourney in learningjourneys:
-                    temp_dict = view_learningjourney_By_LJid(learningjourney)
-                    my_dict[learningjourney.lj_id] = temp_dict
-            
+                    res = view_learningjourney_By_LJid(learningjourney,team_mem.Staff_ID)
+                    print("response data",res[0].data)
+                    my_dict[learningjourney.lj_id] = json.loads(res[0].data)
+
             return jsonify({
                 "data" : my_dict
             }), 200
