@@ -69,7 +69,7 @@ const Cards = ({ljs})=>{
       {ljs[lj_id].title}
       </Typography>
       <Typography variant="body2" >
-        You have completed {ljs[lj_id].progress}%
+        Completed {ljs[lj_id].progress}%
       </Typography>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
@@ -92,18 +92,20 @@ const Cards = ({ljs})=>{
 
 
 const LearningJourneys = () => {
-  const {setPath} = useGlobalContext()
+  const {setPath, user} = useGlobalContext()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
 
+  console.log(user, "LJJJ USER")
+
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${150166}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${user}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
       console.log(data.data)
     });
-  },[])
+  },[user])
   
   return (
     <div>

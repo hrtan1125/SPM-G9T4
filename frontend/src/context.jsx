@@ -1,13 +1,14 @@
 
 import React, { useState, useContext, useEffect } from 'react'
 import axios from 'axios'
+import { useMemo } from 'react'
 const AppContext = React.createContext()
 
 // Roles
-const rolesUrl = 'http://127.0.0.1:5001/view'
+const rolesUrl = 'http://127.0.0.1:5001/viewroles'
 const viewSelectedRoleUrl = 'http://127.0.0.1:5001/viewselectedrole?role_id='
-const deleteRoleUrl = 'http://127.0.0.1:5001/delete'
-const updateRoleUrl = 'http://127.0.0.1:5001/update'
+const deleteRoleUrl = 'http://127.0.0.1:5001/deleterole'
+const updateRoleUrl = 'http://127.0.0.1:5001/updaterole'
 
 // Skills
 const skillsUrl = 'http://127.0.0.1:5000/view'
@@ -21,26 +22,36 @@ const deleteSkillUrl = 'http://127.0.0.1:5000/delete'
 const coursesUrl = 'http://127.0.0.1:5002/viewAllCourses'
 const viewCoursesBySkillUrl = 'http://127.0.0.1:5002/viewCourses?skill_code='
 
+//Learning Journeys
+const viewLJsUrl = 'http://127.0.0.1:5002/viewlearningjourneys?staff_id='
 
-// const SkillsProvider = ({children}) =>{
-//    const [skills, setSkills] = useState(async(url) => {
-//     try {
-//         const {data} = await axios(url)
-//         return data.data
-//     } catch (error) {
-//         console.log("my error",error.response)
-//     }
-// })
-
-// return(
-//   <SkillsContext value={{skills, setSkills}}>
-// {children}
-//   </SkillsContext>
-// )
-// }
 
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
+    
+    // const [user, setUser] = useState(150166)
+    var userRoleSaved = ""
+    var userDeptSaved = ""
+    var userSaved = ""
+
+    if (localStorage.getItem("userRole")){
+      userRoleSaved = localStorage.getItem("userRole")
+    }
+    // if (localStorage.getItem("dept")){
+    //   userDeptSaved = localStorage.getItem("dept")
+    // }
+    // if (localStorage.getItem("user")){
+    //   userDeptSaved = localStorage.getItem("user")
+    // }
+
+    const [userRole, setUserRole] = useState(userRoleSaved)
+    const [userDept, setUserDept] = useState(userDeptSaved)
+    const [user, setUser] = useState(userSaved)
+
+    useEffect(()=>setUser(localStorage.getItem("user")),[user])
+    // useEffect(()=>setUserDept(localStorage.getItem("userDept")),[userDept])
+    // useEffect(()=>setUserRole(localStorage.getItem("userRole")),[userRole])
+    
 
     // Roles
     const [roles, setRoles] = useState([])
@@ -52,8 +63,6 @@ const AppProvider = ({ children }) => {
     const [relatedSkills, setRelatedSkills] = useState([])
     const [skill, setSkill] = useState([])
     const [skillCode, setSkillCode] = useState('')
-    // const [chipData,setChipData] = useState([])
-    // const [variantData,setVariant] = useState({})
     
     // Courses
     const [courses, setCourses] = useState([])
@@ -69,7 +78,6 @@ const AppProvider = ({ children }) => {
     const closeModal = () => {
       setShowModal(false)
     }
-
 
     const fetchRoles = async(url) => {
         try {
@@ -113,12 +121,6 @@ const fetchRelatedCourses = async(url) => {
         const {data} = await axios(url)
         setSkills(()=>{return data.data})
         console.log(skills)
-        // const skills_list = data.data
-        // setChipData(skills_list.map((skill)=>{
-        //   let key = skill.skill_code
-        //   let label = skill.skill_name
-        //   return {key:key,label:label};
-        // }))
     } catch (error) {
         console.log(error.response)
     }
@@ -143,6 +145,7 @@ const fetchSkill = async(url) => {
       console.log(error.response)
   }
 }
+
     useEffect(() => {
         fetchRoles(rolesUrl)
         console.log("test fetch role")
@@ -266,9 +269,10 @@ const fetchSkill = async(url) => {
 
     return (
       <AppContext.Provider
-        value={{path,setPath,roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+        value={{path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
-          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole, user, setUser,
+          userDept, setUserDept
 }}
       >
         {children}

@@ -62,7 +62,7 @@ class Role_Skills(db.Model):
 
 
 # admin create role
-@app.route("/create", methods=['POST'])
+@app.route("/createrole", methods=['POST'])
 def createRole():
     data = request.get_json()
     # print(data)
@@ -110,14 +110,27 @@ def createRole():
         }), 500
 
 # admin read all roles
-@app.route("/view")
+@app.route("/viewroles")
 def viewRoles():
-    data = Roles.query.filter_by(deleted="no").all()
-    return jsonify(
-        {
-            "data": [role.to_dict() for role in data]
-        }
-    ), 200
+    try: 
+        data = Roles.query.filter_by(deleted="no").all()
+
+        if data:
+            return jsonify(
+                {
+                    "data": [role.to_dict() for role in data]
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "message": "No role available."
+                }
+            ), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
     # admin read all roles
 @app.route("/viewselectedrole")
@@ -137,7 +150,7 @@ def viewSelectedRole():
         ),500
 
 # admin update a role
-@app.route("/update", methods=['PUT'])
+@app.route("/updaterole", methods=['PUT'])
 def updateRole():
     try:
         data = request.get_json()
@@ -179,7 +192,7 @@ def updateRole():
         ), 500
 
 # admin delete role (soft delete)
-@app.route("/delete", methods=['PUT'])
+@app.route("/deleterole", methods=['PUT'])
 def removeRole():
     try:
         data = request.get_json()
