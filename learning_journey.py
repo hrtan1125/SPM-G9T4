@@ -324,6 +324,7 @@ def viewCourses():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500   
+        
 @app.route("/createlearningjourney", methods=['POST'])
 def create_learning_journey():
     data = request.get_json()
@@ -379,7 +380,7 @@ def add_learning_journey_courses(lj_id=0,courses=[]):
         
         return jsonify({
             "message": "Courses successfully added!"
-        })
+        }), 200
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."

@@ -108,6 +108,10 @@ export default function App() {
                 path="/learningjourneys"
                 element={<LearningJourneys />}
               ></Route>
+              <Route
+                path="/learningjourneys/team/:staff_id"
+                element={<LearningJourneys />}
+              ></Route>
               <Route path="/createlearningjourney" element={<CreateLJ />} />
 
               <Route path="/roles" element={<Roles />}></Route>
