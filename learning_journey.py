@@ -313,6 +313,7 @@ def viewCourses():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500   
+
 @app.route("/createlearningjourney", methods=['POST'])
 def create_learning_journey():
     data = request.get_json()
@@ -343,6 +344,7 @@ def create_learning_journey():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
 #to handle a list of courses
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
@@ -369,6 +371,7 @@ def add_learning_journey_courses(lj_id=0,courses=[]):
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+        
 @app.route("/removecourses", methods=['DELETE'])
 def removeCourses():
     data = request.get_json()
@@ -419,6 +422,7 @@ def remove_learning_journey():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
 # View all learning journeys
 @app.route("/viewlearningjourney")
 def viewLearningJourney():
@@ -430,6 +434,7 @@ def viewLearningJourney():
             "data": [learningJourney.to_dict() for learningJourney in data]
         }
     ), 200
+
 # Filter Learning Journey(s) based on role
 @app.route("/filterLearningJourneyByRole", methods=['GET'])
 def filterLearningJourneyByRole():
