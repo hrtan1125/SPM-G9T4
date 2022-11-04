@@ -32,32 +32,13 @@ const theme = createTheme({
 });
 
 export default function App() {
-  const { path, userRole, userDetails } = useGlobalContext();
+  const { path, userDetails } = useGlobalContext();
   const roles_id_role_name = {
     1: "Admin",
     2: "User",
     3: "Manager",
   };
 
-  console.log(
-    userDetails,
-    userDetails.typ,
-    userDetails.dept,
-    userDetails.name,
-    userDetails?.staff_id,
-    "DETAILLSS"
-  );
-  console.log(typeof userDetails);
-
-  console.log(userDetails == "{}", "HAHAHHAA");
-  console.log(userDetails == {}, "hehehehe");
-  console.log(Object.keys(userDetails).length === 0, "HOHOHO");
-
-  const sx = {
-    width:
-      Object.keys(userDetails).length !== 0 && `calc(100% - ${drawerWidth}px)`,
-    ml: Object.keys(userDetails).length !== 0 && `${drawerWidth}px`,
-  };
   return (
     <ThemeProvider theme={theme}>
       <Router>
