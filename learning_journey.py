@@ -197,6 +197,7 @@ def viewlearningjourneys():
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
             learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+            print("all learning journeys", learningjourneys)
             for learningjourney in learningjourneys:
                 # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
                 res = view_learningjourney_By_LJid(learningjourney,staff_id)
@@ -222,18 +223,17 @@ def viewlearningjourneys():
 def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
     print("viewing by id")
     print(staff_id)
-    print(type(staff_id))
-    if isinstance(staff_id,int):
-        learningjourney=request.args.get('lj_id')
+    if "lj_id" in request.args:
+        lj_id=request.args.get('lj_id')
         staff_id=request.args.get('staff_id')
+        learningjourney = Learning_Journey.query.filter_by(lj_id=lj_id).first()
         print(learningjourney)
         print(staff_id)
-        #fix in progress
     try:
-        # lj_courses_and_status = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
+        print("lj_id is", learningjourney.lj_id)
         response = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
         lj_courses_and_status = json.loads(response[0].data)
-        print(lj_courses_and_status)
+        print("courses",lj_courses_and_status)
         role = Roles.query.filter_by(role_id = learningjourney.role_id).first()
         lj_courses_and_status["title"] = learningjourney.title
         lj_courses_and_status["role_id"] = learningjourney.role_id
@@ -455,6 +455,7 @@ def filterLearningJourneyByRole():
                 "message": "No Learning Journey found for this role."
             }
         ), 400
+
 @app.route("/viewTeamMembers", methods=['GET'])
 def viewTeamMembers():
     data = request.get_json()
@@ -475,7 +476,8 @@ def viewTeamMembers():
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 500         
+        }), 500     
+
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
     #data= request.get_json()
@@ -486,11 +488,15 @@ def viewTeamlearningjourneys():
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
             team_mems = [team_mem for team_mem in team_members]
+            print("team-members",team_mems)
             for team_mem in team_mems:
+                print("team member is ",team_mem.Staff_ID)
                 LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+                print("learning journeys list", learningjourneys)
                 for learningjourney in learningjourneys:
                     res = view_learningjourney_By_LJid(learningjourney,team_mem.Staff_ID)
+                    print("response data",res[0].data)
                     my_dict[learningjourney.lj_id] = json.loads(res[0].data)
             return jsonify({
                 "data" : my_dict
