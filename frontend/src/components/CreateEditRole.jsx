@@ -38,7 +38,7 @@ const CreateEditRole = () =>{
 
 
 function refreshPage() {
-  navigate(`/${role_id}/${roleRef.current.value}`)
+  navigate(`/role/${role_id}/${roleRef.current.value}`)
   window.location.reload(false);
 }
 
@@ -74,7 +74,7 @@ function handleUpdate(e,key){
 //submit new role to database
 const createNewRole=async(roleName,skillsToAssign)=>{
   console.log("Creating new Role")
-  fetch('http://127.0.0.1:5001/create',{
+  fetch('http://127.0.0.1:5001/createrole',{
     method:"POST",
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -95,6 +95,8 @@ const handleSubmit = (e) => {
   if(e.target.textContent==="Create"){
     if (!roleRef.current.value){
       alert("Role Name cannot be empty")
+    }else if(!/^[A-Za-z0-9 ]*$/.test(roleRef.current.value)){
+      console.log("invalid role name")
     }else if (toUpdateSkills.length === 0){
       alert("Please select at least one skill")
     }else{
@@ -170,7 +172,7 @@ const deleteSkillsFromRole = async(role_id, skill_code) => {
     <Grid container spacing={2} >
       <Grid item sx={{display:"flex", alignItems:"center"}}> 
       Role Name:   &nbsp;
-        <TextField size="small" id="outlined-basic"  variant="outlined" defaultValue={role_name} inputRef={roleRef}/>  
+        <TextField size="small" id="outlined-basic" style={{width:"400px"}} variant="outlined" defaultValue={role_name} inputRef={roleRef}/>  
       </Grid>
       <Grid item sx={{display:"flex", alignItems:"center"}}>
       <Button style={{backgroundColor:"#5289B5"}} variant="contained" onClick={(e) => handleSubmit(e)}>{role_id?"Edit":"Create"}</Button>

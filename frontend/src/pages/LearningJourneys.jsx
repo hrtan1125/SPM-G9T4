@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, {useEffect, useState} from 'react'
 import { useGlobalContext } from '../context';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Grid from "@mui/material/Grid"
 import {Card} from "@mui/material"
 import { Typography } from '@mui/material';
@@ -13,6 +13,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import ReadMoreOutlinedIcon from '@mui/icons-material/ReadMoreOutlined';
 import { Box } from '@mui/material';
+import AlertDialog from "../components/DeleteConfirmation"
 
 
 // const testLJ = () => {
@@ -37,22 +38,19 @@ const viewDetails = (e) =>{
   //handle view details of learning journeys
 }
 
-const deleteLJ = (id,title) =>{
-  console.log("deleting in progress")
-  fetch("http://127.0.0.1:5002/removelearningjourney",{
-    method:"DELETE",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      "lj_id":id,
-      "title":title
-    })
-  }).then(res=>{
-    res.json()
-    window.location.reload(false);
-  })
-}
+
+
+
 
 const Cards = ({ljs})=>{
+  const {setOpen, lid, ltitle, setLid, setLTitle} = useGlobalContext()
+
+  const deleteLJ = (id,title) =>{
+    console.log("deleting in progress")
+    setLTitle(title)
+    setLid(id)
+    setOpen(true)
+  }
   
   return (<>{Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>
@@ -69,7 +67,7 @@ const Cards = ({ljs})=>{
       {ljs[lj_id].title}
       </Typography>
       <Typography variant="body2" >
-        You have completed {ljs[lj_id].progress}%
+        Completed {ljs[lj_id].progress}%
       </Typography>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
@@ -84,6 +82,7 @@ const Cards = ({ljs})=>{
     </Grid>
   </React.Fragment>
   </Card>
+  <AlertDialog/>
   </Grid>
   ))}
   </>
@@ -92,18 +91,21 @@ const Cards = ({ljs})=>{
 
 
 const LearningJourneys = () => {
-  const {setPath} = useGlobalContext()
+
+  const {setPath, userDetails} = useGlobalContext()
+
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
 
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${150166}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${userDetails.staff_id}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
       console.log(data.data)
     });
-  },[])
+  },[userDetails.staff_id])
+
   
   return (
     <div>

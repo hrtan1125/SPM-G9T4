@@ -73,19 +73,19 @@ const LJDetails = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {courses?.map((course) => (
-              <TableRow key={course[1]} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              {courses && Object.keys(courses).map((cid) => (
+              <TableRow key={cid} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell>
-                  {course[1]}
+                  {cid}
                 </TableCell>
                 <TableCell>
-                  {course[2]}
+                  {courses[cid]["course_name"]}
                 </TableCell>
                 <TableCell>
-                  {course[0]}
+                  {courses[cid]["completion_status"]?courses[cid]["completion_status"]:"Not Registered"}
                 </TableCell>
                 <TableCell>
-                <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(course[1],id)}>
+                <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(cid,id)}>
                   <DeleteOutlinedIcon/>
               </IconButton>
                 </TableCell>

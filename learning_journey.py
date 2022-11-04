@@ -41,8 +41,7 @@ class Learning_Journey(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-        
-            
+
 class Learning_Journey_Courses(db.Model):
     __tablename__ = 'learning_journey_courses'
     lj_id = db.Column(db.Integer)
@@ -83,9 +82,11 @@ class Courses(db.Model):
     course_status = db.Column(db.String(15))
     course_type = db.Column(db.String(10))
     course_category = db.Column(db.String(50))
+
     __mapper_args__ = {
         'polymorphic_identity': 'courses'
     }
+
     def to_dict(self):
         """
         'to_dict' converts the object into a dictionary,
@@ -140,6 +141,33 @@ class Staff(db.Model):
             result[column] = getattr(self, column)
         return result
 
+# check user's role
+@app.route("/checkrole", methods=['GET'])
+def checkRole():
+    try:
+        staff_id = request.args.get('staff_id')
+        # print(staff_id)
+        staff_role = Staff.query.filter_by(Staff_ID=staff_id).first()
+        # print(staff_id)
+        if staff_role:
+            staff_rid = staff_role.Role
+            staff_dept = staff_role.Dept
+            staff_name = staff_role.Staff_FName + " " + staff_role.Staff_LName
+            return jsonify({
+                "role": staff_rid,
+                "dept": staff_dept,
+                "name": staff_name,
+                "staff_id" : staff_id
+            }),200
+        else:
+            return jsonify({
+                "message": "Invalid staff ID!"
+            }),400
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error"
+        }),500
+
 # view courses
 @app.route("/viewAllCourses", methods=['GET'])
 def viewAllCourses():
@@ -189,10 +217,8 @@ def viewlearningjourneys():
             for learningjourney in learningjourneys:
                 # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
                 res = view_learningjourney_By_LJid(learningjourney,staff_id)
-                print("hello testing again")
+               
                 my_dict[learningjourney.lj_id] = json.loads(res[0].data)
-                print("hello successful")
-                print(my_dict)
                 
             return jsonify({
                 "data" : my_dict
@@ -209,8 +235,10 @@ def viewlearningjourneys():
 #View learning journey by LJ id
 @app.route("/viewlearningjourneyByLJid")
 def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
+
     if "lj_id" in request.args:
         lj_id=request.args.get('lj_id')
+
         staff_id=request.args.get('staff_id')
         learningjourney = Learning_Journey.query.filter_by(lj_id=lj_id).first()
         print(learningjourney)
@@ -307,6 +335,7 @@ def create_learning_journey():
         return jsonify({
             "message": "Incorrect Data Formet."
         }), 500
+
     title = data["title"]
     role_id = data["role_id"]
     staff_id = data["staff_id"]
@@ -321,6 +350,7 @@ def create_learning_journey():
         #call function to add courses to learning journey
         add_learning_journey_courses(id,courses_list)
         return jsonify(learning_journey.to_dict()), 201
+
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
@@ -330,6 +360,7 @@ def create_learning_journey():
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
 def add_learning_journey_courses(lj_id=0,courses=[]):
+    print("hello adding")
     data = request.get_json()
     print(data)
     if data:
@@ -352,7 +383,7 @@ def add_learning_journey_courses(lj_id=0,courses=[]):
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
-        
+
 @app.route("/removecourses", methods=['DELETE'])
 def removeCourses():
     data = request.get_json()
@@ -441,9 +472,12 @@ def filterLearningJourneyByRole():
         ), 400
 
 @app.route("/viewTeamMembers", methods=['GET'])
-def viewTeamMembers():
-    data = request.get_json()
-    dept =  data['dept']
+def viewTeamMembers(dept=''):
+    dept = request.args["dept"]
+    # if request.get_json():
+    #     data = request.get_json()
+    #     dept =  data['dept']
+
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
@@ -466,20 +500,21 @@ def viewTeamMembers():
 def viewTeamlearningjourneys():
     dept = request.args.get('dept')
     my_dict = {}
+
     try:
         if dept:
             team_members = Staff.query.filter_by(Dept=dept).all()
             team_mems = [team_mem for team_mem in team_members]
-            print("team-members",team_mems)
             for team_mem in team_mems:
                 print("team member is ",team_mem.Staff_ID)
                 LearningJourneys = Learning_Journey.query.filter_by(staff_id=team_mem.Staff_ID).all()
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
-                print("learning journeys list", learningjourneys)
+
                 for learningjourney in learningjourneys:
                     res = view_learningjourney_By_LJid(learningjourney,team_mem.Staff_ID)
                     print("response data",res[0].data)
                     my_dict[learningjourney.lj_id] = json.loads(res[0].data)
+
             return jsonify({
                 "data" : my_dict
             }), 200
