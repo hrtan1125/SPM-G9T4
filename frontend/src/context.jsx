@@ -30,13 +30,6 @@ const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
 
     const [open, setOpen] = useState(false)
-    const [user, setUser] = useState(150166)
-    var userRoleSaved = "1"
-    if (localStorage.getItem("userRole")){
-      userRoleSaved = localStorage.getItem("userRole")
-    }
-
-    const [userRole, setUserRole] = useState(userRoleSaved)
 
     const [userDetails, setUserDetails] = useState({})
 
