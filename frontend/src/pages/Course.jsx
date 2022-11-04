@@ -1,12 +1,19 @@
 
-import { Button, Checkbox, TextField } from '@mui/material';
+import { Button, TextField, Grid, Chip, Checkbox } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useGlobalContext } from '../context';
 
+
+var toUpdateSkills = [];
+var toDeleteSkills = [];
+
+//need modify backend function to give me a list of related skills
 const Course = () => {
-    const {course_id} = useParams()
+    const {skills} = useGlobalContext()
+    const {course_id, course_name} = useParams()
     const getSkillsByCourseUrl = "http://127.0.0.1:5000/view_skills_to_add/"
     const [skillsByCourse, setSkillsByCourse] = useState({})
 
@@ -28,6 +35,22 @@ const Course = () => {
 
 
 const [checked, setChecked] = useState([]);
+
+const handleUpdate = (e,key)=>{
+  console.log("add skills", key)
+  if(Object.keys(skillsByCourse).includes(key)){
+    if (toDeleteSkills.includes(key)){
+      let idx = toDeleteSkills.indexOf(key)
+      toDeleteSkills.splice(idx,1);
+      e.currentTarget.style.backgroundColor="#e6e6e6";
+      e.currentTarget.style.border="0px";
+    }else{
+      toDeleteSkills.push(key);
+      e.currentTarget.style.backgroundColor="#ffffff";
+      e.currentTarget.style.border="1px solid #bfbfbf";
+    }
+  }
+}
 
 const handleCheck = (event) => {
   var updatedList = [...checked];
@@ -66,56 +89,21 @@ const assignSkillsToCourse = async(course_id, skills) => {
 }
 };
 
+console.log(Object.keys(skillsByCourse).length)
+
   return (
-    <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
-       <div className="app-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Skill Code</th>
-              <th>Skills already associated with this course</th>
-            </tr>
-          </thead>
-          <tbody>
-          {skillsByCourse?.skills?.yes?.map((course)=> (
-            <tr key={course.skill_code}>
-              <td>
-                {course.skill_code}
-              </td>
-              <td>
-                {course.skill_name}
-              </td>
-            </tr>
-          ))}
-          </tbody>
-        </table>
-        <Button variant="contained" onClick={(e) => handleSubmit(e)}>Add Skill/s to Course</Button>
-      <table>
-        <thead>
-          <tr>
-            <th>Skill Code</th>
-            <th>Skill Name</th>
-            <th>Add Skill</th>
-          </tr>
-        </thead>
-        <tbody>
-        {skillsByCourse?.skills?.no?.map((course)=> (
-          <tr key={course.skill_code}>
-              <td>
-                {course.skill_code}
-              </td>
-              <td>
-                {course.skill_name}
-              </td>
-              <td>
-                <input value={course.skill_code} type="checkbox" onChange={handleCheck} />
-              </td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
+   <>
+   <Grid item sx={{ display: "flex", alignItems: "center", marginTop: 3 }}>
+        <h3>Course Name: {course_name}</h3>
+      </Grid>
+      <Grid item sx={{ display: "flex", alignItems: "center", marginTop: 3 }}>
+        Selects skills to add....
+      </Grid>
+      <Grid container spacing={2} marginTop={1}>
+        {skills?.map((skill) => (
+          <Chip key={skill.skill_code} label={skill.skill_name} sx={{ margin: 1 }} onClick={(e) => handleUpdate(e, skill.skill_code)} variant={skillsByCourse?.skills?.includes(skill.skill_code) ? "filled" : "outlined"} />))}
+      </Grid>
+   </>
   );
 }
 export default Course
