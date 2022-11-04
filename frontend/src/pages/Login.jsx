@@ -5,12 +5,14 @@ import Box from '@mui/material/Box';
 
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const {setPath, setUserDetails, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Login"),[])
   useEffect(()=>  setUserDetails({}),[])
   useEffect(()=>  localStorage.setItem("userDetails", JSON.stringify({})),[])
+  const navigate = useNavigate()
 
   console.log("userDetails", userDetails,  typeof userDetails, Object.keys(userDetails).length !== 0)
   const [staffId, setStaffId] = React.useState('');
@@ -24,13 +26,16 @@ const Login = () => {
   const handleSubmit = (event) => {
     axios.get(`${getUserRoleUrl}${staffId}`)
     .then(response => {
+      // navigate('/learningjourneys')
       localStorage.setItem("userDetails", JSON.stringify(response.data))
       setUserDetails(response.data)
-      window.location.replace("http://localhost:3000/learningjourneys");
+      // window.location.replace("http://localhost:3000/learningjourneys");
+      
     })
     .catch(error => {
         console.error('There was an error!', error);   
     });
+    navigate('/learningjourneys')
   };
 
 
@@ -61,7 +66,7 @@ const Login = () => {
       
       </Box>
       <li>Admin: 130001</li>
-      <li>User: 140002</li>
+      <li>User: 150166</li>
       <li>Manager: 140001</li>
       <li>With Learning Journey: 150008</li>
        

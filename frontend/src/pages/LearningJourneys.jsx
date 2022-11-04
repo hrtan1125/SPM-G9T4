@@ -16,16 +16,6 @@ import { Box } from '@mui/material';
 import AlertDialog from "../components/DeleteConfirmation"
 
 
-// const testLJ = () => {
-
-// }
-// fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${130001}`).then(res=>{
-//   console.log(res.json())
-// }).then(data=>{
-//   var ljs = data.data;
-// })
-
-// const ljs = 
 const toEditF = (id) => {
   console.log("your id: ", id)
 }

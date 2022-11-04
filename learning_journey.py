@@ -415,11 +415,8 @@ def removeCourses():
             "message": "Unable to commit to database."
         }), 500
         
-@app.route("/removelearningjourney", methods=['DELETE'])
-def remove_learning_journey():
-    data = request.get_json()
-    id = data['lj_id']
-    title = data["title"]   
+@app.route("/removelearningjourney/<int:id>", methods=['DELETE'])
+def remove_learning_journey(id):
     to_remove = Learning_Journey.query.filter_by(lj_id=id).first()
     if not to_remove:
         return jsonify({
@@ -427,14 +424,17 @@ def remove_learning_journey():
         }), 404
     try: 
         db.session.delete(to_remove)
+        # print(id)
         db.session.commit()
+        print(id)
         return jsonify({
-            "message": title + " has been removed successfully."
+            "message": "Learning Journey has been removed successfully."
         }), 200
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
 # View all learning journeys
 @app.route("/viewlearningjourney")
 def viewLearningJourney():

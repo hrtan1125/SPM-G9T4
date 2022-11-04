@@ -17,7 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import { useState } from 'react';
 
 const LJDetails = () => {
-  const {setPath} = useGlobalContext()
+  const {setPath, userDetails} = useGlobalContext()
   const [courses,setCourses] = useState(null)
   const [ljs, setLJs] = useState(null)
   const {id} = useParams()
@@ -25,19 +25,20 @@ const LJDetails = () => {
 
 
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewCoursesByLearningJourney?staff_id=${150166}&lj_id=${id}`)
+    fetch(`http://127.0.0.1:5002/viewCoursesByLearningJourney?staff_id=${userDetails.staff_id}&lj_id=${id}`)
     .then(res=> {return res.json()})
     .then(data => {
       setCourses(data.courses);
       console.log(data)
     });
 
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${150166}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${userDetails.staff_id}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
+      console.log(data.data)
     });
-  },[id])
+  },[userDetails.staff_id])
 
   function toDelete(cid,id){
     console.log(cid,id)
@@ -57,10 +58,10 @@ const LJDetails = () => {
       <div style={{display: 'flex', justifyContent: "center"}} >
         <div className="app-container" style={{display: 'flex',justifyContent:"center"}}>
           <div style={{display: 'flex', justifyContent: "center"}}>
-            <h3>{ljs && ljs[id].title}</h3>
+            <h3>{ljs && ljs[id]?.title}</h3>
           </div>
           <div style={{display: 'flex', justifyContent: "center"}}>
-          <h4>Role related: {ljs && ljs[id].role_name}</h4>
+          <h4>Role related: {ljs && ljs[id]?.role_name}</h4>
           </div>
           <TableContainer component={Paper}>
           <Table sx={{ minWidth: 640, "& td": { border: 0 }}} aria-label="simple table">
