@@ -496,6 +496,7 @@ def viewTeamMembers(dept=''):
             "message": "Unable to commit to database."
         }), 500     
 
+
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
     dept = request.args.get('dept')
@@ -526,7 +527,7 @@ def viewTeamlearningjourneys():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
-
+        
 @app.route("/AdminViewLearners", methods=['GET'])
 def adminViewLearners():
     staff_id=request.args.get('staff_id')
