@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useGlobalContext } from '../context';
 
 const TeamMembers = () => {
-    const {setPath, setRoleId, userRole, userDept, setUserDept} = useGlobalContext()
+    const {setPath, setRoleId, userDetails} = useGlobalContext()
     useEffect(()=>setPath("Roles"),[])
     useEffect(()=>setRoleId(0),[])
 
@@ -15,14 +15,10 @@ const TeamMembers = () => {
     useEffect(() => {
       fetchRoles(rolesUrl)
     }, [])
-
-    useEffect(()=>setUserDept(localStorage.getItem("userDept")),[userDept])
-  
   
     const [page, setPage] = useState(1);
 
     const [teamMembers, setTeamMembers] = useState([]);
-    console.log(userDept)
     const getTeamMembers = async () => {
         const { data } = await axios.get(`${viewTeamMembersUrl}Sales`);
         setTeamMembers(data.data);
@@ -37,9 +33,10 @@ const TeamMembers = () => {
 
   
     var width = 500;
-    if (userRole == 1) {
-      width = 640;
+    if (userDetails.role == 3) {
+      width = 750;
     }
+
   
     function sliceIntoChunks(arr, chunkSize) {
       const res = [];

@@ -16,14 +16,13 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 
 const Roles = () => {
-  const {setPath, setRoleId, userRole} = useGlobalContext()
+  const {setPath, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Roles"),[])
-  useEffect(()=>setRoleId(0),[])
 
   const {rolesUrl, fetchRoles} = useGlobalContext()
   useEffect(() => {
     fetchRoles(rolesUrl)
-}, [])
+  }, [])
 
   const {roles, deleteRole} = useGlobalContext()
 
@@ -42,7 +41,7 @@ const Roles = () => {
   }
 
   var width = 500;
-  if (userRole == 1) {
+  if (userDetails.role == 1) {
     width = 640;
   }
 
@@ -66,7 +65,7 @@ return (
   <div style={{display: 'flex', justifyContent: "center"}} >
       <div className="app-container" style={{display: 'flex',justifyContent:"center"}} >
         <Pagination count={roles_chunks.length} page={page} onChange={handleChange} />
-        {userRole == 1 && <div style={{display: 'flex', justifyContent: "center"}} >
+        {userDetails.role  == 1 && <div style={{display: 'flex', justifyContent: "center"}} >
         <Link to={`/createrole`} style={{textDecoration:"none"}}> 
           <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
         </Link>
@@ -78,7 +77,7 @@ return (
           <TableRow>
             <TableCell>Role ID</TableCell>
             <TableCell align="left">Role Name</TableCell>
-            {userRole == 1 && <><TableCell align="center"></TableCell>
+            {userDetails.role  == 1 && <><TableCell align="center"></TableCell>
             <TableCell align="center"></TableCell></>}
             
           </TableRow>
@@ -94,7 +93,7 @@ return (
               </TableCell>
               <TableCell align="left">{role.role_name}</TableCell>
               
-              {userRole == 1 && <><TableCell align="center">
+              {userDetails.role  == 1 && <><TableCell align="center">
               <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(role.role_id)}>
                   <DeleteOutlinedIcon/>
               </IconButton>

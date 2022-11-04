@@ -152,9 +152,12 @@ def checkRole():
         if staff_role:
             staff_rid = staff_role.Role
             staff_dept = staff_role.Dept
+            staff_name = staff_role.Staff_FName + " " + staff_role.Staff_LName
             return jsonify({
                 "role": staff_rid,
-                "dept": staff_dept
+                "dept": staff_dept,
+                "name": staff_name,
+                "staff_id" : staff_id
             }),200
         else:
             return jsonify({

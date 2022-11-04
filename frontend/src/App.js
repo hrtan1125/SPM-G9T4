@@ -31,16 +31,31 @@ const theme = createTheme({
 });
 
 export default function App() {
-  const { path, userRole } = useGlobalContext();
+  const { path, userRole, userDetails } = useGlobalContext();
   const roles_id_role_name = {
     1: "Admin",
     2: "User",
     3: "Manager",
   };
 
+  console.log(
+    userDetails,
+    userDetails.typ,
+    userDetails.dept,
+    userDetails.name,
+    userDetails?.staff_id,
+    "DETAILLSS"
+  );
+  console.log(typeof userDetails);
+
+  console.log(userDetails == "{}", "HAHAHHAA");
+  console.log(userDetails == {}, "hehehehe");
+  console.log(Object.keys(userDetails).length === 0, "HOHOHO");
+
   const sx = {
-    width: userRole !== "" && `calc(100% - ${drawerWidth}px)`,
-    ml: userRole !== "" && `${drawerWidth}px`,
+    width:
+      Object.keys(userDetails).length !== 0 && `calc(100% - ${drawerWidth}px)`,
+    ml: Object.keys(userDetails).length !== 0 && `${drawerWidth}px`,
   };
   return (
     <ThemeProvider theme={theme}>
@@ -71,13 +86,15 @@ export default function App() {
                 component="div"
                 style={{ fontWeight: "bold" }}
               >
-                {userRole !== "" && (
-                  <>Logged in as {roles_id_role_name[userRole]}</>
-                )}
+                {
+                  <>
+                    {roles_id_role_name[userDetails.role]} {userDetails.name}
+                  </>
+                }
               </Typography>
             </Toolbar>
           </AppBar>
-          {userRole != "" && <PermanentDrawerLeft />}
+          {Object.keys(userDetails).length !== 0 && <PermanentDrawerLeft />}
 
           <Box
             style={{ margin: "60px" }}

@@ -14,14 +14,14 @@ import Button from '@mui/material/Button';
 import { Pagination } from '@mui/material';
 
 const Courses = () => {
-  const {setPath, userRole} = useGlobalContext()
+  const {setPath, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Courses"))
   const {allCourses} = useGlobalContext()
   var width = 500;
   var marginTop = 0;
-  if (userRole == 1) {
+  if (userDetails.role == 1) {
     width = 640;
-    marginTop = 80;
+    marginTop = 50;
   }
 
     function sliceIntoChunks(arr, chunkSize) {
@@ -42,16 +42,16 @@ const Courses = () => {
     };
 
     return (
-        <div style={{display: 'flex', marginTop: marginTop, justifyContent: "center"}} >
+        <div style={{display: 'flex',  justifyContent: "center"}} >
            <div className="app-container">
            <Pagination count={courses_chunks.length} page={page} onChange={handleChange} />
-           <TableContainer component={Paper} elevation={3}>
+           <TableContainer style={{marginTop: marginTop}} component={Paper} elevation={3}>
             <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Course ID</TableCell>
                   <TableCell align="left">Course Name</TableCell>
-                  {userRole == 1 && 
+                  {userDetails.role == 1 && 
                   <TableCell align="center"></TableCell>}
                 </TableRow>
               </TableHead>
@@ -65,7 +65,7 @@ const Courses = () => {
                       {course.course_id}
                     </TableCell>
                     <TableCell align="left">{course.course_name}</TableCell>
-                    {userRole == 1 && 
+                    {userDetails.role == 1 && 
                     <>
                       <TableCell align="center">
                         <div style={{display: 'flex', justifyContent: "center"}} >

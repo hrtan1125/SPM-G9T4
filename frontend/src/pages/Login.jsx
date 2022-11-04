@@ -7,11 +7,12 @@ import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 
 const Login = () => {
-  const {setPath, setUserRole, setUser, setUserDept} = useGlobalContext()
+  const {setPath, setUserDetails, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Login"),[])
-  useEffect(()=>  setUserRole(""),[])
-  useEffect(()=>  localStorage.setItem("userRole", 0),[])
+  useEffect(()=>  setUserDetails({}),[])
+  useEffect(()=>  localStorage.setItem("userDetails", JSON.stringify({})),[])
 
+  console.log("userDetails", userDetails,  typeof userDetails, Object.keys(userDetails).length !== 0)
   const [staffId, setStaffId] = React.useState('');
 
   const getUserRoleUrl = 'http://127.0.0.1:5002/checkrole?staff_id='
@@ -21,15 +22,10 @@ const Login = () => {
   };
 
   const handleSubmit = (event) => {
-    console.log(staffId, "STAFFFIDD")
     axios.get(`${getUserRoleUrl}${staffId}`)
-    .then(response => {console.log(response.data.role, "KEKEKEKE")
-      localStorage.setItem("userRole", response.data.role)
-      localStorage.setItem("userDept", response.data.dept)
-      localStorage.setItem("user", staffId)
-      setUser(staffId)
-      setUserRole(response.data.role)
-      setUserDept(response.data.dept)
+    .then(response => {
+      localStorage.setItem("userDetails", JSON.stringify(response.data))
+      setUserDetails(response.data)
       window.location.replace("http://localhost:3000/learningjourneys");
     })
     .catch(error => {

@@ -10,8 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useGlobalContext } from '../context';
 const drawerWidth = 240;
 export default function PermanentDrawerLeft(){
-  const {userRole} = useGlobalContext()
-  console.log(userRole, "USERROLLEE")
+  const { userDetails} = useGlobalContext()
     
     // const url = window.location.pathname
     // let path = ""
@@ -26,7 +25,7 @@ export default function PermanentDrawerLeft(){
     //     path = "Skills"
     // }
     const admin_drawer = {
-      learningjourneys : 'Learning Journeys', roles: 'Manage Roles', skills : 'Manage Skills', courses: 'Manage Courses',  login: 'Logout'
+      learningjourneys : 'Learning Journeys', roles: 'Manage Roles', skills : 'Manage Skills', courses: 'Manage Courses', learners: "Learners",  login: 'Logout'
     }
 
     const user_drawer = {
@@ -65,7 +64,7 @@ export default function PermanentDrawerLeft(){
         <h2 style={{color:"#1F3541" ,textAlign:"left", marginLeft:"15px"}}>LJPS</h2>
         <Divider />
         {
-          (userRole == 1) &&
+          (userDetails.role == 1) &&
           <List>
           {Object.keys(admin_drawer).map((key, index) => (
             <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
@@ -77,7 +76,7 @@ export default function PermanentDrawerLeft(){
         </List>
         }
         {
-          (userRole == 2) &&
+          (userDetails.role == 2) &&
           <List>
           {Object.keys(user_drawer).map((key, index) => (
             <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
@@ -89,7 +88,7 @@ export default function PermanentDrawerLeft(){
         </List>
         }
         {
-          (userRole == 3) &&
+          (userDetails.role == 3) &&
           <List>
           {Object.keys(manager_drawer).map((key, index) => (
             <ListItem key={index} component={Link} to={`/${key}`} disablePadding>
