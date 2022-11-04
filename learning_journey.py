@@ -211,20 +211,22 @@ def viewlearningjourneys():
     try:
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
-            learningjourneys = [learningjourney for learningjourney in LearningJourneys]
-            for learningjourney in learningjourneys:
-                # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
-                res = view_learningjourney_By_LJid(learningjourney,staff_id)
-               
-                my_dict[learningjourney.lj_id] = json.loads(res[0].data)
+            if LearningJourneys:
+                learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+                for learningjourney in learningjourneys:
+                    # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
+                    res = view_learningjourney_By_LJid(learningjourney,staff_id)
                 
-            return jsonify({
-                "data" : my_dict
-            }), 200
-        else:
-            return jsonify({
-                "message": "No registration available."
-            }), 400
+                    my_dict[learningjourney.lj_id] = json.loads(res[0].data)
+                    
+                return jsonify({
+                    "data" : my_dict
+                }), 200
+            else:
+                return jsonify({
+                    "message": "No learning journeys records found."
+                }), 400
+            
     except Exception:
         return jsonify({
             "message": "Unable to commit to database"
@@ -324,7 +326,7 @@ def viewCourses():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500   
-        
+
 @app.route("/createlearningjourney", methods=['POST'])
 def create_learning_journey():
     data = request.get_json()

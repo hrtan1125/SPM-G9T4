@@ -134,7 +134,7 @@ export default function App() {
               ></Route>
 
               <Route path="/courses" element={<Courses />} />
-              <Route path="/course/:course_id" element={<Course />} />
+              <Route path="/course/:course_id/:course_name" element={<Course />} />
 
               <Route path="/teammembers" element={<TeamMembers />} />
               <Route path="/learners" element={<Learners />} />

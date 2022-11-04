@@ -21,6 +21,7 @@ import AlertDialog from "../components/DeleteConfirmation"
 
 const Cards = ({ljs,staff})=>{
   console.log("staff is", staff)
+  console.log(ljs)
   const {setOpen, setLid, setLTitle} = useGlobalContext()
   const navigate = useNavigate()
   const deleteLJ = (id,title) =>{
@@ -34,7 +35,7 @@ const Cards = ({ljs,staff})=>{
     navigate(`/learningjourneys/team/${sid}`)
   }
 
-  return (<>{Object.keys(ljs).map((lj_id)=>(
+  return (<>{(ljs["message"]!==undefined)?<div style={{width:"100%", display: 'flex', marginBottom:"20px",justifyContent: "center"}}><h3>{ljs.message}</h3></div>:Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>
       <Card variant="outlined">
   <React.Fragment>
@@ -80,20 +81,25 @@ const LearningJourneys = () => {
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
   var sid = (window.location.href.indexOf('team')>-1)?staff_id:userDetails.staff_id;
-  console.log("sid",sid)
-  // if(window.location.href.indexOf('team')>-1){
-  //   sid = staff_id
-  // }else{
-  //   sid = userDetails.staff_id
-  // }
+  
+
   useEffect(()=>{
-    
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
+    console.log(sid)
+    if(sid!==undefined){
+      fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
     .then(res=> {return res.json()})
     .then(data => {
-      setLJs(data.data);
-      console.log(data.data)
+      console.log("is data exist?", ("data" in Object.keys(data)))
+      if (data["data"]===undefined){
+        console.log("hello")
+        setLJs(data);
+      }else{
+        console.log("hi")
+        setLJs(data.data);
+      }
     });
+    }
+    
   },[sid])
 
   
@@ -105,7 +111,7 @@ const LearningJourneys = () => {
         </Link>}
       </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        {ljs && <Cards ljs={ljs} staff={sid}/>}
+        { ljs && <Cards ljs={ljs} staff={sid}/>}
       </Grid>
     
     </div> 
