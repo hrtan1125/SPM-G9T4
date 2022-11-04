@@ -54,14 +54,14 @@ const Cards = ({ljs,staff})=>{
       </Typography>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
-    <CardActions style={{marginBottom:10}}>
+    {(window.location.href.indexOf('team')>-1)?<></>:<CardActions style={{marginBottom:10}}>
     <Button onClick={()=>toEditF(lj_id,"150166")} style={{color:"#5289B5", borderColor:"#5289B5"}} size="small" variant="outlined" startIcon={<EditIcon />}>
       Edit
     </Button>
     <Button onClick={()=>deleteLJ(lj_id,ljs[lj_id].title)} style={{backgroundColor:"#5289B5"}} size="small" variant="contained" startIcon={<DeleteIcon />}>
       Delete
     </Button>
-    </CardActions>
+    </CardActions>}
     </Grid>
   </React.Fragment>
   </Card>
@@ -100,9 +100,9 @@ const LearningJourneys = () => {
   return (
     <div>
       <div style={{display: 'flex',  marginBottom:"20px",justifyContent: "center"}} >
-        <Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
+        {(window.location.href.indexOf('team')>-1)?<h3>Created by: user #{sid}</h3>:<Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
          <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>}>New Learning Journey</Button>
-        </Link>
+        </Link>}
       </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
         {ljs && <Cards ljs={ljs} staff={sid}/>}
