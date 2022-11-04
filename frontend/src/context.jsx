@@ -28,29 +28,17 @@ const viewLJsUrl = 'http://127.0.0.1:5002/viewlearningjourneys?staff_id='
 
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
-    
-    // const [user, setUser] = useState(150166)
-    var userRoleSaved = ""
-    var userDeptSaved = ""
-    var userSaved = ""
-
+    const [open, setOpen] = useState(false)
+    const [item, setItem] = useState("")
+    const [confirmDelete, setCD] = useState(false)
+    const [user, setUser] = useState(150166)
+    var userRoleSaved = "1"
     if (localStorage.getItem("userRole")){
       userRoleSaved = localStorage.getItem("userRole")
     }
-    // if (localStorage.getItem("dept")){
-    //   userDeptSaved = localStorage.getItem("dept")
-    // }
-    // if (localStorage.getItem("user")){
-    //   userDeptSaved = localStorage.getItem("user")
-    // }
 
     const [userRole, setUserRole] = useState(userRoleSaved)
-    const [userDept, setUserDept] = useState(userDeptSaved)
-    const [user, setUser] = useState(userSaved)
 
-    useEffect(()=>setUser(localStorage.getItem("user")),[user])
-    // useEffect(()=>setUserDept(localStorage.getItem("userDept")),[userDept])
-    // useEffect(()=>setUserRole(localStorage.getItem("userRole")),[userRole])
     
 
     // Roles
@@ -65,6 +53,8 @@ const AppProvider = ({ children }) => {
     const [skillCode, setSkillCode] = useState('')
     
     // Courses
+    const [lid, setLid] = useState(0)
+    const [ltitle, setLTitle] = useState("")
     const [courses, setCourses] = useState([])
     const [allCourses, setAllCourses] = useState([])
     const [addCourses, setAddCourses] = useState([])
@@ -269,10 +259,9 @@ const fetchSkill = async(url) => {
 
     return (
       <AppContext.Provider
-        value={{path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+        value={{lid, ltitle, setLTitle, setLid,confirmDelete, setCD, item, setItem, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
-          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole, user, setUser,
-          userDept, setUserDept
+          closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal, userRole, setUserRole
 }}
       >
         {children}

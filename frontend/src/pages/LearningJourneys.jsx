@@ -13,6 +13,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import ReadMoreOutlinedIcon from '@mui/icons-material/ReadMoreOutlined';
 import { Box } from '@mui/material';
+import AlertDialog from "../components/DeleteConfirmation"
 
 
 // const testLJ = () => {
@@ -37,22 +38,28 @@ const viewDetails = (e) =>{
   //handle view details of learning journeys
 }
 
-const deleteLJ = (id,title) =>{
-  console.log("deleting in progress")
-  fetch("http://127.0.0.1:5002/removelearningjourney",{
-    method:"DELETE",
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      "lj_id":id,
-      "title":title
-    })
-  }).then(res=>{
-    res.json()
-    window.location.reload(false);
-  })
-}
+
 
 const Cards = ({ljs})=>{
+  const {setOpen, lid, ltitle, setLid, setLTitle} = useGlobalContext()
+
+  const deleteLJ = (id,title) =>{
+    console.log("deleting in progress")
+    setLTitle(title)
+    setLid(id)
+    setOpen(true)
+    // fetch("http://127.0.0.1:5002/removelearningjourney",{
+    //   method:"DELETE",
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     "lj_id":id,
+    //     "title":title
+    //   })
+    // }).then(res=>{
+    //   res.json()
+    //   window.location.reload(false);
+    // })
+  }
   
   return (<>{Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>
@@ -84,6 +91,7 @@ const Cards = ({ljs})=>{
     </Grid>
   </React.Fragment>
   </Card>
+  <AlertDialog/>
   </Grid>
   ))}
   </>
@@ -92,20 +100,18 @@ const Cards = ({ljs})=>{
 
 
 const LearningJourneys = () => {
-  const {setPath, user} = useGlobalContext()
+  const {setPath} = useGlobalContext()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
 
-  console.log(user, "LJJJ USER")
-
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${user}`)
+    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${150166}`)
     .then(res=> {return res.json()})
     .then(data => {
       setLJs(data.data);
       console.log(data.data)
     });
-  },[user])
+  },[])
   
   return (
     <div>

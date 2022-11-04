@@ -95,6 +95,8 @@ const handleSubmit = (e) => {
   if(e.target.textContent==="Create"){
     if (!roleRef.current.value){
       alert("Role Name cannot be empty")
+    }else if(!/^[A-Za-z0-9 ]*$/.test(roleRef.current.value)){
+      console.log("invalid role name")
     }else if (toUpdateSkills.length === 0){
       alert("Please select at least one skill")
     }else{

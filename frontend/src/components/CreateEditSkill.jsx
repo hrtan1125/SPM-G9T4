@@ -43,13 +43,13 @@ const CreateEditSkill = () => {
     <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
 
             <div>
-                {skill_name === undefined && (<>Skill Code: <TextField id="outlined-basic"  variant="outlined" name="skill_code" value={formData.skill_code} onChange={handleChange} /></> )}
+                {skill_name === undefined && (<>Skill Code: <TextField id="outlined-basic" style={{width:"100px"}} size="small" variant="outlined" name="skill_code" value={formData.skill_code} onChange={handleChange} /></> )}
             </div>
             <div>
-              Skill Name: <TextField id="outlined-basic"  variant="outlined" name="skill_name" value={formData.skill_name} onChange={handleChange} />
+              Skill Name: <TextField id="outlined-basic" style={{width:"400px"}} variant="outlined" name="skill_name" size="small" value={formData.skill_name} onChange={handleChange} />
             </div>
             <div>
-              {skill_name === undefined ? (<Button onClick={(e) => handleCreateSubmit(e)} variant="contained">Create Skill</Button>):(<Button onClick={(e) => handleUpdateSubmit(e)} variant="contained">Update Skill Name</Button>)}
+              {skill_name === undefined ? (<Button style={{backgroundColor:"#5289B5"}} onClick={(e) => handleCreateSubmit(e)} variant="contained">Create Skill</Button>):(<Button style={{backgroundColor:"#5289B5"}} onClick={(e) => handleUpdateSubmit(e)} variant="contained">Update Skill Name</Button>)}
             </div>
     </div>
   )
