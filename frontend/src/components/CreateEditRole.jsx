@@ -93,10 +93,11 @@ const handleSubmit = (e) => {
   e.preventDefault();
   console.log("Event is", e.target.textContent)
   if(e.target.textContent==="Create"){
-    if (!roleRef.current.value){
-      alert("Role Name cannot be empty")
+    let val = roleRef.current.value.trim()
+    if (!val){
+      alert("Role Name cannot be empty!")
     }else if(!/^[A-Za-z0-9 ]*$/.test(roleRef.current.value)){
-      console.log("invalid role name")
+      alert("Invalid role name!Only alphanumeric and spaces allowed!")
     }else if (toUpdateSkills.length === 0){
       alert("Please select at least one skill")
     }else{
@@ -118,9 +119,13 @@ const handleSubmit = (e) => {
       console.log("these are to be updated", toUpdateSkills)
       assignSkillsToRole(role_id, toUpdateSkills)
     }
-
-    if (roleRef.current.value !== role_name) {
-      console.log("Role Name has been changed to", roleRef.current.value)
+    let val = roleRef.current.value.trim()
+    if (!val){
+      alert("Role Name cannot be empty!")
+    }else if(!/^[A-Za-z0-9 ]*$/.test(roleRef.current.value)){
+      alert("Invalid role name!Only alphanumeric and spaces allowed!")
+    }else if (val !== role_name) {
+      console.log("Role Name has been changed to", val)
       handleUpdateSubmit(e)
       refreshPage();
     }
