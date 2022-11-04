@@ -21,6 +21,7 @@ import Course from "./pages/Course";
 import LJDetails from "./pages/LJdetails";
 import Login from "./pages/Login";
 import TeamMembers from "./pages/TeamMembers";
+import Learners from "./pages/Learners";
 
 const drawerWidth = 240;
 
@@ -136,6 +137,7 @@ export default function App() {
               <Route path="/course/:course_id" element={<Course />} />
 
               <Route path="/teammembers" element={<TeamMembers />} />
+              <Route path="/learners" element={<Learners />} />
             </Routes>
           </Box>
         </Box>
