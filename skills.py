@@ -229,12 +229,23 @@ def get_all():
 #split out the skills which already assigned
 @app.route("/view_skills_to_add/<id>", methods=['GET'])
 def view_skills_to_add(id):
-    assigned_skills = Course_skills.query.filter_by(course_id=id).all()
-    skills = [skill.skill_code for skill in assigned_skills]
+    try:
+        assigned_skills = Course_skills.query.filter_by(course_id=id).all()
+        skills = [skill.skill_code for skill in assigned_skills]
 
-    return jsonify({
-        "skills":skills
-        }),200
+        if skills:
+            return jsonify({
+                "skills":skills
+                }), 200
+        else: 
+            return jsonify({
+                "message": "no skills assigned to the course yet."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit database."
+        }), 500
+    
 
 
 @app.route("/skill_assigns_course", methods=['POST'])
