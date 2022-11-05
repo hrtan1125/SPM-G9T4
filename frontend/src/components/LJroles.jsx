@@ -50,7 +50,7 @@ const LJroles = () => {
             </tbody>
           </table>
           ) : (
-            <div>All the roles are deleted</div>
+            <div>No roles available</div>
           )}
         </div>
       </div>

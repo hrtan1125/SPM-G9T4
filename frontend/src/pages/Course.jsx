@@ -2,6 +2,7 @@
 import { Button, TextField, Grid, Chip, Checkbox } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useGlobalContext } from '../context';
@@ -9,13 +10,14 @@ import { useGlobalContext } from '../context';
 
 var toUpdateSkills = [];
 var toDeleteSkills = [];
-
 //need modify backend function to give me a list of related skills
 const Course = () => {
     const {skills} = useGlobalContext()
     const {course_id, course_name} = useParams()
     const getSkillsByCourseUrl = "http://127.0.0.1:5000/view_skills_to_add/"
     const [skillsByCourse, setSkillsByCourse] = useState({})
+    const [toAdd, setToAdd] = useState(false)
+    const [toDelete, setToDelete] = useState(false)
 
     React.useEffect(() => {
         let isMounted = true;
@@ -37,8 +39,8 @@ const Course = () => {
 const [checked, setChecked] = useState([]);
 
 const handleUpdate = (e,key)=>{
-  console.log("add skills", key)
-  if(Object.keys(skillsByCourse).includes(key)){
+  console.log(skillsByCourse.skills, key)
+  if(skillsByCourse.skills.includes(key)){
     if (toDeleteSkills.includes(key)){
       let idx = toDeleteSkills.indexOf(key)
       toDeleteSkills.splice(idx,1);
@@ -49,52 +51,87 @@ const handleUpdate = (e,key)=>{
       e.currentTarget.style.backgroundColor="#ffffff";
       e.currentTarget.style.border="1px solid #bfbfbf";
     }
+  }else{
+    if(toUpdateSkills.includes(key)){
+      let idx = toUpdateSkills.indexOf(key)
+      toUpdateSkills.splice(idx,1);
+      e.currentTarget.style.backgroundColor="#ffffff";
+      e.currentTarget.style.border="1px solid #bfbfbf";
+    }else{
+      toUpdateSkills.push(key);
+      e.currentTarget.style.backgroundColor="#e6e6e6";
+      e.currentTarget.style.border="0px";
+    }
   }
 }
 
-const handleCheck = (event) => {
-  var updatedList = [...checked];
-  if (event.target.checked) {
-    updatedList = [...checked, event.target.value];
-  } else {
-    updatedList.splice(checked.indexOf(event.target.value), 1);
-  }
-  setChecked(updatedList);
-};
 
 function refreshPage() {
   window.location.reload(false);
 }
 
+useEffect(()=>{
+  if(toAdd && toDelete){
+    refreshPage()
+  }
+},[toAdd,toDelete])
+
 const handleSubmit = (e) => {
   e.preventDefault();
-  refreshPage()
-  assignSkillsToCourse(course_id, checked)
+  console.log("Event is", e.target.textContent)
+  
+  if (toDeleteSkills.length !== 0) {
+    if(toUpdateSkills.length===0 && (toDeleteSkills.length === Object.keys(skillsByCourse).length)){
+      alert("Deletion Failed! A course should have at least one skill!")
+    }else{
+      console.log("these are to be deleted", toDeleteSkills)
+    //call delete function here
+      setToDelete(true)
+    }
+  }else{
+    setToDelete(true)
+  }
+
+  if (toUpdateSkills.length !== 0) {
+    console.log("these are to be updated", toUpdateSkills)
+    assignSkillsToCourse(course_id, toUpdateSkills)
+    // toAdd=true
+  }else{
+    setToAdd(true)
+  }
 };
 
 const assignSkillsToCourse = async(course_id, skills) => {
   console.log(skills, "skills")
   console.log(course_id,  "course_id")
   try {
-    const requestOptions = {
+  //   const requestOptions = {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({course_id, skills})
+  // };
+    fetch("http://127.0.0.1:5000/skill_assigns_course", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({course_id, skills})
-  };
-  fetch("http://127.0.0.1:5000/skill_assigns_course", requestOptions)
-    .then(response => response.json())
+      body: JSON.stringify({ course_id, skills })
+    })
+      .then(response => {
+        response.json()
+        setToAdd(true)
+      })
 
 } catch (error) {
     console.log(error.response)
 }
 };
 
-console.log(Object.keys(skillsByCourse).length)
-
   return (
    <>
-   <Grid item sx={{ display: "flex", alignItems: "center", marginTop: 3 }}>
-        <h3>Course Name: {course_name}</h3>
+   <Grid item sx={{ display: "flex", alignItems: "center", marginTop: 3 }}>    
+      </Grid>
+      <Grid item sx={{display:"flex", alignItems:"center"}}>
+      <h3>Course Name: {course_name}</h3>
+      <Button style={{backgroundColor:"#5289B5", marginLeft:"20px"}} variant="contained" onClick={(e) => handleSubmit(e)}>Update Skills</Button>
       </Grid>
       <Grid item sx={{ display: "flex", alignItems: "center", marginTop: 3 }}>
         Selects skills to add....

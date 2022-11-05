@@ -24,7 +24,7 @@ const viewCoursesBySkillUrl = 'http://127.0.0.1:5002/viewCourses?skill_code='
 
 //Learning Journeys
 const viewLJsUrl = 'http://127.0.0.1:5002/viewlearningjourneys?staff_id='
-
+const viewCoursesByLJ = 'http://127.0.0.1:5002/viewCoursesByLearningJourney?'
 
 const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")

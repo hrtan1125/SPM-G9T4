@@ -46,10 +46,8 @@ export default function Modal() {
     checked.map((skill) => {
         courses_codes_list.push(skill.split(" - ")[0])
     })
-    console.log(courses_codes_list, "COURSES CODES LIST")
     const transformed_courses = [];
     transformed_courses[skillCode] = courses_codes_list
-    console.log(transformed_courses, "TRANSFORMERS")
     const finalResult = Object.assign(ljCourses, transformed_courses)
     console.log(finalResult, "FINAL RESULT")
     setljCourses(finalResult)
@@ -59,7 +57,7 @@ export default function Modal() {
     <>
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
         {transformed_courses.length === 0 ? (
-            <Box sx={{ color: 'warning.main' }}>There is no courses related to this skill </Box>
+            <Box sx={{ color: 'warning.main' }}>There is no courses assigned to this skill </Box>
         ) : (
             <div>
                 <h1>Select your courses</h1>

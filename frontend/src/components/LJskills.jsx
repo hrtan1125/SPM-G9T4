@@ -45,7 +45,7 @@ const LJskills = () => {
             </tbody>
           </table>
           ) : (
-            <div>All the skills are deleted LMAO</div>
+            <div>No skills available</div>
           )}
         </div>
       </div>

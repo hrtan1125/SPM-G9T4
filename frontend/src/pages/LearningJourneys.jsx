@@ -30,9 +30,9 @@ const Cards = ({ljs,staff})=>{
     setLid(id)
     setOpen(true)
   }
-  const toEditF = (id,title) => {
+  const toEditF = (id,title,sid) => {
     console.log("your title: ", title)
-    navigate(`/editlearningjourney/${id}/${title}`)
+    navigate(`/editlearningjourney/${id}/${title}/${sid}`)
   }
 
   return (<>{(ljs["message"]!==undefined)?<div style={{width:"100%", display: 'flex', marginBottom:"20px",justifyContent: "center"}}><h3>{ljs.message}</h3></div>:Object.keys(ljs).map((lj_id)=>(
@@ -56,7 +56,7 @@ const Cards = ({ljs,staff})=>{
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
     {(window.location.href.indexOf('team')>-1)?<></>:<CardActions style={{marginBottom:10}}>
-    <Button onClick={()=>toEditF(lj_id,ljs[lj_id].title)} style={{color:"#5289B5", borderColor:"#5289B5"}} size="small" variant="outlined" startIcon={<EditIcon />}>
+    <Button onClick={()=>toEditF(lj_id,ljs[lj_id].title,staff)} style={{color:"#5289B5", borderColor:"#5289B5"}} size="small" variant="outlined" startIcon={<EditIcon />}>
       Edit
     </Button>
     <Button onClick={()=>deleteLJ(lj_id,ljs[lj_id].title)} style={{backgroundColor:"#5289B5"}} size="small" variant="contained" startIcon={<DeleteIcon />}>

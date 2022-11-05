@@ -96,7 +96,7 @@ export default function App() {
                 element={<LearningJourneys />}
               ></Route>
               <Route
-                path="/editlearningjourney/:id/:title"
+                path="/editlearningjourney/:id/:title/:sid"
                 element={<EditLJ />}
               ></Route>
               <Route path="/createlearningjourney" element={<CreateLJ />} />
