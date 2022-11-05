@@ -39,8 +39,9 @@ const Course = () => {
 const [checked, setChecked] = useState([]);
 
 const handleUpdate = (e,key)=>{
-  console.log(skillsByCourse.skills, key)
-  if(skillsByCourse.skills.includes(key)){
+  // console.log(skillsByCourse.skills, key)
+
+  if(Object.keys(skillsByCourse).includes("skills")&&skillsByCourse.skills.includes(key)){
     if (toDeleteSkills.includes(key)){
       let idx = toDeleteSkills.indexOf(key)
       toDeleteSkills.splice(idx,1);
@@ -95,7 +96,7 @@ const handleSubmit = (e) => {
   if (toUpdateSkills.length !== 0) {
     console.log("these are to be updated", toUpdateSkills)
     assignSkillsToCourse(course_id, toUpdateSkills)
-    // toAdd=true
+
   }else{
     setToAdd(true)
   }
@@ -105,11 +106,6 @@ const assignSkillsToCourse = async(course_id, skills) => {
   console.log(skills, "skills")
   console.log(course_id,  "course_id")
   try {
-  //   const requestOptions = {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({course_id, skills})
-  // };
     fetch("http://127.0.0.1:5000/skill_assigns_course", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
