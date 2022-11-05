@@ -66,4 +66,5 @@ jobs:
         # runs integration test
         run: |
           # Add integration test below
-          python integration_tests.py
+          python roles_integration_tests.py
+          python skills_integration_tests.py
