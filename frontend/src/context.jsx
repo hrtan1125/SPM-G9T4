@@ -43,7 +43,7 @@ const AppProvider = ({ children }) => {
 
   // Skills
   const [skills, setSkills] = useState([])
-  const [relatedSkills, setRelatedSkills] = useState([])
+  const [relatedSkills, setRelatedSkills] = useState(null)
   const [skill, setSkill] = useState([])
   const [skillCode, setSkillCode] = useState('')
 
@@ -85,7 +85,6 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await axios(url)
       setRelatedSkills(data.data)
-      console.log("RS:", data.data)
     } catch (error) {
       console.log(error.response)
     }
