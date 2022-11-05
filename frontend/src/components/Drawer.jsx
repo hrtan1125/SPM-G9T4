@@ -11,19 +11,6 @@ import { useGlobalContext } from '../context';
 const drawerWidth = 240;
 export default function PermanentDrawerLeft(){
   const { userDetails} = useGlobalContext()
-    
-    // const url = window.location.pathname
-    // let path = ""
-    // console.log(url)
-    // if (url.includes("learningjourneys")){
-    //     path = "Learning Journey"
-    // }else if(url.includes("courses")){
-    //     path = "Courses"
-    // }else if(url.includes("roles")){
-    //     path = "Roles"
-    // }else{
-    //     path = "Skills"
-    // }
     const admin_drawer = {
       learningjourneys : 'Learning Journeys', roles: 'Manage Roles', skills : 'Manage Skills', courses: 'Manage Courses', learners: "Learners",  login: 'Logout'
     }

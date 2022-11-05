@@ -4,7 +4,7 @@ import "./../App.css";
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Grid } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,6 +21,7 @@ const LJDetails = () => {
   const [courses,setCourses] = useState(null)
   const [ljs, setLJs] = useState(null)
   const {id, sid} = useParams()
+  const navigate = useNavigate()
   useEffect(()=>setPath("Learning Journey"),[])
 
 
@@ -50,6 +51,7 @@ const LJDetails = () => {
         lj_id:id
       })
     }).then(response => {
+      navigate(`/learningjourneys`)
       window.location.reload(false);
     })
   }

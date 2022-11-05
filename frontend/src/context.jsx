@@ -54,6 +54,7 @@ const AppProvider = ({ children }) => {
   const [courses, setCourses] = useState([])
   const [allCourses, setAllCourses] = useState([])
   const [addCourses, setAddCourses] = useState([])
+  const [toAddCName, setToAddCName] = useState(null)
 
   // Learning Journey Pages
   const [ljCourses, setljCourses] = useState({})
@@ -240,7 +241,7 @@ const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
-        show,setShow,lid, ltitle, setLTitle, setLid, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+        setToAddCName,toAddCName,show,setShow,lid, ltitle, setLTitle, setLid, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
         updateSkill, createSkill, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
         closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal,
         userDetails, setUserDetails

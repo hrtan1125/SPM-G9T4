@@ -1,5 +1,5 @@
 import "./../App.css";
-import { Button, CardActionArea, IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -8,39 +8,86 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import AddIcon from "@mui/icons-material/Add"
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
 import { useGlobalContext } from '../context';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import Grid from "@mui/material/Grid"
-import {Card} from "@mui/material"
-import { Typography } from '@mui/material';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import ReadMoreOutlinedIcon from '@mui/icons-material/ReadMoreOutlined';
-import { Box } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import Grid from "@mui/material/Grid";
 
-
-//{skillcode:[courses]}
-var toUpdateCourses = {}
-var coursesList = []
 
 function ShowCourse(){
-    const {show,setShow,courses,ljCourses}= useGlobalContext()
+    const {show,setShow,courses,ljCourses,addCourses,setAddCourses,skillCode,setToAddCName,toAddCName}= useGlobalContext()
     const handleClose = () => {
         setShow(false);
       };
+      
+      const handleToggle = (e,cid,cname) =>{
+        console.log(e)
+        console.log(skillCode,cid)
+        if(Array.isArray(addCourses) && addCourses.length===0){
+            // console.log(skillCode,cid)
+            let tempDict = {[skillCode]:[cid]}
+            console.log(tempDict)
+            setAddCourses(tempDict)
+            setToAddCName({[cid]:cname})
+        }else if(!Object.keys(addCourses).includes(skillCode)){
+            // let tempDict = {[skillCode]:[cid]}
+            setAddCourses(prvDt =>{
+                return {
+                    ...prvDt,
+                    [skillCode]:[cid]
+                }
+            })
+            setToAddCName(prvCData=>{
+                return {
+                    ...prvCData,
+                    [cid]:cname
+                }
+            })
+        }else if(Object.keys(addCourses).includes(skillCode)){
+            let tempList = addCourses[skillCode]
+            let copyList = [...tempList]
+            if(!copyList.includes(cid)){
+                copyList.push(cid)
+                setAddCourses(prvDt=>{
+                    return {
+                        ...prvDt,
+                        [skillCode]:copyList
+                    }
+                })
+                setToAddCName(prvCData=>{
+                    return {
+                        ...prvCData,
+                        [cid]:cname
+                    }
+                })
+            }else{
+                let idx = copyList.indexOf(cid);
+                copyList.splice(idx, 1);
+                setAddCourses(prvDt=>{
+                    return {
+                        ...prvDt,
+                        [skillCode]:copyList
+                    }
+                })
+                delete toAddCName[cid]
+            }
+            console.log(toAddCName)    
+        }
+        // if(addCourses.length===0||!addCourses.includes(skillCode)){
 
-      const handleAdd = () =>{
-        setShow(false)
-        console.log("courses",coursesList)
-      };
-      useEffect(()=>{
+        //     console.log(cid)
+        //     const cs = [...addCourses]
+        //     cs.push(cid)
+        //     setAddCourses(cs)
+        // }else{
+        //     const coursesCopy = [...addCourses];
+        //     let idx = coursesCopy.indexOf(cid);
+        //     coursesCopy.splice(idx, 1);
+        //     setAddCourses(coursesCopy)
+        // }
+      }
 
-      },[])
       return (
           <Dialog
               open={show}
@@ -55,16 +102,14 @@ function ShowCourse(){
                   </DialogContentText>
                   <FormGroup>
                       {courses?.length!==0?courses?.map((c)=>(
-                      Object.keys(ljCourses.courses).includes(c.course_id)?<FormControlLabel disabled control={<Checkbox defaultChecked/>} label={c.course_name} />:<FormControlLabel control={<Checkbox/>} label={c.course_name} />
+                      Object.keys(ljCourses.courses).includes(c.course_id)?<FormControlLabel disabled control={<Checkbox defaultChecked/>} 
+                      label={c.course_name} />:<FormControlLabel control={<Checkbox onChange={(e)=>handleToggle(e,c.course_id,c.course_name)} checked={toAddCName!==null && Object.keys(toAddCName).includes(c.course_id)}/>} label={c.course_name} />
                       )):<>No courses available.</>}
                   </FormGroup>
               </DialogContent>
               <DialogActions>
                   <Button onClick={handleClose} color="primary">
-                      Cancel
-                  </Button>
-                  <Button onClick={handleAdd} color="primary" autoFocus>
-                      Add Courses
+                      Save & Close
                   </Button>
               </DialogActions>
           </Dialog>
@@ -74,7 +119,7 @@ function ShowCourse(){
 const EditLJ = () =>{
     const viewCoursesByLJ = 'http://127.0.0.1:5002/viewCoursesByLearningJourney?'
     const {id,title,sid,rid} = useParams()
-    const {relatedSkills, setRoleId, setShow, setSkillCode, setljCourses} = useGlobalContext()
+    const {relatedSkills, setRoleId, setShow, setSkillCode, setljCourses, addCourses, toAddCName, skillCode,setAddCourses} = useGlobalContext()
    
     const navigate = useNavigate()
     
@@ -91,10 +136,12 @@ const EditLJ = () =>{
 
 
     function handleView(e,skill_code){
-        console.log(skill_code)
+        // console.log(skill_code)
         setSkillCode(skill_code)
+        console.log(skillCode)
         setShow(true)
     }
+
     React.useEffect(() => {
         let isMounted = true;
         const fetchData = async () => {
@@ -113,10 +160,22 @@ const EditLJ = () =>{
         return () => (isMounted = false);
       }, [sid, id])
 
-    const handleUpdateSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         // to edit use edit learing journey
         // navigate(`/Roles`);
+        fetch('http://127.0.0.1:5002/addlearningjourneycourses',{
+    method:"POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      "lj_id":id,
+      "courses":addCourses
+    })
+  }).then(res => {
+    setAddCourses([])
+    refreshPage()
+    return res.json();
+  })
     };
 
     function refreshPage() {
@@ -127,8 +186,20 @@ const EditLJ = () =>{
     return(
         <>
         <h2>{title}</h2>
-        <h4>Courses in this learning journey</h4>
-        <div>{lj_courses!==null && Object.values(lj_courses.courses).map((c)=>(<p>{c.course_name}</p>))}</div>
+            <Button style={{backgroundColor:"#5289B5"}} variant="contained" 
+            onClick={(e) => handleSubmit(e)}>Add Courses</Button>
+        <hr/>
+        <Grid container>
+            <Grid item>
+                    <h4>Courses in this learning journey</h4>
+                    {lj_courses !== null && Object.values(lj_courses.courses).map((c) => (<p>{c.course_name}</p>))}
+            </Grid>
+            <Grid item xs={1}></Grid>
+            <Grid item>
+                <h4>Courses to be added</h4>
+                {toAddCName!==null && Object.values(toAddCName).map((c)=>(<p>{c}</p>))}
+            </Grid>
+        </Grid>
         <hr/>
         <h5>Selects Course(s) to add...</h5>
         {relatedSkills!==null && Object.values(relatedSkills).map((skill)=>(
