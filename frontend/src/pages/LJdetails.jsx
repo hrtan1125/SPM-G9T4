@@ -85,11 +85,11 @@ const LJDetails = () => {
                 <TableCell>
                   {courses[cid]["completion_status"]?courses[cid]["completion_status"]:"Not Registered"}
                 </TableCell>
-                <TableCell>
+                {(window.location.href.indexOf('team')>-1)?<></>:<TableCell>
                 <IconButton aria-label="delete" style={{color:"#5289B5"}} onClick={()=>toDelete(cid,id)}>
                   <DeleteOutlinedIcon/>
               </IconButton>
-                </TableCell>
+                </TableCell>}
             </TableRow>
           ))}
           </TableBody>

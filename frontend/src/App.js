@@ -111,6 +111,10 @@ export default function App() {
                 path="/learningjourney/:id/:sid"
                 element={<LJDetails />}
               ></Route>
+              <Route
+                path="/learningjourney/team/:id/:sid"
+                element={<LJDetails />}
+              ></Route>
 
               <Route path="/skills" element={<Skills />}></Route>
               <Route path="/createskill" element={<CreateEditSkill />} />

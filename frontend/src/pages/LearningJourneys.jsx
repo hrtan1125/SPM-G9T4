@@ -41,7 +41,10 @@ const Cards = ({ljs,staff})=>{
       <Card variant="outlined">
   <React.Fragment>
     <CardContent>
-      {(window.location.href.indexOf('team')>-1)?<></>:<Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
+      {(window.location.href.indexOf('team')>-1)?<Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
+      <IconButton href={`/learningjourney/team/${lj_id}/${staff}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
+      </Box>:
+      <Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
       <IconButton href={`/learningjourney/${lj_id}/${staff}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
       </Box>}
       
@@ -82,7 +85,6 @@ const LearningJourneys = () => {
   const {staff_id} = useParams()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
-  const [filter, setFilter]= useState(null);
   var sid = (window.location.href.indexOf('team')>-1)?staff_id:userDetails.staff_id;
   const [role, setRole] = React.useState('all');
 
