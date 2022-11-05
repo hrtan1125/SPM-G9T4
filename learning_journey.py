@@ -475,12 +475,12 @@ def filterLearningJourneyByRole():
 
 @app.route("/viewTeamMembers", methods=['GET'])
 def viewTeamMembers(dept='',staffid=''):
-    dept = request.args["dept"]
-    staffid = request.args["staff_id"]
     # if request.get_json():
     #     data = request.get_json()
     #     dept =  data['dept']
-
+    if "dept" in request.args and "staff_id" in request.args:
+        dept = request.args["dept"]
+        staffid = request.args["staff_id"]
     try:
         if dept and staffid:
             team_members = Staff.query.filter(Staff.Staff_ID != staffid).filter_by(Dept=dept).all()
