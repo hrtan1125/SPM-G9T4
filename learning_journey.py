@@ -450,28 +450,31 @@ def viewLearningJourney():
 # Filter Learning Journey(s) based on role
 @app.route("/filterLearningJourneyByRole", methods=['GET'])
 def filterLearningJourneyByRole():
-    data = request.get_json()
-    id = data['staff_id']
-    role = data['role_id']
-    if(Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()):
+    id = request.args.get("staff_id")
+    role = request.args.get("role_id")
+    try:
         learningJourneys = Learning_Journey.query.filter_by(staff_id=id, role_id=role).all()
-        return jsonify(
-            {
-                "data": [learningJourney.to_dict() for learningJourney in learningJourneys]
-            }
-        ), 200
-    
-    else:
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "staff_id": id,
-                    "role_id": role
-                },
-                "message": "No Learning Journey found for this role."
-            }
-        ), 400
+        if(learningJourneys):
+            my_dict={}
+            for learningJourney in learningJourneys:
+                res = view_learningjourney_By_LJid(learningJourney,id)
+                my_dict[learningJourney.lj_id] = json.loads(res[0].data)
+            return jsonify(
+                {
+                    "data": my_dict
+                }
+            ), 200
+        else:
+            return jsonify(
+                {
+                    "code": 400,
+                    "message": "No Learning Journey found for this role."
+                }
+            ), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
 @app.route("/viewTeamMembers", methods=['GET'])
 def viewTeamMembers(dept='',staffid=''):
