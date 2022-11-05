@@ -10,8 +10,8 @@ var toUpdateSkills = [];
 var toDeleteSkills = [];
 
 const CreateEditRole = () =>{
-
-  const { relatedSkills, setRoleId, updateRole, skills, setPath } = useGlobalContext()
+  const updateRoleUrl = 'http://127.0.0.1:5001/updaterole'
+  const { relatedSkills, setRoleId, skills, setPath } = useGlobalContext()
   const roleRef = useRef(null);
 
   useEffect(()=>setPath("Roles"),[])
@@ -26,6 +26,28 @@ const CreateEditRole = () =>{
       }
     },[])
     
+    const updateRole = async(formData) => {
+      try {
+        const requestOptions = {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+      };
+      fetch(updateRoleUrl, requestOptions)
+        .then(response => {
+          console.log(response)
+          return response.json()
+        }).then(data =>{
+          if(data.code===400){
+            alert(data.message)
+          }else{
+            refreshPage()
+          }
+        })
+    } catch (error) {
+        console.log(error.response)
+    }
+    }
 
     const handleUpdateSubmit = (e) => {
       e.preventDefault();
@@ -33,6 +55,7 @@ const CreateEditRole = () =>{
         "role_id": role_id,
         "role_name": roleRef.current.value
       });
+      
       // navigate(`/Roles`);
     };
 
@@ -82,10 +105,17 @@ const createNewRole=async(roleName,skillsToAssign)=>{
       "skills":skillsToAssign
     })
   }).then(res => {
-    res.json();
-    setRoleId(0)
-    toUpdateSkills=[]
-    navigate('/Roles')
+    return res.json();
+    
+  }).then(data => {
+    console.log(data)
+    if(data["message"]===undefined){
+      setRoleId(0)
+      toUpdateSkills=[]
+      navigate('/Roles')
+    }else{
+      alert(data["message"])
+    }
   })
 }
 
@@ -127,7 +157,7 @@ const handleSubmit = (e) => {
     }else if (val !== role_name) {
       console.log("Role Name has been changed to", val)
       handleUpdateSubmit(e)
-      refreshPage();
+      // refreshPage();
     }
   }
   

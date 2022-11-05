@@ -162,6 +162,7 @@ def updateRole():
         if checkRoleName:
             return jsonify(
                 {
+                    "code": 400,
                     "message": "Role exists!"
                 }
             ), 400
@@ -175,12 +176,14 @@ def updateRole():
             db.session.commit()
             return jsonify(
                 {
+                    "code": 200,
                     "message": "Role updated successfully."
                 }
             ), 200
         else:
             return jsonify(
                 {
+                    "code": 400,
                     "message": "Role not found!"
                 }
             ), 400

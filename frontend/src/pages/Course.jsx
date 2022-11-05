@@ -82,7 +82,7 @@ const handleSubmit = (e) => {
   console.log("Event is", e.target.textContent)
   
   if (toDeleteSkills.length !== 0) {
-    if(toUpdateSkills.length===0 && (toDeleteSkills.length === Object.keys(skillsByCourse).length)){
+    if(toUpdateSkills.length===0 && (toDeleteSkills.length === skillsByCourse.skills.length)){
       alert("Deletion Failed! A course should have at least one skill!")
     }else{
       console.log("these are to be deleted", toDeleteSkills)

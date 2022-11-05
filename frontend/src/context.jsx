@@ -8,7 +8,6 @@ const AppContext = React.createContext()
 const rolesUrl = 'http://127.0.0.1:5001/viewroles'
 const viewSelectedRoleUrl = 'http://127.0.0.1:5001/viewselectedrole?role_id='
 const deleteRoleUrl = 'http://127.0.0.1:5001/deleterole'
-const updateRoleUrl = 'http://127.0.0.1:5001/updaterole'
 
 // Skills
 const skillsUrl = 'http://127.0.0.1:5000/view'
@@ -106,7 +105,6 @@ const fetchRelatedCourses = async(url) => {
     try {
         const {data} = await axios(url)
         setSkills(()=>{return data.data})
-        console.log(skills)
     } catch (error) {
         console.log(error.response)
     }
@@ -233,20 +231,6 @@ const fetchSkill = async(url) => {
     }
     }
 
-    const updateRole = async(formData) => {
-      try {
-        const requestOptions = {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-      };
-      fetch(updateRoleUrl, requestOptions)
-        .then(response => response.json())
-    
-    } catch (error) {
-        console.log(error.response)
-    }
-    }
 
     const selectSkill = (skill_code) => {
       setSkillCode(skill_code)
@@ -256,7 +240,7 @@ const fetchSkill = async(url) => {
     return (
       <AppContext.Provider
         value={{lid, ltitle, setLTitle, setLid, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
-          updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
+          updateSkill, createSkill, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
           closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal,
           userDetails, setUserDetails
 }}
