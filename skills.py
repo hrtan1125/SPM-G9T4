@@ -142,7 +142,7 @@ def skills():
     ), 200
 
 # admin read all skills
-@app.route("/viewselectedskill")
+@app.route("/viewselectedskill", methods=['GET'])
 def viewSelectedSkill():
     try:
         skill_code = request.args["skill_code"]
