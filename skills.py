@@ -17,6 +17,7 @@ if __name__ == "__main__":
                                             'pool_recycle': 280}
 else:
      app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
+     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
