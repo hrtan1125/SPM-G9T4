@@ -312,7 +312,7 @@ def viewSkillsByRole(RoleSkills=[]):
 
 # need to add skill name 
 @app.route("/viewTeamMembersSkills", methods=['GET'])
-def managerViewTeamMembersSkills(dept=''):
+def managerViewTeamMembersSkills(dept='',staffid=''):
 
     from learning_journey import viewTeamMembers
     # {
@@ -322,11 +322,12 @@ def managerViewTeamMembersSkills(dept=''):
     if request.get_json():
         data = request.get_json()
         dept =  data['dept']
+        staffid = data['staff_id']
     
     try: 
 
         # get the the list of team members
-        team_members_json = viewTeamMembers(dept)
+        team_members_json = viewTeamMembers(dept, staffid)
         team_members = json.loads(team_members_json[0].data)
         team_members_list = team_members["data"]
 
@@ -403,41 +404,55 @@ def adminViewLearnersSkills():
         }), 500
 
 @app.route("/viewTeamMembersCourses", methods=['GET'])
-def managerViewTeamMembersCourses():
+def managerViewTeamMembersCourses(dept='',staffid=''):
 
     from learning_journey import Registration, Courses
 
     if request.get_json():
         data = request.get_json()
         dept =  data['dept']
+        staffid = data['staff_id']
 
-    team_members_skills_json = managerViewTeamMembersSkills(dept)
-    team_members_skill = json.loads(team_members_skills_json[0].data)
-    team_members_skill_obj = team_members_skill["data"]
+    print ("hello")
 
-    empty_dict = {}
-    for member_id in team_members_skill_obj.keys():
-        reg_list_from_staff_id = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
-        staff_roles = [reg.to_dict() for reg in reg_list_from_staff_id]
-        empty_dict[member_id] = staff_roles
+    
+    try:
+        print(staffid, dept)
+        team_members_skills_json = managerViewTeamMembersSkills(dept, staffid)
+        team_members_skill = json.loads(team_members_skills_json[0].data)
+        team_members_skill_obj = team_members_skill["data"]
+        # return jsonify(team_members_skill_obj)
 
-    name_temp_dict = {}
-    for member_obj in empty_dict:
-        for attr in empty_dict[member_obj]:
-            course_id = attr['course_id']
-            course = Courses.query.filter_by(course_id=course_id).first()
-            course_id = course.course_id
-            course_name = course.course_name
-            name_temp_dict[course_id] = course_name
+        empty_dict = {}
+        for member_id in team_members_skill_obj.keys():
+            reg_list_from_staff_id = Registration.query.filter_by(staff_id=member_id, completion_status ='Completed').all()
+            staff_roles = [reg.to_dict() for reg in reg_list_from_staff_id]
+            empty_dict[member_id] = staff_roles
 
-    for member_obj in empty_dict:
-        list_of_obj = empty_dict[member_obj]
-        for obj in list_of_obj:
-            if obj['course_id'] in name_temp_dict.keys():
-                course_id = obj['course_id']
-                obj['course_name'] = name_temp_dict[course_id]
+        name_temp_dict = {}
+        for member_obj in empty_dict:
+            for attr in empty_dict[member_obj]:
+                course_id = attr['course_id']
+                course = Courses.query.filter_by(course_id=course_id).first()
+                course_id = course.course_id
+                course_name = course.course_name
+                name_temp_dict[course_id] = course_name
 
-    return empty_dict
+        for member_obj in empty_dict:
+            list_of_obj = empty_dict[member_obj]
+            for obj in list_of_obj:
+                if obj['course_id'] in name_temp_dict.keys():
+                    course_id = obj['course_id']
+                    obj['course_name'] = name_temp_dict[course_id]
+
+        return jsonify({
+                    "data" : empty_dict
+                }), 200
+    
+    except Exception:
+        return jsonify({
+            "message": "Unexpected Error."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
