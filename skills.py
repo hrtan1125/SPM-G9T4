@@ -119,7 +119,7 @@ def create_skill():
     try:
         db.session.add(skill)
         db.session.commit()
-        return jsonify(skill.to_dict(), {"message": "Skill created successfully."}), 201
+        return jsonify({"data": [{"skill created": skill.to_dict()}, {"message": "Skill created successfully."}]}), 201
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
