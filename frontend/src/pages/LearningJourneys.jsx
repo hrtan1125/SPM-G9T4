@@ -14,9 +14,10 @@ import CardContent from '@mui/material/CardContent';
 import ReadMoreOutlinedIcon from '@mui/icons-material/ReadMoreOutlined';
 import { Box } from '@mui/material';
 import AlertDialog from "../components/DeleteConfirmation"
-
-
-
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 
 const Cards = ({ljs,staff})=>{
@@ -76,31 +77,53 @@ const Cards = ({ljs,staff})=>{
 
 const LearningJourneys = () => {
 
-  const {setPath, userDetails} = useGlobalContext()
+
+  const {setPath, userDetails, roles} = useGlobalContext()
   const {staff_id} = useParams()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
+  const [filter, setFilter]= useState(null);
   var sid = (window.location.href.indexOf('team')>-1)?staff_id:userDetails.staff_id;
-  
+  const [role, setRole] = React.useState('all');
+
+  const handleChange = (event) => {
+    setRole(event.target.value);
+  };
 
   useEffect(()=>{
     console.log(sid)
-    if(sid!==undefined){
-      fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
-    .then(res=> {return res.json()})
-    .then(data => {
-      console.log("is data exist?", ("data" in Object.keys(data)))
-      if (data["data"]===undefined){
-        console.log("hello")
-        setLJs(data);
+    if (sid !== undefined) {
+      if(role!=="all"){
+        fetch(`http://127.0.0.1:5002/filterLearningJourneyByRole?staff_id=${sid}&role_id=${role}`)
+        .then(res => { return res.json() })
+        .then(data => {
+          console.log("is data exist?", ("data" in Object.keys(data)))
+          if (data["data"] === undefined) {
+            console.log("hello")
+            setLJs(data);
+          } else {
+            console.log("hi")
+            setLJs(data.data);
+          }
+        });
       }else{
-        console.log("hi")
-        setLJs(data.data);
+        fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
+        .then(res => { return res.json() })
+        .then(data => {
+          console.log("is data exist?", ("data" in Object.keys(data)))
+          if (data["data"] === undefined) {
+            console.log("hello")
+            setLJs(data);
+          } else {
+            console.log("hi")
+            setLJs(data.data);
+          }
+        });
       }
-    });
+      
     }
     
-  },[sid])
+  },[sid, role])
 
   
   return (
@@ -110,6 +133,24 @@ const LearningJourneys = () => {
          <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>}>New Learning Journey</Button>
         </Link>}
       </div>
+      <div style={{display: 'flex',  marginBottom:"20px",justifyContent: "center"}} >
+      <FormControl sx={{ m: 1, minWidth: 80 }}>
+        <InputLabel id="demo-simple-select-autowidth-label">Filter By Role</InputLabel>
+        <Select
+          labelId="demo-simple-select-autowidth-label"
+          id="demo-simple-select-autowidth"
+          value={role}
+          onChange={handleChange}
+          autoWidth
+          label="Filter By Role"
+        >
+          <MenuItem value="all">
+            No Filter
+          </MenuItem>
+          {roles?.map((r)=>(<MenuItem value={r.role_id}>{r.role_name}</MenuItem>))}
+        </Select>
+      </FormControl>
+    </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
         { ljs && <Cards ljs={ljs} staff={sid}/>}
       </Grid>
