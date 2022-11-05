@@ -30,13 +30,6 @@ const AppProvider = ({ children }) => {
     const [path, setPath] = useState("Learning Journey")
 
     const [open, setOpen] = useState(false)
-    const [user, setUser] = useState(150166)
-    var userRoleSaved = "1"
-    if (localStorage.getItem("userRole")){
-      userRoleSaved = localStorage.getItem("userRole")
-    }
-
-    const [userRole, setUserRole] = useState(userRoleSaved)
 
     const [userDetails, setUserDetails] = useState({})
 
@@ -262,7 +255,7 @@ const fetchSkill = async(url) => {
 
     return (
       <AppContext.Provider
-        value={{lid, ltitle, setLTitle, setLid,confirmDelete, setCD, item, setItem, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
+        value={{lid, ltitle, setLTitle, setLid, open, setOpen, path, setPath, roles, deleteRole, role, setRoleId, setRole, skills, deleteSkill, setSkillCode, setSkill, skill, setRoles, fetchRoles, rolesUrl, setSkills,
           updateSkill, createSkill, updateRole, activeStep, setActiveStep, skipped, setSkipped, roleId, skillCode, courses, allCourses, addCourses, setAddCourses,
           closeModal, showModal, relatedSkills, selectSkill, ljCourses, setljCourses, fetchSkills, skillsUrl, setShowModal,
           userDetails, setUserDetails

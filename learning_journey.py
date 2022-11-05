@@ -212,21 +212,22 @@ def viewlearningjourneys():
     try:
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
-            learningjourneys = [learningjourney for learningjourney in LearningJourneys]
-            print("all learning journeys", learningjourneys)
-            for learningjourney in learningjourneys:
-                # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
-                res = view_learningjourney_By_LJid(learningjourney,staff_id)
-               
-                my_dict[learningjourney.lj_id] = json.loads(res[0].data)
-                
-            return jsonify({
-                "data" : my_dict
-            }), 200
-        else:
-            return jsonify({
-                "message": "No registration available."
-            }), 400
+
+            if LearningJourneys:
+                learningjourneys = [learningjourney for learningjourney in LearningJourneys]
+                for learningjourney in learningjourneys:
+                    # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
+                    res = view_learningjourney_By_LJid(learningjourney,staff_id)
+                    my_dict[learningjourney.lj_id] = json.loads(res[0].data)
+                    
+                return jsonify({
+                    "data" : my_dict
+                }), 200
+            else:
+                return jsonify({
+                    "message": "No learning journeys records found."
+                }), 400
+            
     except Exception:
         return jsonify({
             "message": "Unable to commit to database"
@@ -378,7 +379,7 @@ def add_learning_journey_courses(lj_id=0,courses=[]):
         
         return jsonify({
             "message": "Courses successfully added!"
-        })
+        }), 200
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
@@ -423,6 +424,7 @@ def remove_learning_journey(id):
         }), 404
     try: 
         db.session.delete(to_remove)
+        # print(id)
         db.session.commit()
         print(id)
         return jsonify({

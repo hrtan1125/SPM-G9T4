@@ -21,6 +21,7 @@ import Course from "./pages/Course";
 import LJDetails from "./pages/LJdetails";
 import Login from "./pages/Login";
 import TeamMembers from "./pages/TeamMembers";
+import Learners from "./pages/Learners";
 
 const drawerWidth = 240;
 
@@ -31,32 +32,13 @@ const theme = createTheme({
 });
 
 export default function App() {
-  const { path, userRole, userDetails } = useGlobalContext();
+  const { path, userDetails } = useGlobalContext();
   const roles_id_role_name = {
     1: "Admin",
     2: "User",
     3: "Manager",
   };
 
-  console.log(
-    userDetails,
-    userDetails.typ,
-    userDetails.dept,
-    userDetails.name,
-    userDetails?.staff_id,
-    "DETAILLSS"
-  );
-  console.log(typeof userDetails);
-
-  console.log(userDetails == "{}", "HAHAHHAA");
-  console.log(userDetails == {}, "hehehehe");
-  console.log(Object.keys(userDetails).length === 0, "HOHOHO");
-
-  const sx = {
-    width:
-      Object.keys(userDetails).length !== 0 && `calc(100% - ${drawerWidth}px)`,
-    ml: Object.keys(userDetails).length !== 0 && `${drawerWidth}px`,
-  };
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -108,6 +90,10 @@ export default function App() {
                 path="/learningjourneys"
                 element={<LearningJourneys />}
               ></Route>
+              <Route
+                path="/learningjourneys/team/:staff_id"
+                element={<LearningJourneys />}
+              ></Route>
               <Route path="/createlearningjourney" element={<CreateLJ />} />
 
               <Route path="/roles" element={<Roles />}></Route>
@@ -117,7 +103,7 @@ export default function App() {
                 element={<CreateEditRole />}
               />
               <Route
-                path="/learningjourney/:id"
+                path="/learningjourney/:id/:sid"
                 element={<LJDetails />}
               ></Route>
 
@@ -129,9 +115,10 @@ export default function App() {
               ></Route>
 
               <Route path="/courses" element={<Courses />} />
-              <Route path="/course/:course_id" element={<Course />} />
+              <Route path="/course/:course_id/:course_name" element={<Course />} />
 
               <Route path="/teammembers" element={<TeamMembers />} />
+              <Route path="/learners" element={<Learners />} />
             </Routes>
           </Box>
         </Box>

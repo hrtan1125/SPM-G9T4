@@ -1,5 +1,5 @@
 import { useGlobalContext } from '../context';
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import "./../App.css";
 import { Link } from 'react-router-dom';
 import AddIcon from "@mui/icons-material/Add"
@@ -11,23 +11,38 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import { Pagination } from '@mui/material';
 
 const Courses = () => {
   const {setPath, userDetails} = useGlobalContext()
   useEffect(()=>setPath("Courses"))
   const {allCourses} = useGlobalContext()
+  const [page, setPage] = useState(1);
   var width = 500;
 
-  var marginTop = 0;
   if (userDetails.role == 1) {
     width = 640;
-    marginTop = 50;
 
   }
-    return (
-        <div style={{display: 'flex', marginTop: 80, justifyContent: "center"}} >
-           <div className="app-container">
+  function sliceIntoChunks(arr, chunkSize) {
+    const res = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        const chunk = arr.slice(i, i + chunkSize);
+        res.push(chunk);
+    }
+    return res;
+  }
 
+  const courses_chunks = sliceIntoChunks(allCourses, 20)
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
+    return (
+        <div style={{display: 'flex', justifyContent: "center"}} >
+           <div className="app-container">
+           <Pagination count={courses_chunks.length} page={page} onChange={handleChange} />
            <TableContainer component={Paper} elevation={3}>
       <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
         <TableHead>
@@ -39,7 +54,7 @@ const Courses = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {allCourses?.map((course) => (
+          {courses_chunks[page - 1]?.map((course) => (
             <TableRow
               key={course.course_id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

@@ -102,7 +102,7 @@ def create_skill():
                 {
                     "message": "Skill code and name already exist!"
                 }
-            )
+            ), 400
     elif check_skill:    
         return jsonify(
                 {
@@ -113,7 +113,7 @@ def create_skill():
             {
                 "message": "Skill code already exist!"
             }
-        )
+        ),400
     data['deleted']='no'
     skill = Skills(**data)
     try:

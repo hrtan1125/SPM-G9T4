@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, {useEffect, useState} from 'react'
 import { useGlobalContext } from '../context';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import Grid from "@mui/material/Grid"
 import {Card} from "@mui/material"
 import { Typography } from '@mui/material';
@@ -16,50 +16,34 @@ import { Box } from '@mui/material';
 import AlertDialog from "../components/DeleteConfirmation"
 
 
-// const testLJ = () => {
-
-// }
-// fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${130001}`).then(res=>{
-//   console.log(res.json())
-// }).then(data=>{
-//   var ljs = data.data;
-// })
-
-// const ljs = 
-const toEditF = (id) => {
-  console.log("your id: ", id)
-}
-
-const viewDetails = (e) =>{
-  // e.preventDefault();
-  // console.log("view details")
-  // console.log(e)
-  // navigate(`/learningjourney/${id}`)
-  //handle view details of learning journeys
-}
 
 
 
-
-
-const Cards = ({ljs})=>{
-  const {setOpen, lid, ltitle, setLid, setLTitle} = useGlobalContext()
-
+const Cards = ({ljs,staff})=>{
+  console.log("staff is", staff)
+  console.log(ljs)
+  const {setOpen, setLid, setLTitle} = useGlobalContext()
+  const navigate = useNavigate()
   const deleteLJ = (id,title) =>{
     console.log("deleting in progress")
     setLTitle(title)
     setLid(id)
     setOpen(true)
   }
-  
-  return (<>{Object.keys(ljs).map((lj_id)=>(
+  const toEditF = (id,sid) => {
+    console.log("your sid: ", sid)
+    navigate(`/learningjourneys/team/${sid}`)
+  }
+
+  return (<>{(ljs["message"]!==undefined)?<div style={{width:"100%", display: 'flex', marginBottom:"20px",justifyContent: "center"}}><h3>{ljs.message}</h3></div>:Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>
       <Card variant="outlined">
   <React.Fragment>
     <CardContent>
-      <Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
-      <IconButton href={`/learningjourney/${lj_id}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
-      </Box>
+      {(window.location.href.indexOf('team')>-1)?<></>:<Box display="flex" justifyContent="flex-end" alignItems={"flex-end"}>
+      <IconButton href={`/learningjourney/${lj_id}/${staff}`} style={{borderColor:"#5289B5"}}><ReadMoreOutlinedIcon/></IconButton>
+      </Box>}
+      
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
         Role related: {ljs[lj_id].role_name}
       </Typography>
@@ -71,14 +55,14 @@ const Cards = ({ljs})=>{
       </Typography>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
-    <CardActions style={{marginBottom:10}}>
-    <Button onClick={()=>toEditF(lj_id)} style={{color:"#5289B5", borderColor:"#5289B5"}} size="small" variant="outlined" startIcon={<EditIcon />}>
+    {(window.location.href.indexOf('team')>-1)?<></>:<CardActions style={{marginBottom:10}}>
+    <Button onClick={()=>toEditF(lj_id,"150166")} style={{color:"#5289B5", borderColor:"#5289B5"}} size="small" variant="outlined" startIcon={<EditIcon />}>
       Edit
     </Button>
     <Button onClick={()=>deleteLJ(lj_id,ljs[lj_id].title)} style={{backgroundColor:"#5289B5"}} size="small" variant="contained" startIcon={<DeleteIcon />}>
       Delete
     </Button>
-    </CardActions>
+    </CardActions>}
     </Grid>
   </React.Fragment>
   </Card>
@@ -93,30 +77,41 @@ const Cards = ({ljs})=>{
 const LearningJourneys = () => {
 
   const {setPath, userDetails} = useGlobalContext()
-
+  const {staff_id} = useParams()
   useEffect(()=>setPath("Learning Journeys"),[])
   const [ljs, setLJs] = useState(null);
+  var sid = (window.location.href.indexOf('team')>-1)?staff_id:userDetails.staff_id;
+  
 
   useEffect(()=>{
-    fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${userDetails.staff_id}`)
+    console.log(sid)
+    if(sid!==undefined){
+      fetch(`http://127.0.0.1:5002/viewlearningjourneys?staff_id=${sid}`)
     .then(res=> {return res.json()})
     .then(data => {
-      setLJs(data.data);
-      console.log(data.data)
+      console.log("is data exist?", ("data" in Object.keys(data)))
+      if (data["data"]===undefined){
+        console.log("hello")
+        setLJs(data);
+      }else{
+        console.log("hi")
+        setLJs(data.data);
+      }
     });
-  },[userDetails.staff_id])
+    }
+    
+  },[sid])
 
   
   return (
     <div>
       <div style={{display: 'flex',  marginBottom:"20px",justifyContent: "center"}} >
-        <Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
+        {(window.location.href.indexOf('team')>-1)?<h3>Created by: user #{sid}</h3>:<Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
          <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>}>New Learning Journey</Button>
-        </Link>
+        </Link>}
       </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        
-        {ljs && <Cards ljs={ljs}/>}
+        { ljs && <Cards ljs={ljs} staff={sid}/>}
       </Grid>
     
     </div> 
