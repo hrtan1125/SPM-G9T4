@@ -63,9 +63,8 @@ const Learners = () => {
               <TableCell>Staff ID</TableCell>
               <TableCell align="left">Staff Name</TableCell>
               <TableCell align="center">Staff Email</TableCell>
-              <TableCell align="center">Staff Role</TableCell>
+              <TableCell align="center">Dept</TableCell>
               <TableCell align="center">View More</TableCell>
-              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -79,8 +78,9 @@ const Learners = () => {
                 </TableCell>
                 <TableCell align="left">{member.Staff_FName} {member.Staff_LName}</TableCell>
                 <TableCell align="center">{member.Email}</TableCell>
-                <TableCell align="center">{member.Role === 1 ? (`Admin`): (member.Role === 2 ? (`User`):(`Manager`))}</TableCell>
-                <TableCell align="center"><VisibilityIcon color="primary" onClick={()=>navigate(`/learningjourneys/team/${member.Staff_ID}`)}/></TableCell>
+                <TableCell align="center">{member.Dept}</TableCell>
+                {/* <TableCell align="center">{member.Role === 1 ? (`Admin`): (member.Role === 2 ? (`User`):(`Manager`))}</TableCell> */}
+                <TableCell align="center"><VisibilityIcon style={{color:"#5289B5"}} onClick={()=>navigate(`/learningjourneys/team/${member.Staff_ID}`)}/></TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -134,6 +134,7 @@ const LearningJourneys = () => {
         {(window.location.href.indexOf('team')>-1)?<h3>Created by: user #{sid}</h3>:<Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
          <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>}>New Learning Journey</Button>
         </Link>}
+        
       </div>
       <div style={{display: 'flex',  marginBottom:"20px",justifyContent: "center"}} >
       <FormControl sx={{ m: 1, minWidth: 80 }}>
@@ -152,11 +153,15 @@ const LearningJourneys = () => {
           {roles?.map((r)=>(<MenuItem value={r.role_id}>{r.role_name}</MenuItem>))}
         </Select>
       </FormControl>
+      <Grid item sx={{display:"flex", alignItems:"center"}}>
+      <Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
+         <Button variant="contained" style={{backgroundColor:"#5289B5"}}>Check Skills Acquired</Button>
+        </Link>
+        </Grid>
     </div>
       <Grid className='Font App' container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
         { ljs && <Cards ljs={ljs} staff={sid}/>}
       </Grid>
-    
     </div> 
   )
 }

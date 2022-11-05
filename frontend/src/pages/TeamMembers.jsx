@@ -1,16 +1,18 @@
-import { Button, IconButton, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, IconButton, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGlobalContext } from '../context';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const TeamMembers = () => {
     const {setPath, setRoleId, userDetails} = useGlobalContext()
+    const navigate = useNavigate()
     useEffect(()=>setPath("Roles"),[])
     useEffect(()=>setRoleId(0),[])
     console.log(userDetails)
     const viewTeamMembersUrl = 'http://127.0.0.1:5002/viewTeamMembers?dept='
-  
+    const [skills_ac, setSkillsAc] = useState(null)
     const {rolesUrl, fetchRoles} = useGlobalContext()
     useEffect(() => {
       fetchRoles(rolesUrl)
@@ -26,6 +28,16 @@ const TeamMembers = () => {
     useEffect(() => {
         getTeamMembers();
     }, []);
+
+    useEffect(()=>{
+      fetch(`http://127.0.0.1:5000/viewTeamMembersSkills?dept=${userDetails.dept}&staff_id=${userDetails.staff_id}`)
+      .then(res=>{
+        return res.json()
+      })
+      .then(data=>{
+        setSkillsAc(data.data)
+      })
+    },[])
 
     console.log(teamMembers)
   
@@ -65,9 +77,8 @@ const TeamMembers = () => {
             <TableRow>
               <TableCell>Staff ID</TableCell>
               <TableCell align="left">Staff Name</TableCell>
-              <TableCell align="center">Staff Email</TableCell>
-              <TableCell align="center">Staff Role</TableCell>
-              
+              <TableCell align="center">Staff's Skills</TableCell>
+              <TableCell align="center">View More</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,9 +91,11 @@ const TeamMembers = () => {
                   {member.Staff_ID}
                 </TableCell>
                 <TableCell align="left">{member.Staff_FName}</TableCell>
-                <TableCell align="center">{member.Email}</TableCell>
-                <TableCell align="center">{member.Role === 1 ? (`Admin`): (member.Role === 3 ? (`Manager`):(`User`))}</TableCell>
-                
+                <TableCell align="center" style={{maxWidth:"100px"}}>{skills_ac!==null && (skills_ac[member.Staff_ID]!==undefined)?
+                Object.values(skills_ac[member.Staff_ID]).join(", ")
+                  :<>no skills</>}
+                </TableCell>
+                <TableCell align="center"><VisibilityIcon style={{color:"#5289B5"}} onClick={()=>navigate(`/learningjourneys/team/${member.Staff_ID}`)}/></TableCell>
               </TableRow>
             ))}
           </TableBody>

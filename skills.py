@@ -327,6 +327,11 @@ def managerViewTeamMembersSkills(dept='',staffid=''):
         data = request.get_json()
         dept =  data['dept']
         staffid = data['staff_id']
+
+    
+    if "dept" in request.args:
+        dept = request.args.get("dept")
+        staffid = request.args.get("staff_id")
     
     try: 
 
@@ -416,6 +421,7 @@ def managerViewTeamMembersCourses(dept='',staffid=''):
         data = request.get_json()
         dept =  data['dept']
         staffid = data['staff_id']
+    
 
     print ("hello")
 
