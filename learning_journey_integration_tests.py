@@ -111,7 +111,7 @@ class testCheckRoles(TestApp):
             'staff_id':130001
         }
 
-        response = self.client.put("/checkrole",
+        response = self.client.get("/checkrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -136,7 +136,7 @@ class testCheckRoles(TestApp):
             'staff_id':999999
         }
 
-        response = self.client.put("/checkrole",
+        response = self.client.get("/checkrole",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -156,7 +156,7 @@ class testViewTeamMembers(TestApp):
             'dept': "Sales"
         }
 
-        response = self.client.put("/viewTeamMembers",
+        response = self.client.get("/viewTeamMembers",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -294,7 +294,7 @@ class testViewTeamMembers(TestApp):
             'dept': "Sales"
         }
 
-        response = self.client.put("/viewTeamMembers",
+        response = self.client.get("/viewTeamMembers",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -312,7 +312,7 @@ class testAdminViewLearners(TestApp):
             'staff_id':130001
         }
 
-        response = self.client.put("/AdminViewLearners",
+        response = self.client.get("/AdminViewLearners",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
@@ -1467,7 +1467,7 @@ class testAdminViewLearners(TestApp):
             'staff_id': ""
         }
 
-        response = self.client.put("/AdminViewLearners",
+        response = self.client.get("/AdminViewLearners",
                                     data=json.dumps(request_body),
                                     content_type='application/json')
 
