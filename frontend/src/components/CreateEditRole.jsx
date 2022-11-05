@@ -13,7 +13,15 @@ const CreateEditRole = () =>{
   const updateRoleUrl = 'http://127.0.0.1:5001/updaterole'
   const { relatedSkills, setRoleId, skills, setPath } = useGlobalContext()
   const roleRef = useRef(null);
+  const [status, setStatus] = useState(null)
+  const [res, setRes] = useState(null)
 
+  useEffect(()=>{
+    if(status===400){
+      alert("Invalid Role")
+      //Change later
+    }
+  },[status])
   useEffect(()=>setPath("Roles"),[])
 
     let navigate = useNavigate();
@@ -36,13 +44,8 @@ const CreateEditRole = () =>{
       fetch(updateRoleUrl, requestOptions)
         .then(response => {
           console.log(response)
+          setStatus(response.status)
           return response.json()
-        }).then(data =>{
-          if(data.code===400){
-            alert(data.message)
-          }else{
-            refreshPage()
-          }
         })
     } catch (error) {
         console.log(error.response)
