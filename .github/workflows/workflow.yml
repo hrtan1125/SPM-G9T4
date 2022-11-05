@@ -68,3 +68,4 @@ jobs:
           # Add integration test below
           python roles_integration_tests.py
           python skills_integration_tests.py
+          python learning_journey_integration_tests.py
