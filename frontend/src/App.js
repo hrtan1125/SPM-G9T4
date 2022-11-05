@@ -22,6 +22,7 @@ import LJDetails from "./pages/LJdetails";
 import Login from "./pages/Login";
 import TeamMembers from "./pages/TeamMembers";
 import Learners from "./pages/Learners";
+import EditLJ from "./pages/EditLJ"
 
 const drawerWidth = 240;
 
@@ -93,6 +94,10 @@ export default function App() {
               <Route
                 path="/learningjourneys/team/:staff_id"
                 element={<LearningJourneys />}
+              ></Route>
+              <Route
+                path="/editlearningjourney/:id/:title"
+                element={<EditLJ />}
               ></Route>
               <Route path="/createlearningjourney" element={<CreateLJ />} />
 
