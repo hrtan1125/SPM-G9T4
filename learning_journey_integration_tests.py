@@ -59,7 +59,35 @@ class TestViewAllCourses(TestApp):
                 }
             ]
         })
+    def test_view_all_courses_with_no_courses(self):
+        
+        response = self.client.get("/viewAllCourses", content_type="application/json")
 
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message": "No courses available."
+        })
+
+#remove Courses
+class TestRemoveCourses(TestApp):
+    def test_remove_courses(self):
+        ljc1 = Learning_Journey_Courses(lj_id=1,skill_code="TRM004",course_id="tch009")
+        
+        db.session.add(ljc1)
+        db.session.commit()
+
+        request_body = {
+            'lj_id': 1,
+            'course': "tch009"
+        }
+        response = self.client.delete("/removecourses",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json, {
+                    "message": "tch009 have been successfully removed."           
+        })
 #view courses
 # class TestViewCourses(TestApp):
 #     def test_view_courses(self):
@@ -78,13 +106,8 @@ class TestViewAllCourses(TestApp):
 #         db.session.add(c2)
 #         db.session.add(c3)
 #         db.session.commit()
-
-#         request_body = {
-#             'skill_code':'GM003'
-#         }
         
-#         response = self.client.put("/viewCourses",
-#                                     data=(request_body),
+#         response = self.client.get("/viewCourses?skill_code=GM003",
 #                                     content_type='application/json')
         
 #         self.assertEqual(response.status_code,200)
@@ -100,6 +123,58 @@ class TestViewAllCourses(TestApp):
 #                 }
 #             ]
 #         })
+
+#create learning journey
+class TestCreateLearningJourney(TestApp):
+    def test_create_learning_journey(self):
+        request_body = {
+            'title':'Design Engineer Journey',
+            'role_id': 3,
+            'staff_id': 150166,
+            'courses': []
+        }
+        response = self.client.post("/createlearningjourney",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,201)
+        self.assertDictEqual(response.json, {
+                    "lj_id": 1,
+                    'title':'Design Engineer Journey',
+                    'role_id': 3,
+                    'staff_id': 150166            
+        })
+    def test_create_learning_journey_with_incorrect_data_format(self):
+        request_body = {
+            'title':'Design Engineer Journey',
+            'role_id': 3,
+            'staff_id': 150166
+        }
+        response = self.client.post("/createlearningjourney",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,500)
+        self.assertDictEqual(response.json, {
+                    "message": "Incorrect Data Format."           
+        })
+
+#create learning journey courses
+class TestCreateLearningJourneyCourses(TestApp):
+    def test_create_learning_journey_courses(self):
+        request_body = {
+            'lj_id': 1,
+            'courses': {"COR000":["Software Project Management"]}
+        }
+        response = self.client.post("/addlearningjourneycourses",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json, {
+                    "message": "Courses successfully added!"           
+        })
+
 
 if __name__ == '__main__':
     unittest.main()

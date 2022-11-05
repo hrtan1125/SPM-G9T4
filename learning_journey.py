@@ -334,7 +334,7 @@ def create_learning_journey():
                        'role_id', 
                        'staff_id', 'courses')):
         return jsonify({
-            "message": "Incorrect Data Formet."
+            "message": "Incorrect Data Format."
         }), 500
 
     title = data["title"]
