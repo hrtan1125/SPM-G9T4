@@ -41,7 +41,7 @@ class Learning_Journey(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-              
+
 class Learning_Journey_Courses(db.Model):
     __tablename__ = 'learning_journey_courses'
     lj_id = db.Column(db.Integer)
@@ -185,6 +185,7 @@ def viewAllCourses():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
+
 # view registration
 @app.route("/viewAllRegistration", methods=['GET'])
 def viewAllRegistration():
@@ -211,12 +212,12 @@ def viewlearningjourneys():
     try:
         if staff_id:
             LearningJourneys = Learning_Journey.query.filter_by(staff_id=staff_id).all()
+
             if LearningJourneys:
                 learningjourneys = [learningjourney for learningjourney in LearningJourneys]
                 for learningjourney in learningjourneys:
                     # temp_dict = view_learningjourney_By_LJid(learningjourney,staff_id)
                     res = view_learningjourney_By_LJid(learningjourney,staff_id)
-                
                     my_dict[learningjourney.lj_id] = json.loads(res[0].data)
                     
                 return jsonify({
@@ -236,17 +237,17 @@ def viewlearningjourneys():
 @app.route("/viewlearningjourneyByLJid")
 def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
 
-    if isinstance(staff_id,int):
-        learningjourney=request.args.get('lj_id')
+    if "lj_id" in request.args:
+        lj_id=request.args.get('lj_id')
+
         staff_id=request.args.get('staff_id')
+        learningjourney = Learning_Journey.query.filter_by(lj_id=lj_id).first()
         print(learningjourney)
         print(staff_id)
-        #fix in progress
     try:
-        # lj_courses_and_status = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
         response = viewCoursesByLearningJourney(learningjourney.lj_id,staff_id)
         lj_courses_and_status = json.loads(response[0].data)
-        print(lj_courses_and_status)
+        print("courses",lj_courses_and_status)
         role = Roles.query.filter_by(role_id = learningjourney.role_id).first()
         lj_courses_and_status["title"] = learningjourney.title
         lj_courses_and_status["role_id"] = learningjourney.role_id
@@ -259,6 +260,7 @@ def view_learningjourney_By_LJid(learningjourney=null,staff_id=0):
         return jsonify({
             "message": "Unable to view learning journey details."
         }), 500
+
 # View Courses Statuses and progress
 @app.route("/viewcoursesstatuses")
 def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
@@ -266,14 +268,10 @@ def view_courses_status_by_courses_ids(courses_ids_list,staff_id):
         coursesList = Courses.query.filter(Courses.course_id.in_(courses_ids_list)).all()
         # course_names = [course.course_name for course in coursesList]
         courses_dict = {course.course_id:{"course_name":course.course_name,"completion_status":""} for course in coursesList}
-        print("view courses in progress")
         courses_progress_list = Registration.query.filter(Registration.course_id.in_(courses_ids_list),Registration.staff_id==staff_id).all()
         
         for progress in courses_progress_list:
             courses_dict[progress.course_id]["completion_status"] = progress.completion_status
-
-        print("printing courses dict")
-        print(courses_dict)
         final_progress = Learning_Journey_Courses.calculate_progress(courses_dict)
         return jsonify({"courses" : courses_dict, "progress": final_progress}), 200
     except Exception:
@@ -343,7 +341,6 @@ def create_learning_journey():
     role_id = data["role_id"]
     staff_id = data["staff_id"]
     courses_list = data["courses"]
-    # {skill_code1:[courses], skill_code2:[courses]}
     learning_journey = Learning_Journey(**{"title": title,"role_id":role_id, "staff_id":staff_id})
     
     try:
@@ -477,15 +474,16 @@ def filterLearningJourneyByRole():
         ), 400
 
 @app.route("/viewTeamMembers", methods=['GET'])
-def viewTeamMembers(dept=''):
+def viewTeamMembers(dept='',staffid=''):
     dept = request.args["dept"]
+    staffid = request.args["staff_id"]
     # if request.get_json():
     #     data = request.get_json()
     #     dept =  data['dept']
 
     try:
-        if dept:
-            team_members = Staff.query.filter_by(Dept=dept).all()
+        if dept and staffid:
+            team_members = Staff.query.filter(Staff.Staff_ID != staffid).filter_by(Dept=dept).all()
             
             return jsonify(
                 {
@@ -499,7 +497,8 @@ def viewTeamMembers(dept=''):
     except Exception:
         return jsonify({
             "message": "Unable to commit to database."
-        }), 500      
+        }), 500     
+
 
 @app.route("/viewTeamlearningjourneys", methods=['GET'])
 def viewTeamlearningjourneys():
@@ -531,7 +530,7 @@ def viewTeamlearningjourneys():
         return jsonify({
             "message": "Unable to commit to database"
         }), 500
-
+        
 @app.route("/AdminViewLearners", methods=['GET'])
 def adminViewLearners():
     staff_id=request.args.get('staff_id')
