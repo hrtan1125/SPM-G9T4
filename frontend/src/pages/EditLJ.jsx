@@ -44,7 +44,7 @@ const EditLJ = () =>{
         }
         fetchData()
         return () => (isMounted = false);
-      }, [])
+      }, [sid, id])
 
     const handleUpdateSubmit = (e) => {
         e.preventDefault();
@@ -58,7 +58,9 @@ const EditLJ = () =>{
     }
 
     return(
-        <></>
+        <>
+        
+        </>
     )
 }
 
