@@ -8,7 +8,7 @@ const TeamMembers = () => {
     const {setPath, setRoleId, userDetails} = useGlobalContext()
     useEffect(()=>setPath("Roles"),[])
     useEffect(()=>setRoleId(0),[])
-
+    console.log(userDetails)
     const viewTeamMembersUrl = 'http://127.0.0.1:5002/viewTeamMembers?dept='
   
     const {rolesUrl, fetchRoles} = useGlobalContext()
@@ -20,7 +20,7 @@ const TeamMembers = () => {
 
     const [teamMembers, setTeamMembers] = useState([]);
     const getTeamMembers = async () => {
-        const { data } = await axios.get(`${viewTeamMembersUrl}Sales`);
+        const { data } = await axios.get(`${viewTeamMembersUrl}${userDetails.dept}&staff_id=${userDetails.staff_id}`);
         setTeamMembers(data.data);
     };
     useEffect(() => {
@@ -81,7 +81,7 @@ const TeamMembers = () => {
                 </TableCell>
                 <TableCell align="left">{member.Staff_FName}</TableCell>
                 <TableCell align="center">{member.Email}</TableCell>
-                <TableCell align="center">{member.Role === 1 ? (`Admin`): (member.Role === 2 ? (`User`):(`Manager`))}</TableCell>
+                <TableCell align="center">{member.Role === 1 ? (`Admin`): (member.Role === 3 ? (`Manager`):(`User`))}</TableCell>
                 
               </TableRow>
             ))}
