@@ -439,5 +439,71 @@ def managerViewTeamMembersCourses():
 
     return empty_dict
 
+
+#Admin remove skills from course
+@app.route("/course_remove_skills", methods=['DELETE'])
+def course_remove_skills():
+    #check if exists
+    data = request.get_json() #py obj
+    course_id = data['course_id']
+    
+    skills = data['skills'] #list
+
+    if(skills == []):
+        return jsonify(
+        {
+            "code": 201,
+            "message": "No skill removed from role"
+        }
+    ), 201
+
+    courseSkillsRecords = Course_skills.query.filter_by(course_id=course_id).all()
+    numOfRecords = 0
+    for record in courseSkillsRecords:
+        numOfRecords +=1
+
+    if(numOfRecords == len(skills)):
+            return jsonify(
+                {
+                    "code": 400,
+                    "data": {
+                        "skill_code": skills,
+                        "course_id": course_id
+                    },
+                    "message": "Skill cannot be removed. A course must have at least one skill."
+                }
+            ), 400
+
+    else:
+        for skill in skills:            
+            courseSkill = Course_skills.query.filter_by(skill_code=skill, course_id=course_id).first()
+            if (courseSkill):
+                try:
+                    db.session.delete(courseSkill)
+                    db.session.commit()
+                    numOfRecords -= 1
+
+                except SQLAlchemyError as e:
+                    print(e)
+                    db.session.rollback()
+                    return jsonify(
+                        {
+                            "code": 500,
+                            "data": {
+                                "skill_code": skill,
+                                "course_id": course_id
+                            },
+                            "message": "An error occurred when removing skill from course."
+                        }
+                    ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "message": "Successful removal of skill(s) from course"
+        }
+    ), 201
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
