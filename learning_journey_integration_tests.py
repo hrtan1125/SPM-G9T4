@@ -108,7 +108,7 @@ class testCheckRoles(TestApp):
         db.session.commit()
 
         request_body = {
-            'staff_id':130001
+            'staff_id': 130001
         }
 
         response = self.client.get("/checkrole",
@@ -288,7 +288,8 @@ class testViewTeamMembers(TestApp):
 
     def test_view_team_members_missing_input(self):
         s1 = Staff(Staff_ID=140001, Staff_FName="Derek", Staff_LName = "Tan", Dept = "Sales", Email = "Derek.Tan@allinone.com.sg", Role = 3)
-        db.session.commit(s1)
+        db.session.add(s1)
+        db.session.commit()
 
         request_body = {
             'dept': "Sales"
