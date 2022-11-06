@@ -2,7 +2,7 @@ import unittest
 import flask_testing
 import json
 # from roles import app, db, Roles, Role_Skills
-from skills import app, db, Skills, Skills_acquired, Course_skills
+from skills import app, db, Skills, Skills_acquired, Course_skills, Role_Skills
 
 class TestApp(flask_testing.TestCase):
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"

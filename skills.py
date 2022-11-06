@@ -65,6 +65,29 @@ class Course_skills(db.Model):
         self.course_id = course_id
         self.skill_code = skill_code
 
+class Role_Skills(db.Model):
+    __tablename__ = 'role_skills'
+    row_id = db.Column(db.Integer, primary_key=True)
+    role_id = db.Column(db.Integer, nullable=False)
+    skill_code = db.Column(db.String(20), nullable=True)
+
+    def to_dict(self):
+        """
+            'to_dict' converts the object into a dictionary,
+            in which the keys correspond to database columns
+        """
+
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+    def __init__(self, role_id, skill_code):
+        self.role_id = role_id
+        self.skill_code = skill_code
+
+
 class Skills_acquired(db.Model):
     __tablename__ = 'skills_acquired'
     row_id = db.Column(db.Integer, primary_key=True)
@@ -290,11 +313,26 @@ def skill_assigns_course():
             }),200
 
 @app.route("/viewRoleSkills", methods=['GET'])
+def viewRoleSkills():
+    search_skill = request.args.get('role_id')
+    try:
+        if search_skill:
+            RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
+            skills = viewSkillsByRole(RoleSkills)
+
+            return skills
+        else:
+            return jsonify({
+                "message": "Missing Input."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+
 def viewSkillsByRole(RoleSkills=[]):
-    # search_skill = request.args.get('role_id')
     try:
         if RoleSkills:
-            # RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
             skills = [skill.skill_code for skill in RoleSkills]
             skillslist = Skills.query.filter(and_(Skills.skill_code.in_(skills),Skills.deleted=="no")).all()
             print([skill.skill_code for skill in skillslist])

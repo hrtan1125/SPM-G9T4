@@ -265,24 +265,7 @@ def assignSkill(skillslist=[], role_id=0):
         }
     ), 201
 
-@app.route("/viewRoleSkills", methods=['GET'])
-def viewRoleSkills():
-    from skills import viewSkillsByRole
-    search_skill = request.args.get('role_id')
-    try:
-        if search_skill:
-            RoleSkills = Role_Skills.query.filter_by(role_id=search_skill).all()
-            skills = viewSkillsByRole(RoleSkills)
 
-            return skills
-        else:
-            return jsonify({
-                "message": "Missing Input."
-            }), 400
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
 
 
 #Admin remove skills from role
