@@ -357,10 +357,10 @@ def managerViewTeamMembersSkills(dept='',staffid=''):
     #     dept:'Ops'
     # }
 
-    if request.get_json():
-        data = request.get_json()
-        dept =  data['dept']
-        staffid = data['staff_id']
+    # if request.get_json():
+    #     data = request.get_json()
+    #     dept =  data['dept']
+    #     staffid = data['staff_id']
 
     
     if "dept" in request.args:
