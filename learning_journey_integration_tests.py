@@ -210,7 +210,18 @@ class TestAdminViewLearners(TestApp):
             "Staff_LName": "Ma"
         }]
         })
-        
+    def test_adminViewLearners_missing_id(self):
+        s1 = Staff(Staff_ID=130001, Staff_FName="John", Staff_LName = "Sim", Dept = "Chairman", Email = "jack.sim@allinone.com.sg", Role = 1)
+        db.session.add(s1)
+        db.session.commit()
+
+        response = self.client.get("/AdminViewLearners",
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message": "There are no learners available"
+        }) 
 
 class testCheckRoles(TestApp):
     def test_check_role(self):
@@ -298,55 +309,6 @@ class testViewTeamMembers(TestApp):
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json, {
             "message": "Missing Input."
-        })
-class testAdminViewLearners(TestApp):
-    def test_adminViewLearners(self):
-        s1 = Staff(Staff_ID=130001, Staff_FName="John", Staff_LName = "Sim", Dept = "Chairman", Email = "jack.sim@allinone.com.sg", Role = 1)
-        s2 = Staff(Staff_ID=130002, Staff_FName="Jack", Staff_LName = "Sim", Dept = "CEO", Email = "Susan.Goh@allinone.com.sg", Role = 1)
-        s3 = Staff(Staff_ID=140001, Staff_FName="Derek", Staff_LName = "Tan", Dept = "Sales", Email = "Derek.Tan@allinone.com.sg", Role = 3)
-        db.session.add(s1)
-        db.session.add(s2)
-        db.session.add(s3)
-        db.session.commit()
-
-
-
-        response = self.client.get("/AdminViewLearners?staff_id=130001",
-                                    content_type='application/json')
-
-        self.assertEqual(response.status_code,200)
-        self.assertDictEqual(response.json, {
-            "data": [
-                {
-                    "Dept": "CEO",
-                    "Email": "jack.sim@allinone.com.sg",
-                    "Role": 1,
-                    "Staff_FName": "Jack",
-                    "Staff_ID": 130002,
-                    "Staff_LName": "Sim"
-                },
-                {
-                    "Dept": "Sales",
-                    "Email": "Derek.Tan@allinone.com.sg",
-                    "Role": 3,
-                    "Staff_FName": "Derek",
-                    "Staff_ID": 140001,
-                    "Staff_LName": "Tan"
-                }
-            ]
-        })
-
-    def test_adminViewLearners_missing_id(self):
-        s1 = Staff(Staff_ID=130001, Staff_FName="John", Staff_LName = "Sim", Dept = "Chairman", Email = "jack.sim@allinone.com.sg", Role = 1)
-        db.session.add(s1)
-        db.session.commit()
-
-        response = self.client.get("/AdminViewLearners",
-                                    content_type='application/json')
-
-        self.assertEqual(response.status_code,400)
-        self.assertDictEqual(response.json, {
-            "message": "There are no learners available"
         })
 
 class TestRegistration(TestApp):
