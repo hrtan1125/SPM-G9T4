@@ -1,5 +1,5 @@
 import unittest
-from learning_journey import Learning_Journey, Registration, Staff, Learning_Journey_Courses
+from learning_journey import Learning_Journey, Registration, Staff, Learning_Journey_Courses, Courses
 
 class TestLearningJourney(unittest.TestCase):
     def setUp(self):
@@ -102,6 +102,6 @@ class TestCourses(unittest.TestCase):
             "course_type":"Internal",
             "course_category":"Core"
         })
-        
+
 if __name__ == "__main__":
     unittest.main()
