@@ -87,7 +87,23 @@ const handleSubmit = (e) => {
     }else{
       console.log("these are to be deleted", toDeleteSkills)
     //call delete function here
-      setToDelete(true)
+      fetch(`http://127.0.0.1:5000/course_remove_skills`,{
+        method:'DELETE',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          course_id :course_id,
+          skills : toDeleteSkills
+        })
+      }).then(res=>{
+        if(res.status===201){
+          setToDelete(true)
+        }
+        return res.json()
+      }).then(data =>{
+        if(data.code===400){
+          alert(data.message)
+        }
+      })
     }
   }else{
     setToDelete(true)

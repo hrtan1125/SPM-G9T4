@@ -15,13 +15,32 @@ const CreateEditRole = () =>{
   const roleRef = useRef(null);
   const [status, setStatus] = useState(null)
   const [res, setRes] = useState(null)
+  const [refresh,setRefresh]=useState({rname:false,radd:false,rdelete:false})
 
   useEffect(()=>{
-    if(status===400){
-      alert("Invalid Role")
-      //Change later
+    if(status===400 && res!==null){
+      alert(res)
+      setRes(null)
     }
-  },[status])
+  },[res])
+
+  useEffect(()=>{
+    if(refresh.rname && refresh.radd && refresh.rdelete && status!==400){
+      setRoleId(0)
+      toUpdateSkills=[]
+      toDeleteSkills=[]
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          rname:false,
+          radd:false,
+          rdelete:false
+        }
+      })
+      refreshPage();
+    }
+  },[status,res])
+
   useEffect(()=>setPath("Roles"),[])
 
     let navigate = useNavigate();
@@ -46,6 +65,8 @@ const CreateEditRole = () =>{
           console.log(response)
           setStatus(response.status)
           return response.json()
+        }).then(data=>{
+          setRes(data.message)
         })
     } catch (error) {
         console.log(error.response)
@@ -59,7 +80,6 @@ const CreateEditRole = () =>{
         "role_name": roleRef.current.value
       });
       
-      // navigate(`/Roles`);
     };
 
 
@@ -108,16 +128,30 @@ const createNewRole=async(roleName,skillsToAssign)=>{
       "skills":skillsToAssign
     })
   }).then(res => {
+    setStatus(res.status)
+    setRefresh(prv =>{
+      return {
+        ...prv,
+        rname:true
+      }
+    })
     return res.json();
     
   }).then(data => {
-    console.log(data)
-    if(data["message"]===undefined){
+    // console.log(data)
+    // if(data["message"]===undefined){
+    //   setRoleId(0)
+    //   toUpdateSkills=[]
+    //   navigate('/Roles')
+    // }else{
+    //   alert(data["message"])
+    // }
+    if(data["message"]!==undefined){
+      setRes(data.message)
+    }else{
       setRoleId(0)
       toUpdateSkills=[]
       navigate('/Roles')
-    }else{
-      alert(data["message"])
     }
   })
 }
@@ -136,8 +170,6 @@ const handleSubmit = (e) => {
     }else{
       createNewRole(roleRef.current.value,toUpdateSkills)
     }
-    
-    
   }else{
     if (toDeleteSkills.length !== 0) {
       if(toUpdateSkills.length===0 && (toDeleteSkills.length === Object.keys(relatedSkills).length)){
@@ -145,12 +177,27 @@ const handleSubmit = (e) => {
       }else{
         console.log("these are to be deleted", toDeleteSkills)
       //function here
+      deleteSkillsFromRole(role_id,toDeleteSkills)
       }
+    }else{
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          rdelete:true
+        }
+      })
     }
 
     if (toUpdateSkills.length !== 0) {
       console.log("these are to be updated", toUpdateSkills)
       assignSkillsToRole(role_id, toUpdateSkills)
+    }else{
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          radd:true
+        }
+      })
     }
     let val = roleRef.current.value.trim()
     if (!val){
@@ -158,9 +205,15 @@ const handleSubmit = (e) => {
     }else if(!/^[A-Za-z0-9 ]*$/.test(roleRef.current.value)){
       alert("Invalid role name!Only alphanumeric and spaces allowed!")
     }else if (val !== role_name) {
-      console.log("Role Name has been changed to", val)
+      console.log("Role Name will be changed to", val)
       handleUpdateSubmit(e)
-      // refreshPage();
+    }else{
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          rname:true
+        }
+      })
     }
   }
   
@@ -175,10 +228,17 @@ const assignSkillsToRole = async(role_id, skill_code) => {
   };
   fetch("http://127.0.0.1:5001/assignSkills", requestOptions)
     .then(response => {
-      response.json();
-      setRoleId(0)
       toUpdateSkills=[]
-      refreshPage();
+      setStatus(response.status)
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          radd:true
+        }
+      })
+      return response.json();
+    }).then(data=>{
+      setRes(data.message)
     })
 
 } catch (error) {
@@ -186,24 +246,29 @@ const assignSkillsToRole = async(role_id, skill_code) => {
 }
 };
 
-const deleteSkillsFromRole = async(role_id, skill_code) => {
-  try {
-    const requestOptions = {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({role_id, skill_code})
-  };
-  fetch("http://127.0.0.1:5001/assignSkills", requestOptions)
-    .then(response => {
-      response.json();
-      setRoleId(0)
-      refreshPage();
-    })
-
-} catch (error) {
-    console.log(error.response)
-}
-}
+  const deleteSkillsFromRole = async (role_id, skill_code) => {
+    try {
+      fetch("http://127.0.0.1:5001/removeSkills", {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role_id, skill_code })
+      })
+        .then(response => {
+          setStatus(response.status)
+          setRefresh(prv =>{
+            return {
+              ...prv,
+              rdelete:true
+            }
+          })
+          return response.json();
+        }).then(data=>{
+          setRes(data.message)
+        })
+    } catch (error) {
+      console.log(error.response)
+    }
+  }
 
   return (
     <>

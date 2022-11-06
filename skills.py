@@ -483,9 +483,9 @@ def course_remove_skills():
     ), 201
 
     courseSkillsRecords = Course_skills.query.filter_by(course_id=course_id).all()
-    numOfRecords = 0
-    for record in courseSkillsRecords:
-        numOfRecords +=1
+    numOfRecords = len(courseSkillsRecords)
+    # for record in courseSkillsRecords:
+    #     numOfRecords +=1
 
     if(numOfRecords == len(skills)):
             return jsonify(

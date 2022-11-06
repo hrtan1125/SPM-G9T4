@@ -159,7 +159,7 @@ def updateRole():
         # check if new Role Name already exists
         checkRoleName = Roles.query.filter_by(role_name=newRoleName,deleted="no").first()
 
-        if checkRoleName:
+        if checkRoleName and checkRoleName.role_id!=data['role_id']:
             return jsonify(
                 {
                     "message": "Role exists!"
