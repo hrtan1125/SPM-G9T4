@@ -22,17 +22,24 @@ const SkillsAc = () =>{
     useEffect(()=>{
         fetch(`http://127.0.0.1:5000/viewLearnersSkills?staff_id=${sid}`)
         .then(res=>{
+            console.log(res.status)
             return res.json()
         }).then(data=>{
-            setSkillsAc(data.data)
-            console.log("testing only")
-            console.log(skills_ac)
+            console.log(data["message"]===undefined,data["data"]===undefined)
+            if(data["message"]===undefined){
+                setSkillsAc(data.data)
+                console.log(sid)
+            }else{
+                setSkillsAc(data)
+                console.log(data)
+            }
         })
     },[sid])
 
     return(
     <>
     <h3>Following are the skills acquired</h3>
+    {(skills_ac!==null && skills_ac["message"]!==undefined)?<h4>{skills_ac.message}</h4>:
     <TableContainer component={Paper} elevation={3}>
       <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
         <TableHead>
@@ -55,7 +62,7 @@ const SkillsAc = () =>{
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </TableContainer>}
     </>
     )
 }

@@ -390,17 +390,18 @@ def viewLearnersSkills():
     # staff_id = receivedRequest["staff_id"]
     staff_id = request.args.get('staff_id')
     skill_list = []
-    my_dict = {}
+    # my_dict = {}
     try:
-        if staff_id:
-            # staff = Staff.query.filter_by(Staff_ID=staff_id).first()
-            # staff_role = staff.Role
-            temp = Skills_acquired.query.filter_by(staff_id=staff_id).all()
-            for item in temp:
-                skill = item.skill_code
-                skill_dict=viewSkillsByCodes([skill])
-                skill_list.append(skill_dict)
-            # my_dict = viewSkillsByCodes(skill_list)
+        
+        # staff = Staff.query.filter_by(Staff_ID=staff_id).first()
+        # staff_role = staff.Role
+        temp = Skills_acquired.query.filter_by(staff_id=staff_id).all()
+        for item in temp:
+            skill = item.skill_code
+            skill_dict=viewSkillsByCodes([skill])
+            skill_list.append(skill_dict)
+        # my_dict = viewSkillsByCodes(skill_list)
+        if skill_list:
             return jsonify({
                 "data" : skill_list
             }), 200
