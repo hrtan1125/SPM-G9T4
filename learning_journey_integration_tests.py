@@ -176,6 +176,45 @@ class TestCreateLearningJourneyCourses(TestApp):
                     "message": "Courses successfully added!"           
         })
 
+class TestAdminViewLearners(TestApp):
+    def test_admin_view_learners(self):
+        s1 = Staff(Staff_ID=130001,Staff_FName="John",Staff_LName="Sim",Dept="Chariman",Email="john.sim@allinone.com.sg",Role=1)
+        s2 = Staff(Staff_ID=130002,Staff_FName="Jack",Staff_LName="Sim",Dept="CEO",Email="jack.sim@allinone.com.sg",Role=1)
+        s3 = Staff(Staff_ID=130003,Staff_FName="Jack",Staff_LName="Ma",Dept="Sales",Email="jack.ma@allinone.com.sg",Role=1)
+
+        db.session.add(s1)
+        db.session.add(s2)
+        db.session.add(s3)
+        db.session.commit()
+
+        response = self.client.get("/AdminViewLearners?staff_id=130001",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "data": [
+        {
+            "Dept": "CEO",
+            "Email": "jack.sim@allinone.com.sg",
+            "Role": 1,
+            "Staff_FName": "Jack",
+            "Staff_ID": 130002,
+            "Staff_LName": "Sim"
+        },
+        {
+            "Dept": "Sales",
+            "Email": "jack.ma@allinone.com.sg",
+            "Role": 1,
+            "Staff_FName": "Jack",
+            "Staff_ID": 130003,
+            "Staff_LName": "Ma"
+        }]
+        })
+        
+
+
+
+
     # def test_view_team_members_missing_input(self):
     #     s1 = Staff(Staff_ID=140001, Staff_FName="Derek", Staff_LName = "Tan", Dept = "Sales", Email = "Derek.Tan@allinone.com.sg", Role = 3)
     #     db.session.commit(s1)
