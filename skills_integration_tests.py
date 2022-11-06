@@ -2,7 +2,7 @@ import unittest
 import flask_testing
 import json
 # from roles import app, db, Roles, Role_Skills
-from skills import app, db, Skills
+from skills import app, db, Skills, Skills_acquired
 
 class TestApp(flask_testing.TestCase):
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
@@ -282,6 +282,43 @@ class testDeleteSkill(TestApp):
         self.assertDictEqual(response.json,{
             "message": "Skill no longer available."
         })
+
+class testViewLearnerSkills(TestApp):
+    def test_view_learner_skills(self):
+        skA1 = Skills_acquired(staff_id="140115",skill_code="GM003")
+        s1 = Skills(skill_code="GM003", skill_name="French Cooking",deleted="no")
+        db.session.add(skA1)
+        db.session.add(s1)
+        db.session.commit()
+        
+        response = self.client.get("/viewLearnersSkills?staff_id=140115",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "data": 
+                {
+                    "GM003":"French Cooking"
+                }
+        })
+    def test_view_learner_skills_with_no_staffid(self):
+        skA1 = Skills_acquired(staff_id="140115",skill_code="GM003")
+        s1 = Skills(skill_code="GM003", skill_name="French Cooking",deleted="no")
+        db.session.add(skA1)
+        db.session.add(s1)
+        db.session.commit()
+        
+        response = self.client.get("/viewLearnersSkills",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json,{
+            "message": "No skills available."
+        })
+
+    
+
+
 
 if __name__ == '__main__':
     unittest.main()
