@@ -356,23 +356,24 @@ class TestGetAllCourseSkills(TestApp):
             
     
 class Test_skill_assigns_course(TestApp):
-    # def test_skill_assigns_course(self):
-    #     cs1 = Course_skills(course_id="COR002", skill_code="GM004")
-    #     db.session.add(cs1)
-    #     db.session.commit()
+    def test_skill_assigns_course(self):
+        cs1 = Course_skills(course_id="COR002", skill_code="GM004")
+        db.session.add(cs1)
+        db.session.commit()
 
-    #     request_body = {
-    #         "course_id": "COR001" ,
-    #         "skills": "GM003"
-    #     }
-    #     response = self.client.post("/skill_assigns_course",
-    #                                 data=json.dumps(request_body),
-    #                                 content_type='application/json')
+        request_body = {
+            "course_id": "COR001" ,
+            "skills": ["GM003"]
+        }
+        response = self.client.post("/skill_assigns_course",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
 
-    #     self.assertEqual(response.status_code,200)
-    #     self.assertDictEqual(response.json, {
-    #         "message": "Course and Skills successfully updated"
-    #     })
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json, {
+            "message": "Course and Skills successfully updated"
+        })
+
     def test_skill_assigns_course_assigned(self):
         cs1 = Course_skills(course_id="COR001", skill_code="GM003")
         db.session.add(cs1)
