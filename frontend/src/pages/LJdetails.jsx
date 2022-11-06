@@ -43,7 +43,10 @@ const LJDetails = () => {
 
   function toDelete(cid,id){
     console.log(cid,id)
-    fetch(`http://127.0.0.1:5002/removecourses`,{
+    if(Object.keys(courses).length===1){
+      alert("Learning Journey should have at least one course!")
+    }else{
+      fetch(`http://127.0.0.1:5002/removecourses`,{
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -54,6 +57,8 @@ const LJDetails = () => {
       navigate(`/learningjourneys`)
       window.location.reload(false);
     })
+    }
+    
   }
 
     return (
