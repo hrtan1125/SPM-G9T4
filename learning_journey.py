@@ -163,6 +163,7 @@ class Course_skills(db.Model):
     def __init__(self, course_id, skill_code):
         self.course_id = course_id
         self.skill_code = skill_code
+        
 # check user's role
 @app.route("/checkrole", methods=['GET'])
 def checkRole():
