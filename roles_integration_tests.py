@@ -200,6 +200,22 @@ class testDeleteRole(TestApp):
         self.assertDictEqual(response.json,{
             "message": "Role has been removed!"
         })
+class test_viewSelectedRole(TestApp):
+    def test_viewSelectedRole(self):
+        r1 = Roles(role_id=1, role_name="Chief Technology Officer", deleted="no")
+        db.session.add(r1)
+        db.session.commit()
+
+        
+        response = self.client.get("/viewselectedrole?role_id=1",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,201)
+        self.assertDictEqual(response.json,{
+            "deleted": "no",
+            "role_id": 1,
+            "role_name": "Chief Technology Officer"
+        })
 
 if __name__ == '__main__':
     unittest.main()
