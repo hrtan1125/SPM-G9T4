@@ -119,7 +119,7 @@ function ShowCourse(){
 const EditLJ = () =>{
     const viewCoursesByLJ = 'http://127.0.0.1:5002/viewCoursesByLearningJourney?'
     const {id,title,sid,rid} = useParams()
-    const {relatedSkills, setRoleId, setShow, setSkillCode, setljCourses, addCourses, toAddCName, skillCode,setAddCourses} = useGlobalContext()
+    const {relatedSkills, setRoleId, setShow, setSkillCode, setljCourses, addCourses, toAddCName, skillCode,setAddCourses,setToAddCName} = useGlobalContext()
    
     const navigate = useNavigate()
     
@@ -173,6 +173,7 @@ const EditLJ = () =>{
     })
   }).then(res => {
     setAddCourses([])
+    setToAddCName(null)
     refreshPage()
     return res.json();
   })
