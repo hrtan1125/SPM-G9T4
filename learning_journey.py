@@ -383,7 +383,6 @@ def create_learning_journey():
 # parameters: lj_id, courses in this format {skill_code1:[courses], skill_code2:[courses],...}
 @app.route("/addlearningjourneycourses", methods=['POST'])
 def add_learning_journey_courses(lj_id=0,courses=[]):
-    print("hello adding")
     data = request.get_json()
     print(data)
     if data:

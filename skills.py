@@ -458,10 +458,6 @@ def managerViewTeamMembersCourses(dept='',staffid=''):
         dept =  data['dept']
         staffid = data['staff_id']
     
-
-    print ("hello")
-
-    
     try:
         print(staffid, dept)
         team_members_skills_json = managerViewTeamMembersSkills(dept, staffid)
