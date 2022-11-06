@@ -383,9 +383,9 @@ def viewSkillsByCodes(skill_code_list):
         }), 500
 
 #Admin views Learner's Skills Function
-@app.route("/adminViewLearnersSkills", methods=['GET'])
-def adminViewLearnersSkills():
-    from learning_journey import Staff
+@app.route("/viewLearnersSkills", methods=['GET'])
+def viewLearnersSkills():
+    # from learning_journey import Staff
     # receivedRequest = request.json
     # staff_id = receivedRequest["staff_id"]
     staff_id = request.args.get('staff_id')
@@ -393,9 +393,9 @@ def adminViewLearnersSkills():
     my_dict = {}
     try:
         if staff_id:
-            staff = Staff.query.filter_by(Staff_ID=staff_id).first()
-            staff_role = staff.Role
-            temp = Role_Skills.query.filter_by(role_id=staff_role).all()
+            # staff = Staff.query.filter_by(Staff_ID=staff_id).first()
+            # staff_role = staff.Role
+            temp = Skills_acquired.query.filter_by(staff_id=staff_id).all()
             for item in temp:
                 skill = item.skill_code
                 skill_list.append(skill)
