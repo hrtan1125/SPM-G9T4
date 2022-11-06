@@ -398,10 +398,11 @@ def viewLearnersSkills():
             temp = Skills_acquired.query.filter_by(staff_id=staff_id).all()
             for item in temp:
                 skill = item.skill_code
-                skill_list.append(skill)
-            my_dict = viewSkillsByCodes(skill_list)
+                skill_dict=viewSkillsByCodes([skill])
+                skill_list.append(skill_dict)
+            # my_dict = viewSkillsByCodes(skill_list)
             return jsonify({
-                "data" : my_dict
+                "data" : skill_list
             }), 200
         else:
             return jsonify({

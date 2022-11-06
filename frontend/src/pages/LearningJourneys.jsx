@@ -170,7 +170,7 @@ const LearningJourneys = () => {
         </Select>
       </FormControl>
       <Grid item sx={{display:"flex", alignItems:"center"}}>
-      <Link style={{textDecoration:"none"}} to={`/createlearningjourney`}> 
+      <Link style={{textDecoration:"none"}} to={`/skillac/${sid}`}> 
          <Button variant="contained" style={{backgroundColor:"#5289B5"}}>Check Skills Acquired</Button>
         </Link>
         </Grid>

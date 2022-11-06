@@ -23,6 +23,7 @@ import Login from "./pages/Login";
 import TeamMembers from "./pages/TeamMembers";
 import Learners from "./pages/Learners";
 import EditLJ from "./pages/EditLJ"
+import SkillsAc from "./pages/SkillsAcquired";
 
 const drawerWidth = 240;
 
@@ -128,6 +129,7 @@ export default function App() {
 
               <Route path="/teammembers" element={<TeamMembers />} />
               <Route path="/learners" element={<Learners />} />
+              <Route path="/skillac/:sid" element={<SkillsAc/>}/>
             </Routes>
           </Box>
         </Box>
