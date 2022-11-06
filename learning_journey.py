@@ -8,18 +8,21 @@ from skills import *
 import json
 import math
 
-app = Flask(__name__)
+from os import getenv
+from dotenv import load_dotenv
 
+load_dotenv()
+app = Flask(__name__)
 if __name__ == "__main__":
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                            '@localhost:3306/testDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URL")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                             'pool_recycle': 280}
 else:
      app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-     
+
 db = SQLAlchemy(app)
+
 CORS(app)
 
 class Learning_Journey(db.Model):
@@ -163,7 +166,7 @@ class Course_skills(db.Model):
     def __init__(self, course_id, skill_code):
         self.course_id = course_id
         self.skill_code = skill_code
-        
+
 # check user's role
 @app.route("/checkrole", methods=['GET'])
 def checkRole():

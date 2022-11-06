@@ -8,16 +8,18 @@ import json
 from roles import Role_Skills
 # from learning_journey import * 
 
+from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
 app = Flask(__name__)
 if __name__ == "__main__":
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:' + \
-                                            '@localhost:3306/testDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = getenv("DATABASE_URL")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                             'pool_recycle': 280}
 else:
      app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite://"
-     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
