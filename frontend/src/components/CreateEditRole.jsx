@@ -21,10 +21,14 @@ const CreateEditRole = () =>{
     if(status===400 && res!==null){
       alert(res)
       setRes(null)
+      if(refresh.rname){
+        refreshPage();
+      }
     }
   },[res])
 
   useEffect(()=>{
+    console.log(refresh.rname,refresh.radd,refresh.rdelete)
     if(refresh.rname && refresh.radd && refresh.rdelete && status!==400){
       setRoleId(0)
       toUpdateSkills=[]
@@ -62,7 +66,14 @@ const CreateEditRole = () =>{
       };
       fetch(updateRoleUrl, requestOptions)
         .then(response => {
-          console.log(response)
+          if(response.status!==400){
+            setRefresh(prv =>{
+              return {
+                ...prv,
+                rname:true
+              }
+            })
+          }
           setStatus(response.status)
           return response.json()
         }).then(data=>{
@@ -230,6 +241,9 @@ const assignSkillsToRole = async(role_id, skill_code) => {
     .then(response => {
       toUpdateSkills=[]
       setStatus(response.status)
+      if(response.status!==400){
+        toUpdateSkills=[]
+      }
       setRefresh(prv =>{
         return {
           ...prv,
@@ -261,6 +275,10 @@ const assignSkillsToRole = async(role_id, skill_code) => {
               rdelete:true
             }
           })
+          if(response.status!==400){
+           
+            toDeleteSkills=[]
+          }
           return response.json();
         }).then(data=>{
           setRes(data.message)

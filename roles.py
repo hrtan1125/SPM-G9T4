@@ -155,11 +155,9 @@ def updateRole():
     try:
         data = request.get_json()
         newRoleName = data['role_name']
-
         # check if new Role Name already exists
         checkRoleName = Roles.query.filter_by(role_name=newRoleName,deleted="no").first()
-        print(checkRoleName.role_id)
-        print(data['role_id'])
+        
         if checkRoleName and checkRoleName.role_id!=int(data['role_id']):
             return jsonify(
                 {
