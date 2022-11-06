@@ -229,24 +229,17 @@ class testCheckRoles(TestApp):
         db.session.add(s1)
         db.session.commit()
 
-        request_body = {
-            'staff_id':130001
-        }
 
-        response = self.client.get("/checkrole",
-                                    data=json.dumps(request_body),
+
+        response = self.client.get("/checkrole?staff_id=130001",
                                     content_type='application/json')
 
         self.assertEqual(response.status_code,200)
         self.assertDictEqual(response.json, {
-            "data": [
-                {
-                    "role": 1,
-                    "dept": "Chairman",
-                    "name": "John Sim",
-                    "staff_id" : 130001
-                }
-            ]
+            "dept": "Chairman",
+            "name": "John Sim",
+            "role": 1,
+            "staff_id": "130001"
         })
 
     def test_check_role_invalid_id(self):
