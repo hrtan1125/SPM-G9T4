@@ -243,7 +243,7 @@ class Test_assignSkill(TestApp):
     #         "skills": ["GM003"]
     #     }
 
-    #     response = self.client.post("/skill_assigns_course",
+    #     response = self.client.post("/assignSkills",
     #                                 data=json.dumps(request_body),
     #                                 content_type='application/json')
 
