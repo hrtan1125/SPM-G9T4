@@ -221,7 +221,7 @@ class Test_assignSkill(TestApp):
 
         request_body = {
             "role_id": 1 ,
-            "skills": ["GM003"]
+            "skill_code": ["GM003"]
         }
         response = self.client.post("/assignSkills",
                                     data=json.dumps(request_body),
