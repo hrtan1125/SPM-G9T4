@@ -284,6 +284,75 @@ def viewRoleSkills():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
+
+
+#Admin remove skills from role
+@app.route("/removeSkills", methods=['DELETE'])
+def removeSkill(skillslist=[], role_id=0):
+    data = request.get_json()
+
+    if data:
+        if all(key in data.keys() for
+                    key in ('role_id', 'skill_code')):
+            print(data['role_id'])            
+            role_id = data["role_id"]
+            skillslist = data["skill_code"]
+
+    if(skillslist == []):
+        return jsonify(
+        {
+            "code": 201,
+            "message": "No skill removed from role"
+        }
+    ), 201
+
+    roleSkillsRecords = Role_Skills.query.filter_by(role_id=role_id).all()
+    numOfRecords = 0
+    for record in roleSkillsRecords:
+        numOfRecords +=1
+
+    if(numOfRecords == len(skillslist)):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "skill_code": skillslist,
+                    "role_id": role_id
+                },
+                "message": "Skill(s) cannot be removed. A role must have at least one skill"
+            }
+        ), 400
+
+    else:
+        for skill in skillslist:            
+            roleSkill = Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()
+            if (roleSkill):
+                try:
+                    db.session.delete(roleSkill)
+                    db.session.commit()
+                    numOfRecords -= 1
+
+                except SQLAlchemyError as e:
+                    print(e)
+                    db.session.rollback()
+                    return jsonify(
+                        {
+                            "code": 500,
+                            "data": {
+                                "skill_code": skill,
+                                "role_id": role_id
+                            },
+                            "message": "An error occurred when removing skill from role."
+                        }
+                    ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "message": "Successful removal of skill(s) from role"
+        }
+    ), 201
+    
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
