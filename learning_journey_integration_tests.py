@@ -394,31 +394,5 @@ class TestRemoveLearningJourney(TestApp):
             "message": "Learning Journey has been removed successfully."
         })
 
-#view learning journey
-class TestViewLearningJourney(TestApp):
-    def test_view_learning_journey(self):
-        lj1 = Learning_Journey(lj_id=1,title="Design Engineer Journey",role_id=3,staff_id=150166)
-        db.session.add(lj1)
-        db.session.commit()
-
-        request_body = {
-            'staff_id': 150166
-        }
-        response = self.client.post("/viewlearningjourney",
-                                    data=json.dumps(request_body),
-                                    content_type='application/json')
-
-        self.assertEqual(response.status_code,200)
-        self.assertDictEqual(response.json, {
-                    "data": [
-                        {
-                            "lj_id": 1,
-                            "title": "Design Engineer Journey",
-                            "role_id": 3,
-                            "staff_id": 150166    
-                        }
-                    ]
-        })
-
 if __name__ == '__main__':
     unittest.main()
