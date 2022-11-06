@@ -42,6 +42,7 @@ jobs:
           pip install flask_cors
           pip install flask_testing
           pip install mysql-connector
+          pip install python-dotenv
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Display Python version
