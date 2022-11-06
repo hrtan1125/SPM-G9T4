@@ -53,7 +53,7 @@ const Skills = () => {
     return (
       <div style={{display: 'flex', justifyContent: "center"}} >
         <div className="app-container" style={{display: 'flex',justifyContent:"center"}}>
-        <Pagination count={skills_chunks.length} page={page} onChange={handleChange} />
+        {skills.length!==0?<Pagination count={skills_chunks.length} page={page} onChange={handleChange} />:<></>}
         {userDetails.role == 1 &&
           <div style={{display: 'flex', justifyContent: "center"}}>
             <Link to={`/createskill`} style={{textDecoration:"none"}}> 
@@ -61,7 +61,7 @@ const Skills = () => {
             </Link>
           </div>    
           }
-          <TableContainer component={Paper} elevation={3}>
+          {skills.length!==0?<TableContainer component={Paper} elevation={3}>
           {/* TableContainer */}
           <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
             <TableHead>
@@ -107,7 +107,7 @@ const Skills = () => {
           ))}
           </TableBody>
         </Table>
-          </TableContainer>
+          </TableContainer>:<>No skills available.</>}
           
         </div>
       </div>

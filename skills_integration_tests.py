@@ -320,7 +320,7 @@ class testViewLearnerSkills(TestApp):
         
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json,{
-            "message": "No staffID."
+            "message": "No skill acquired yet."
         })
 
 #get all course with the skills assigned

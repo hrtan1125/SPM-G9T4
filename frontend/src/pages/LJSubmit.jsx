@@ -53,7 +53,7 @@ const handleSubmit = (e) => {
   addPosts(learningjourneyData);
   setActiveStep(0)
   setljCourses({})
-  navigate(`/learningjourneys`);
+  // navigate(`/learningjourneys`);
 };
 
 const addPosts = async(learningjourneyData) => {
@@ -64,7 +64,13 @@ const addPosts = async(learningjourneyData) => {
       body: JSON.stringify(learningjourneyData)
   };
   fetch("http://127.0.0.1:5002/createlearningjourney", requestOptions)
-    .then(response => response.json())
+    .then(response => {
+      return response.json()
+    }).then(
+      data =>{
+        navigate("/learningjourneys")
+      }
+    )
 
 } catch (error) {
     console.log(error.response)

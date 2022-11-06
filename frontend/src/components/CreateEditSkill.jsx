@@ -26,8 +26,12 @@ const CreateEditSkill = () => {
 
   useEffect(()=>{
     if(status===400){
-      alert("Skill Name/Code has been used! Please try a new one.")
+      if(skill_name!==formData.skill_name){
+        alert("Skill Name/Code has been used! Please try a new one.")
+      }
+      setStatus(null)
     }else if(status===200||status===201){
+      setStatus(null)
       navigate(`/Skills`);
     }
   },[status])

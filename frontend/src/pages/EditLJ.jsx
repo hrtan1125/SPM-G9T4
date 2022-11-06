@@ -102,7 +102,7 @@ function ShowCourse(){
                   </DialogContentText>
                   <FormGroup>
                       {courses?.length!==0?courses?.map((c)=>(
-                      Object.keys(ljCourses.courses).includes(c.course_id)?<FormControlLabel disabled control={<Checkbox defaultChecked/>} 
+                      Object.keys(ljCourses?.courses).includes(c.course_id)?<FormControlLabel disabled control={<Checkbox checked="true"/>} 
                       label={c.course_name} />:<FormControlLabel control={<Checkbox onChange={(e)=>handleToggle(e,c.course_id,c.course_name)} checked={toAddCName!==null && Object.keys(toAddCName).includes(c.course_id)}/>} label={c.course_name} />
                       )):<>No courses available.</>}
                   </FormGroup>

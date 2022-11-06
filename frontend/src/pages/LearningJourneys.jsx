@@ -24,7 +24,7 @@ import styled from "@emotion/styled";
 const Cards = ({ljs,staff})=>{
   console.log("staff is", staff)
   console.log(ljs)
-  const {setOpen, setLid, setLTitle} = useGlobalContext()
+  const {setOpen, setLid, setLTitle, setToAddCName} = useGlobalContext()
   const navigate = useNavigate()
   const deleteLJ = (id,title) =>{
     console.log("deleting in progress")
@@ -48,6 +48,10 @@ const Cards = ({ljs,staff})=>{
       backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
     },
   }));
+
+  useEffect(()=>{
+    setToAddCName(null)
+  },[])
 
   return (<>{(ljs["message"]!==undefined)?<div style={{width:"100%", display: 'flex', marginBottom:"20px",justifyContent: "center"}}><h3>{ljs.message}</h3></div>:Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>

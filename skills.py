@@ -441,7 +441,7 @@ def viewLearnersSkills():
             }), 200
         else:
             return jsonify({
-                "message": "No staffID."
+                "message": "No skill acquired yet."
             }), 400
     except Exception:
         return jsonify({

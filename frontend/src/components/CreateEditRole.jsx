@@ -141,12 +141,14 @@ const createNewRole=async(roleName,skillsToAssign)=>{
     })
   }).then(res => {
     setStatus(res.status)
-    setRefresh(prv =>{
-      return {
-        ...prv,
-        rname:true
-      }
-    })
+    if(res.status===200){
+      setRefresh(prv =>{
+        return {
+          ...prv,
+          rname:true
+        }
+      })
+    }
     return res.json();
     
   }).then(data => {

@@ -64,14 +64,14 @@ const Roles = () => {
 return (
   <div style={{display: 'flex', justifyContent: "center"}} >
       <div className="app-container" style={{display: 'flex',justifyContent:"center"}} >
-        <Pagination count={roles_chunks.length} page={page} onChange={handleChange} />
+        {roles.length!==0?<Pagination count={roles_chunks.length} page={page} onChange={handleChange} />:<></>}
         {userDetails.role  == 1 && <div style={{display: 'flex', justifyContent: "center"}} >
         <Link to={`/createrole`} style={{textDecoration:"none"}}> 
           <Button variant="contained" style={{backgroundColor:"#5289B5"}} startIcon={<AddIcon/>} onClick={reseTableRowole}>Create New Role</Button>
         </Link>
         </div>}
       
-        <TableContainer component={Paper} elevation={3}>
+        {roles.length!==0?<TableContainer component={Paper} elevation={3}>
       <Table sx={{ minWidth: width, "& td": { border: 0 }}} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -108,7 +108,7 @@ return (
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </TableContainer>:<>No roles available.</>}
       </div>
     </div>
     );
