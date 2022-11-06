@@ -216,7 +216,47 @@ class test_viewSelectedRole(TestApp):
             "role_id": 1,
             "role_name": "Chief Technology Officer"
         })
+class Test_assignSkill(TestApp):
+    def test_assignSkill(self):
 
+        request_body = {
+            "role_id": 1 ,
+            "skills": ["GM003"]
+        }
+        response = self.client.post("/assignSkills",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,201)
+        self.assertDictEqual(response.json, {
+            "code": 201,
+            "message": "Successful assignment of skill(s) to role"
+        })
+
+    # def test_skill_assigns_course_assigned(self):
+    #     rs1 = Role_Skills(role_id=1, skill_code="GM003")
+    #     db.session.add(rs1)
+    #     db.session.commit()
+        
+    #     request_body = {
+    #         "role_id": 1 ,
+    #         "skills": ["GM003"]
+    #     }
+
+    #     response = self.client.post("/skill_assigns_course",
+    #                                 data=json.dumps(request_body),
+    #                                 content_type='application/json')
+
+    #     self.assertEqual(response.status_code,400)
+    #     self.assertDictEqual(response.json, {
+    #                 "code": 400,
+    #                 "data": {
+    #                     "skill_code": "GM003",
+    #                     "role_id": 1
+    #                 },
+    #                 "message": "Skill is already assigned to role."
+    #             }
+    #         )
 if __name__ == '__main__':
     unittest.main()
 
