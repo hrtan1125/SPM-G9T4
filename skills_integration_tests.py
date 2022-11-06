@@ -382,7 +382,7 @@ class Test_skill_assigns_course(TestApp):
         request_body = {
             
             "course_id": "COR001" ,
-            "skills": "GM003"
+            "skills": ["GM003"]
             
         }
 
