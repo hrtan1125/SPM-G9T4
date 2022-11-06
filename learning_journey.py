@@ -140,7 +140,29 @@ class Staff(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+        
+class Course_skills(db.Model):
+    __tablename__ = 'course_skills'
+    row_id = db.Column(db.Integer, primary_key=True)
+    course_id = db.Column(db.String(20))
+    skill_code = db.Column(db.String(20))
 
+    def to_dict(self):
+       
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+       
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+    def __init__(self, course_id, skill_code):
+        self.course_id = course_id
+        self.skill_code = skill_code
 # check user's role
 @app.route("/checkrole", methods=['GET'])
 def checkRole():

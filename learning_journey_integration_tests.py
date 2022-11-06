@@ -89,46 +89,50 @@ class TestRemoveCourses(TestApp):
                     "message": "tch009 have been successfully removed."           
         })
 #view courses
-# class TestViewCourses(TestApp):
-#     def test_view_courses(self):
-#         cs1 = Course_skills(course_id="COR002", skill_code="GM003")
-#         cs2 = Course_skills(course_id="COR006", skill_code="GM003")
-#         cs3 = Course_skills(course_id="COR008", skill_code="GM006")
+class TestViewCourses(TestApp):
+    def test_view_courses(self):
+        cs1 = Course_skills(course_id="COR002", skill_code="GM003")
+        cs2 = Course_skills(course_id="COR006", skill_code="GM003")
+        cs3 = Course_skills(course_id="COR008", skill_code="GM006")
 
-#         c1 = Courses(course_id="COR002", course_name="Lean Six Sigma Green Belt Certification", course_desc="Course description here", course_status="Active", course_type="Internal", course_category="Core")
-#         c2 = Courses(course_id="COR006", course_name="Manage Change", course_desc="Course description here", course_status="Retired", course_type="Internal", course_category="Core")
-#         c3 = Courses(course_id="COR008", course_name="Basic French Certification", course_desc="Course description here", course_status="Active", course_type="Internal", course_category="Core")
+        c1 = Courses(course_id="COR002", course_name="Lean Six Sigma Green Belt Certification", course_desc="Course description here", course_status="Active", course_type="Internal", course_category="Core")
+        c2 = Courses(course_id="COR006", course_name="Manage Change", course_desc="Course description here", course_status="Retired", course_type="Internal", course_category="Core")
+        c3 = Courses(course_id="COR008", course_name="Basic French Certification", course_desc="Course description here", course_status="Active", course_type="Internal", course_category="Core")
         
-#         skill_db.session.add(cs1)
-#         skill_db.session.add(cs2)
-#         skill_db.session.add(cs3)
-#         db.session.add(c1)
-#         db.session.add(c2)
-#         db.session.add(c3)
-#         db.session.commit()
+        db.session.add(cs1)
+        db.session.add(cs2)
+        db.session.add(cs3)
         
-#         response = self.client.get("/viewCourses?skill_code=GM003",
-#                                     content_type='application/json')
+
+        db.session.add(c1)
+        db.session.add(c2)
+        db.session.add(c3)
+        db.session.commit()
         
-#         self.assertEqual(response.status_code,200)
-#         self.assertDictEqual(response.json,{
-#             "data": [
-#                 {
-#                     "course_id":"COR002",
-#                     "course_name":"Lean Six Sigma Green Belt Certification",
-#                     "course_desc":"Course description here",
-#                     "course_status":"Active",
-#                     "course_type":"Internal",
-#                     "course_category":"Core"
-#                 }
-#             ]
-#         })
+        response = self.client.get("/viewCourses?skill_code=GM003",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "data": [
+                {
+                    "course_id":"COR002",
+                    "course_name":"Lean Six Sigma Green Belt Certification",
+                    "course_desc":"Course description here",
+                    "course_status":"Active",
+                    "course_type":"Internal",
+                    "course_category":"Core"
+                }]
+        })
 
 #create learning journey
 class TestCreateLearningJourney(TestApp):
     def test_create_learning_journey(self):
         request_body = {
-            'staff_id':130001
+            'title':'Design Engineer Journey',
+            'role_id': 3,
+            'staff_id': 150166,
+            'courses': []
         }
         response = self.client.post("/createlearningjourney",
                                     data=json.dumps(request_body),
@@ -172,9 +176,9 @@ class TestCreateLearningJourneyCourses(TestApp):
                     "message": "Courses successfully added!"           
         })
 
-    def test_view_team_members_missing_input(self):
-        s1 = Staff(Staff_ID=140001, Staff_FName="Derek", Staff_LName = "Tan", Dept = "Sales", Email = "Derek.Tan@allinone.com.sg", Role = 3)
-        db.session.commit(s1)
+    # def test_view_team_members_missing_input(self):
+    #     s1 = Staff(Staff_ID=140001, Staff_FName="Derek", Staff_LName = "Tan", Dept = "Sales", Email = "Derek.Tan@allinone.com.sg", Role = 3)
+    #     db.session.commit(s1)
 
 # class testCheckRoles(TestApp):
 #     def test_check_role(self):
