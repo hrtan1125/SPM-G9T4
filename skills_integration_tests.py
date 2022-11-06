@@ -286,9 +286,13 @@ class testDeleteSkill(TestApp):
 class testViewLearnerSkills(TestApp):
     def test_view_learner_skills(self):
         skA1 = Skills_acquired(staff_id="140115",skill_code="GM003")
+        skA2 = Skills_acquired(staff_id="140115",skill_code="GM004")
         s1 = Skills(skill_code="GM003", skill_name="French Cooking",deleted="no")
+        s2 = Skills(skill_code="GM004", skill_name="Italian Cooking",deleted="no")
         db.session.add(skA1)
+        db.session.add(skA2)
         db.session.add(s1)
+        db.session.add(s2)
         db.session.commit()
         
         response = self.client.get("/viewLearnersSkills?staff_id=140115",
@@ -296,10 +300,13 @@ class testViewLearnerSkills(TestApp):
         
         self.assertEqual(response.status_code,200)
         self.assertDictEqual(response.json,{
-            "data": 
+            "data": [
                 {
                     "GM003":"French Cooking"
-                }
+                },
+                {
+                    "GM004":"Italian Cooking"
+                }]
         })
     def test_view_learner_skills_with_no_staffid(self):
         skA1 = Skills_acquired(staff_id="140115",skill_code="GM003")
@@ -313,7 +320,7 @@ class testViewLearnerSkills(TestApp):
         
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json,{
-            "message": "No skills available."
+            "message": "No staffID."
         })
 
     
