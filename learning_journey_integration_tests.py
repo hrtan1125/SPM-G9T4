@@ -2,7 +2,7 @@ import unittest
 import flask_testing
 import json
 # from learning_journey import app, db, Learning_Journey, Learning_Journey_Courses, Courses
-from learning_journey import app, db, Learning_Journey, Learning_Journey_Courses, Courses, Staff
+from learning_journey import app, db, Learning_Journey, Learning_Journey_Courses, Courses, Staff, Registration
 # from skills import Course_skills
 from skills import db as skill_db, Course_skills
 
@@ -347,6 +347,82 @@ class testAdminViewLearners(TestApp):
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json, {
             "message": "There are no learners available"
+        })
+
+class TestRegistration(TestApp):
+    def test_registration(self):
+        r1 = Registration(reg_id=1,course_id="COR002",staff_id=130001,reg_status="Registered",completion_status="Completed")
+        r2 = Registration(reg_id=2,course_id="COR002",staff_id=130002,reg_status="Registered",completion_status="Completed")
+        r3 = Registration(reg_id=3,course_id="COR002",staff_id=140001,reg_status="Registered",completion_status="Completed")
+        db.session.add(r1)
+        db.session.add(r2)
+        db.session.add(r3)
+        db.session.commit()
+        response = self.client.get("/viewAllRegistration",
+                                    content_type='application/json')
+        
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+        "data": [
+        {
+            "completion_status": "Completed",
+            "course_id": "COR002",
+            "reg_id": 1,
+            "reg_status": "Registered",
+            "staff_id": 130001
+        },
+        {
+            "completion_status": "Completed",
+            "course_id": "COR002",
+            "reg_id": 2,
+            "reg_status": "Registered",
+            "staff_id": 130002
+        },
+        {
+            "completion_status": "Completed",
+            "course_id": "COR002",
+            "reg_id": 3,
+            "reg_status": "Registered",
+            "staff_id": 140001
+        }]
+        })
+
+class TestViewCoursesByLearningJourney(TestApp):
+    def test_view_courses_by_learningjourney(self):
+        lj1 = Learning_Journey(lj_id=1, title="Learning Journey 1",role_id=3,staff_id=170166)
+        # lj2 = Learning_Journey(lj_id=1, title="My Learning Journey",role_id=1,staff_id=150166)
+        # lj3 = Learning_Journey(lj_id=1, title="Be CEO in Future",role_id=8,staff_id=150166)
+        c1 = Courses(course_id="tch009",course_name="Systems Thinking and Design",course_desc="This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",course_status="Active",course_type="Internal",course_category="Core")
+        c2 = Courses(course_id="tch012",course_name="Lean Six Sigma Green Belt Certification",course_desc="Apply Lean Six Sigma methodology and statistical tools such as Minitab to be used in process analytics",course_status="Active",course_type="Internal",course_category="Core")
+        c3 = Courses(course_id="tch015",course_name="Service Excellence",course_desc="The programme provides the learner with the key foundations of what builds customer confidence in the service industr",course_status="Pending",course_type="Internal",course_category="Core")
+        ljc1 = Learning_Journey_Courses(row_id=1,lj_id=1,skill_code="TRM004",course_id="tch009")
+        ljc2 = Learning_Journey_Courses(row_id=2,lj_id=1,skill_code="TRM004",course_id="tch012")
+        ljc3 = Learning_Journey_Courses(row_id=3,lj_id=1,skill_code="TRM004",course_id="tch015")
+        r1 = Registration(reg_id=1,course_id="COR002",staff_id=130001,reg_status="Registered",completion_status="OnGoing")
+        r2 = Registration(reg_id=2,course_id="COR002",staff_id=130002,reg_status="Registered",completion_status="OnGoing")
+        r3 = Registration(reg_id=3,course_id="COR002",staff_id=140001,reg_status="Registered",completion_status="OnGoing")
+
+        db.session.add(lj1)
+        # db.session.add(lj2)
+        # db.session.add(lj3)
+        db.session.add(c1)
+        db.session.add(c2)
+        db.session.add(c3)
+        db.session.add(ljc1)
+        db.session.add(ljc2)
+        db.session.add(ljc3)
+        db.session.add(r1)
+        db.session.add(r2)
+        db.session.add(r3)
+        db.session.commit()
+        response = self.client.get("/viewCoursesByLearningJourney?lj_id=1",
+                                    content_type='application/json')
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,
+        {   "courses":{"tch009":{"completion_status":"","course_name":"Systems Thinking and Design"},
+            "tch012":{"completion_status":"","course_name":"Lean Six Sigma Green Belt Certification"},
+            "tch015":{"completion_status":"","course_name":"Service Excellence"}},
+            "progress":0
         })
 
 
