@@ -275,10 +275,8 @@ def skill_assigns_course():
             if (Course_skills.query.filter_by(course_id=course_id, skill_code=skill).first()):
                 return jsonify(
                     {
-                        "code": 400,
                         "message": "skill for this course already exist"
-                    }
-                )
+                    }),400
             course_skill = Course_skills(course_id, skill)
             db.session.add(course_skill)
         db.session.commit()         
@@ -288,10 +286,8 @@ def skill_assigns_course():
 
     return jsonify(
             {
-                "code": 201,
-                "message": "Course and Skills successfully updated"
-            }
-        )
+              "message": "Course and Skills successfully updated"
+            }),200
 
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewSkillsByRole(RoleSkills=[]):
