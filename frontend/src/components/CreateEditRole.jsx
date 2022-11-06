@@ -149,14 +149,6 @@ const createNewRole=async(roleName,skillsToAssign)=>{
     return res.json();
     
   }).then(data => {
-    // console.log(data)
-    // if(data["message"]===undefined){
-    //   setRoleId(0)
-    //   toUpdateSkills=[]
-    //   navigate('/Roles')
-    // }else{
-    //   alert(data["message"])
-    // }
     if(data["message"]!==undefined){
       setRes(data.message)
     }else{
@@ -175,7 +167,7 @@ const handleSubmit = (e) => {
     if (!val){
       alert("Role Name cannot be empty!")
     }else if(!/^[A-Za-z ]*$/.test(roleRef.current.value)){
-      alert("Invalid role name!Only alphanumeric and spaces allowed!")
+      alert("Invalid role name!Only alphabets and spaces allowed!")
     }else if (toUpdateSkills.length === 0){
       alert("Please select at least one skill")
     }else{
@@ -214,7 +206,7 @@ const handleSubmit = (e) => {
     if (!val){
       alert("Role Name cannot be empty!")
     }else if(!/^[A-Za-z ]*$/.test(roleRef.current.value)){
-      alert("Invalid role name!Only alphanumeric and spaces allowed!")
+      alert("Invalid role name!Only alphabets and spaces allowed!")
     }else if (val !== role_name) {
       console.log("Role Name will be changed to", val)
       handleUpdateSubmit(e)
