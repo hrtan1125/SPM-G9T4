@@ -322,6 +322,38 @@ class testViewLearnerSkills(TestApp):
         self.assertDictEqual(response.json,{
             "message": "No staffID."
         })
+
+#get all course with the skills assigned
+class TestGetAllCourseSkills(TestApp):
+    def test_get_all(self):
+        cs1 = Course_skills(course_id="COR002",skill_code="GM003")
+        cs2 = Course_skills(course_id="COR006",skill_code="GM003")
+
+        db.session.add(cs1)
+        db.session.add(cs2)
+        db.session.commit()
+
+        response = self.client.get("/skill_assigns_course/all", content_type="application/json")
+
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json, {
+            'code': 200,
+            'data': {
+                        'course': [
+                            {
+                                'course_id': 'COR002',
+                                'row_id': 1,
+                                'skill_code': 'GM003'
+                            },
+                            {
+                                'course_id': 'COR006',
+                                'row_id': 2,
+                                'skill_code': 'GM003'
+                            }
+                        ]
+                    }
+            })
+            
 # class test_View_skills_to_add(TestApp):
 #     def test_view_skills_to_add(self):
 #         s1 = Skills(skill_code="GM003", skill_name="Change Management level 3", deleted="no")
