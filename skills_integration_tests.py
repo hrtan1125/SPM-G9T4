@@ -20,6 +20,99 @@ class TestApp(flask_testing.TestCase):
         db.session.remove()
         db.drop_all()
 
+# create skills 
+class testCreateSkill(TestApp): 
+    def test_create_skill(self):
+
+        s1 = Skills(skill_code="BF002", skill_name="Cost Management level 3", deleted="no")
+        db.session.add(s1)
+        db.session.commit()
+
+        request_body = {
+            'skill_name':'Chief Technology Officer',
+            'skill_code':'COR002'
+        }
+
+        response = self.client.post("/create",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertDictEqual(response.json, {
+            "data": [{
+                "skill created": {
+                    "deleted": "no",
+                    "skill_code": "COR002",
+                    "skill_name": "Chief Technology Officer"
+                    }
+                },
+                {
+                "message": "Skill created successfully."
+                }
+            ]
+        })
+
+    def test_create_with_existing_skill_code_and_name(self):
+
+        s1 = Skills(skill_code="BF002", skill_name="Cost Management level 3", deleted="no")
+        db.session.add(s1)
+        db.session.commit()
+
+        request_body = {
+            'skill_name':'Cost Management level 3',
+            'skill_code':'BF002'
+        }
+
+        response = self.client.post("/create",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message": "Skill code and name already exist!"
+        })
+    
+    def test_create_with_existing_skill_code(self):
+
+        s1 = Skills(skill_code="BF002", skill_name="Cost Management level 3", deleted="no")
+        db.session.add(s1)
+        db.session.commit()
+
+        request_body = {
+            'skill_name':'Cost Management level 4',
+            'skill_code':'BF002'
+        }
+
+        response = self.client.post("/create",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message": "Skill code already exist!"
+        })
+    
+    def test_create_with_existing_skill_code(self):
+
+        s1 = Skills(skill_code="BF003", skill_name="Cost Management level 3", deleted="no")
+        db.session.add(s1)
+        db.session.commit()
+
+        request_body = {
+            'skill_name':'Cost Management level 3',
+            'skill_code':'BF002'
+        }
+
+        response = self.client.post("/create",
+                                    data=json.dumps(request_body),
+                                    content_type='application/json')
+
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json, {
+            "message": "Skill name already exist!"
+        })
+    
+
+
 # view skills
 class testSkills(TestApp):
     def test_view_skill(self):
