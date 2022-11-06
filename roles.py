@@ -288,45 +288,43 @@ def removeSkill(skillslist=[], role_id=0):
         }
     ), 201
 
-    roleSkillsRecords = Role_Skills.query.filter_by(role_id=role_id).all()
-    numOfRecords = 0
-    for record in roleSkillsRecords:
-        numOfRecords +=1
+    # roleSkillsRecords = Role_Skills.query.filter_by(role_id=role_id).all()
+    # numOfRecords = 0
+    # for record in roleSkillsRecords:
+    #     numOfRecords +=1
 
-    if(numOfRecords == len(skillslist)):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "skill_code": skillslist,
-                    "role_id": role_id
-                },
-                "message": "Skill(s) cannot be removed. A role must have at least one skill"
-            }
-        ), 400
+    # if(numOfRecords == len(skillslist)):
+    #     return jsonify(
+    #         {
+    #             "code": 400,
+    #             "data": {
+    #                 "skill_code": skillslist,
+    #                 "role_id": role_id
+    #             },
+    #             "message": "Skill(s) cannot be removed. A role must have at least one skill"
+    #         }
+    #     ), 400
 
-    else:
-        for skill in skillslist:            
-            roleSkill = Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()
-            if (roleSkill):
-                try:
-                    db.session.delete(roleSkill)
-                    db.session.commit()
-                    numOfRecords -= 1
+    for skill in skillslist:            
+        roleSkill = Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()
+        if (roleSkill):
+            try:
+                db.session.delete(roleSkill)
+                db.session.commit()
 
-                except SQLAlchemyError as e:
-                    print(e)
-                    db.session.rollback()
-                    return jsonify(
-                        {
-                            "code": 500,
-                            "data": {
-                                "skill_code": skill,
-                                "role_id": role_id
-                            },
-                            "message": "An error occurred when removing skill from role."
-                        }
-                    ), 500
+            except SQLAlchemyError as e:
+                print(e)
+                db.session.rollback()
+                return jsonify(
+                    {
+                        "code": 500,
+                        "data": {
+                            "skill_code": skill,
+                            "role_id": role_id
+                        },
+                        "message": "An error occurred when removing skill from role."
+                    }
+                ), 500
 
     return jsonify(
         {

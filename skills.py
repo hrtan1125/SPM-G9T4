@@ -506,53 +506,43 @@ def course_remove_skills():
     
     skills = data['skills'] #list
 
-    if(skills == []):
-        return jsonify(
-        {
-            "code": 201,
-            "message": "No skill removed from role"
-        }
-    ), 201
+    # courseSkillsRecords = Course_skills.query.filter_by(course_id=course_id).all()
+    # numOfRecords = len(courseSkillsRecords)
+    # # for record in courseSkillsRecords:
+    # #     numOfRecords +=1
 
-    courseSkillsRecords = Course_skills.query.filter_by(course_id=course_id).all()
-    numOfRecords = len(courseSkillsRecords)
-    # for record in courseSkillsRecords:
-    #     numOfRecords +=1
+    # if(numOfRecords == len(skills)):
+    #         return jsonify(
+    #             {
+    #                 "code": 400,
+    #                 "data": {
+    #                     "skill_code": skills,
+    #                     "course_id": course_id
+    #                 },
+    #                 "message": "Skill cannot be removed. A course must have at least one skill."
+    #             }
+    #         ), 400
+    for skill in skills:            
+        courseSkill = Course_skills.query.filter_by(skill_code=skill, course_id=course_id).first()
+        if (courseSkill):
+            try:
+                db.session.delete(courseSkill)
+                db.session.commit()
+                # numOfRecords -= 1
 
-    if(numOfRecords == len(skills)):
-            return jsonify(
-                {
-                    "code": 400,
-                    "data": {
-                        "skill_code": skills,
-                        "course_id": course_id
-                    },
-                    "message": "Skill cannot be removed. A course must have at least one skill."
-                }
-            ), 400
-
-    else:
-        for skill in skills:            
-            courseSkill = Course_skills.query.filter_by(skill_code=skill, course_id=course_id).first()
-            if (courseSkill):
-                try:
-                    db.session.delete(courseSkill)
-                    db.session.commit()
-                    numOfRecords -= 1
-
-                except SQLAlchemyError as e:
-                    print(e)
-                    db.session.rollback()
-                    return jsonify(
-                        {
-                            "code": 500,
-                            "data": {
-                                "skill_code": skill,
-                                "course_id": course_id
-                            },
-                            "message": "An error occurred when removing skill from course."
-                        }
-                    ), 500
+            except SQLAlchemyError as e:
+                print(e)
+                db.session.rollback()
+                return jsonify(
+                    {
+                        "code": 500,
+                        "data": {
+                            "skill_code": skill,
+                            "course_id": course_id
+                        },
+                        "message": "An error occurred when removing skill from course."
+                    }
+                ), 500
 
     return jsonify(
         {

@@ -95,7 +95,8 @@ const CreateEditRole = () =>{
 
 
 function refreshPage() {
-  navigate(`/role/${role_id}/${roleRef.current.value}`)
+  // navigate(`/role/${role_id}/${roleRef.current.value}`)
+  navigate("/Roles")
   window.location.reload(false);
 }
 
