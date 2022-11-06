@@ -1,5 +1,5 @@
 import unittest
-from learning_journey import Learning_Journey, Registration, Staff, Learning_Journey_Courses
+from learning_journey import Learning_Journey, Registration, Staff, Learning_Journey_Courses, Courses
 
 class TestLearningJourney(unittest.TestCase):
     def setUp(self):
@@ -84,6 +84,23 @@ class TestLearningJourneyCourses(unittest.TestCase):
             "lj_id": 1,
             "skill_code":"TRM004",
             "course_id": "tch012"
+        })
+
+class TestCourses(unittest.TestCase):
+    def setUp(self):
+        self.course = Courses(course_id="COR001",course_name="Systems Thinking and Design",course_desc="This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",course_status="Active",course_type="Internal",course_category="Core")
+
+    def tearDown(self):
+        self.course = None
+
+    def test_to_dict(self):
+        self.assertDictEqual(self.course.to_dict(),{
+            "course_id":"COR001",
+            "course_name":"Systems Thinking and Design",
+            "course_desc":"This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",
+            "course_status":"Active",
+            "course_type":"Internal",
+            "course_category":"Core"
         })
 
 if __name__ == "__main__":
