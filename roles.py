@@ -161,7 +161,7 @@ def updateRole():
         if checkRoleName and checkRoleName.role_id!=int(data['role_id']):
             return jsonify(
                 {
-                    "message": "Role exists!"
+                    "message": "Role name is used! Please try a new one!"
                 }
             ), 400
 

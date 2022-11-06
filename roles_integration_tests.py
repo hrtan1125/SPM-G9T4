@@ -157,7 +157,7 @@ class testUpdateRole(TestApp):
 
         self.assertEqual(response.status_code,400)
         self.assertDictEqual(response.json,{
-            "message": "Role exists!"
+            "message": "Role name is used! Please try a new one!"
         })
 
     def test_update_role_with_invalid_role_id(self):
