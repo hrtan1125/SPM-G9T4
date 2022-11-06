@@ -435,50 +435,43 @@ class Test_skill_assigns_course(TestApp):
 #         self.assertDictEqual(response.json, {
 #             "message": "skill for this course already exist"
 #         })
-# class test_viewRoleSkills(TestApp):
-#     def test_viewRoleSkills(self):
-#         rs1 = Role_Skills(role_id=1, skill_code="GM003")
-#         s1 =  Skills(skill_code="GM003", skill_name="Change Management level 3",deleted="no")
-#         s1 =  Skills(skill_code="PF003", skill_name="Financial Analysis level 3",deleted="no")
-#         db.session.add(rs1)
-#         db.session.add(s1)
-#         db.session.add(s1)
-#         db.session.commit()
+class test_viewRoleSkills(TestApp):
+    def test_viewRoleSkills(self):
+        rs1 = Role_Skills(role_id=1, skill_code="GM003")
+        s1 =  Skills(skill_code="GM003", skill_name="Change Management level 3",deleted="no")
+        db.session.add(rs1)
+        db.session.add(s1)
+        db.session.commit()
 
-#         response = self.client.get("/viewRoleSkills?role_id=1",
-#                                     content_type='application/json')
+        response = self.client.get("/viewRoleSkills?role_id=1",
+                                    content_type='application/json')
         
-#         self.assertEqual(response.status_code,201)
-#         self.assertDictEqual(response.json,{
-#             "data": {
-#                 "GM003": {
-#                     "deleted": "no",
-#                     "skill_code": "GM003",
-#                     "skill_name": "Change Management level 3"
-#                 },
-#                 "PF003": {
-#                     "deleted": "no",
-#                     "skill_code": "PF003",
-#                     "skill_name": "Financial Analysis level 3"
-#                 }
-#             }
-#         })
-#     def test_viewRoleSkills_missing_input(self):
-#         rs1 = Role_Skills(role_id=1, skill_code="GM003")
-#         s1 =  Skills(skill_code="GM003", skill_name="Change Management level 3",deleted="no")
-#         s1 =  Skills(skill_code="PF003", skill_name="Financial Analysis level 3",deleted="no")
-#         db.session.add(rs1)
-#         db.session.add(s1)
-#         db.session.add(s1)
-#         db.session.commit()
+        self.assertEqual(response.status_code,200)
+        self.assertDictEqual(response.json,{
+            "data": {
+                "GM003": {
+                    "deleted": "no",
+                    "skill_code": "GM003",
+                    "skill_name": "Change Management level 3"
+                }
+            }
+        })
+    def test_viewRoleSkills_missing_input(self):
+        rs1 = Role_Skills(role_id=1, skill_code="GM003")
+        s1 =  Skills(skill_code="GM003", skill_name="Change Management level 3",deleted="no")
+        s1 =  Skills(skill_code="PF003", skill_name="Financial Analysis level 3",deleted="no")
+        db.session.add(rs1)
+        db.session.add(s1)
+        db.session.add(s1)
+        db.session.commit()
 
-#         response = self.client.get("/viewRoleSkills",
-#                                     content_type='application/json')
+        response = self.client.get("/viewRoleSkills",
+                                    content_type='application/json')
         
-#         self.assertEqual(response.status_code,400)
-#         self.assertDictEqual(response.json,{
-#             "message": "Missing Input."
-#         })
+        self.assertEqual(response.status_code,400)
+        self.assertDictEqual(response.json,{
+            "message": "Missing Input."
+        })
 
 if __name__ == '__main__':
     unittest.main()
