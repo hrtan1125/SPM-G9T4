@@ -1,5 +1,5 @@
 import "./../App.css";
-import { Button, CardActionArea, IconButton } from '@mui/material'
+import { Button, CardActionArea, IconButton, LinearProgress, linearProgressClasses } from '@mui/material'
 import AddIcon from "@mui/icons-material/Add"
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,6 +18,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import styled from "@emotion/styled";
 
 
 const Cards = ({ljs,staff})=>{
@@ -35,6 +36,18 @@ const Cards = ({ljs,staff})=>{
     console.log("your title: ", title)
     navigate(`/editlearningjourney/${id}/${title}/${sid}/${rid}`)
   }
+
+  const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 10,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+      backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+    },
+  }));
 
   return (<>{(ljs["message"]!==undefined)?<div style={{width:"100%", display: 'flex', marginBottom:"20px",justifyContent: "center"}}><h3>{ljs.message}</h3></div>:Object.keys(ljs).map((lj_id)=>(
     <Grid item xs={6} sm={6} md={4} key={lj_id}>
@@ -57,6 +70,7 @@ const Cards = ({ljs,staff})=>{
       <Typography variant="body2" >
         Completed {ljs[lj_id].progress}%
       </Typography>
+      <BorderLinearProgress variant="determinate" value={ljs[lj_id].progress} sx={{ mt: 2 }}/>
     </CardContent>
     <Grid justifyContent="center" margin="auto" display="flex" alignItems="center">
     {(window.location.href.indexOf('team')>-1)?<></>:<CardActions style={{marginBottom:10}}>
@@ -79,6 +93,8 @@ const Cards = ({ljs,staff})=>{
 
 
 const LearningJourneys = () => {
+
+  
 
 
   const {setPath, userDetails, roles} = useGlobalContext()
