@@ -67,8 +67,7 @@ const Login = () => {
       </Box>
       <li>Admin: 130001</li>
       <li>User: 150166</li>
-      <li>Manager: 140001</li>
-      <li>With Learning Journey: 150008</li>
+      <li>Manager: 150008</li>
        
       
     </Box>
