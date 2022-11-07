@@ -19,21 +19,37 @@ class TestLearningJourney(unittest.TestCase):
             'staff_id': '170166'}
         )
 
-# class TestLearningJourneyProgress(unittest.TestCase):
-#     def test_progress(self):
-#         courses_and_statuses = [['Completed', 'COR002', 'Lean Six Sigma Green Belt Certification'], ['', 'FIN001', 'Data Collection and Analysis']]
-#         progress = Learning_Journey.calculate_progress(courses_and_statuses)
-#         self.assertEqual(progress, 
-#             50.0)
-#     def test_progress_zero(self):
-#         courses_and_statuses = [["Waitlist", "COR002", "Lean Six Sigma Green Belt Certification"]]
-#         progress = Learning_Journey.calculate_progress(courses_and_statuses)
-#         self.assertEqual(progress, 
-#             0.0)
-#     def test_progress_empty(self):
-#         with self.assertRaises(Exception):
-#             courses_and_statuses = []
-#             progress = Learning_Journey.calculate_progress(courses_and_statuses)
+class TestLearningJourneyCourses(unittest.TestCase):
+    def setUp(self):
+        self.lj_course = Learning_Journey_Courses(lj_id=1,skill_code="TRM004",course_id="tch012")
+
+    def tearDown(self):
+        self.lj_course = None
+
+    def test_to_dict(self):
+        self.assertDictEqual(self.lj_course.to_dict(),{
+            "row_id":None,
+            "lj_id": 1,
+            "skill_code":"TRM004",
+            "course_id": "tch012"
+        })
+
+class TestCourses(unittest.TestCase):
+    def setUp(self):
+        self.course = Courses(course_id="COR001",course_name="Systems Thinking and Design",course_desc="This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",course_status="Active",course_type="Internal",course_category="Core")
+
+    def tearDown(self):
+        self.course = None
+
+    def test_to_dict(self):
+        self.assertDictEqual(self.course.to_dict(),{
+            "course_id":"COR001",
+            "course_name":"Systems Thinking and Design",
+            "course_desc":"This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",
+            "course_status":"Active",
+            "course_type":"Internal",
+            "course_category":"Core"
+        })
 
 class TestStaff(unittest.TestCase):
     def setUp(self):
@@ -68,39 +84,6 @@ class TestRegistration(unittest.TestCase):
             "staff_id":130001,
             "reg_status":"Registered",
             "completion_status":"Completed"
-        })
-        
-
-class TestLearningJourneyCourses(unittest.TestCase):
-    def setUp(self):
-        self.lj_course = Learning_Journey_Courses(lj_id=1,skill_code="TRM004",course_id="tch012")
-
-    def tearDown(self):
-        self.lj_course = None
-
-    def test_to_dict(self):
-        self.assertDictEqual(self.lj_course.to_dict(),{
-            "row_id":None,
-            "lj_id": 1,
-            "skill_code":"TRM004",
-            "course_id": "tch012"
-        })
-
-class TestCourses(unittest.TestCase):
-    def setUp(self):
-        self.course = Courses(course_id="COR001",course_name="Systems Thinking and Design",course_desc="This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",course_status="Active",course_type="Internal",course_category="Core")
-
-    def tearDown(self):
-        self.course = None
-
-    def test_to_dict(self):
-        self.assertDictEqual(self.course.to_dict(),{
-            "course_id":"COR001",
-            "course_name":"Systems Thinking and Design",
-            "course_desc":"This foundation module aims to introduce students to the fundamental concepts and underlying principles of systems thinking",
-            "course_status":"Active",
-            "course_type":"Internal",
-            "course_category":"Core"
         })
 
 if __name__ == "__main__":

@@ -113,8 +113,8 @@ class Skills_acquired(db.Model):
         self.staff_id = staff_id
         self.skill_code = skill_code
 
-
-@app.route("/create", methods=['POST'])  #create skill
+#create a skill
+@app.route("/create", methods=['POST'])
 def create_skill():
     data = request.get_json()
     if not all(key in data.keys() for
@@ -154,7 +154,8 @@ def create_skill():
             "message": "Unable to commit to database."
         }), 500
 
-@app.route("/view") #get skills 
+#view list of skills
+@app.route("/view")
 def skills():
     search_skill = request.args.get('skill_name')
     if search_skill:
@@ -167,21 +168,8 @@ def skills():
         }
     ), 200
 
-# admin read all skills
-@app.route("/viewselectedskill", methods=['GET'])
-def viewSelectedSkill():
-    try:
-        skill_code = request.args["skill_code"]
-        selectedSkill = Skills.query.filter_by(skill_code=skill_code).first()
-        return jsonify(selectedSkill.to_dict()), 201
-    except Exception:
-        return jsonify(
-            {
-                "message": "Unexpected Error."
-            }
-        )
-
-@app.route("/update", methods=['PUT']) #edit
+#Update a skill_name
+@app.route("/update", methods=['PUT'])
 def edit_skill():
     data = request.get_json()
     skill_code = data["skill_code"]
@@ -209,6 +197,21 @@ def edit_skill():
             "message": "Unable to commit to database."
         }), 500
 
+#view details of selected skill
+@app.route("/viewselectedskill", methods=['GET'])
+def viewSelectedSkill():
+    try:
+        skill_code = request.args["skill_code"]
+        selectedSkill = Skills.query.filter_by(skill_code=skill_code).first()
+        return jsonify(selectedSkill.to_dict()), 201
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        )
+
+#delete a skill
 @app.route("/delete", methods=['PUT'])
 def delete_skill():  #delete skill
     try:
@@ -233,7 +236,7 @@ def delete_skill():  #delete skill
             }
         ),400
 
-### assign course start here###
+#assign skills to course
 @app.route("/skill_assigns_course/all", methods=['GET'])
 def get_all():
     all_list = Course_skills.query.all()
@@ -252,40 +255,10 @@ def get_all():
             "message": "There is no entry"
         }
     ), 404
-
-#list all skills available to be added to the course
-#check if the skills already assigned to the course
-#split out the skills which already assigned
-@app.route("/view_skills_to_add/<id>", methods=['GET'])
-def view_skills_to_add(id):
-    try:
-        assigned_skills = Course_skills.query.filter_by(course_id=id).all()
-        skills = [skill.skill_code for skill in assigned_skills]
-
-        if skills:
-            return jsonify({
-                "skills":skills
-                }), 200
-        else: 
-            return jsonify({
-                "message": "no skills assigned to the course yet."
-            }), 400
-    except Exception:
-        return jsonify({
-            "message": "Unable to commit database."
-        }), 500
     
-
-
+#assign skills to a course
 @app.route("/skill_assigns_course", methods=['POST'])
 def skill_assigns_course():
-
-    # assumption here is that the course name is given
-    # the skills are given in the body 
-    #   {
-    #       "course_id": "IS226", 
-    #       "skill_code": ["CS04", "DA04", "CM04"] 
-    #   }
 
     #check if exists
     data = request.get_json() #py obj
@@ -314,6 +287,26 @@ def skill_assigns_course():
               "message": "Course and Skills successfully updated"
             }),200
 
+#list all skills assigned to the course
+@app.route("/view_skills_to_add/<id>", methods=['GET'])
+def view_skills_to_add(id):
+    try:
+        assigned_skills = Course_skills.query.filter_by(course_id=id).all()
+        skills = [skill.skill_code for skill in assigned_skills]
+
+        if skills:
+            return jsonify({
+                "skills":skills
+                }), 200
+        else: 
+            return jsonify({
+                "message": "no skills assigned to the course yet."
+            }), 400
+    except Exception:
+        return jsonify({
+            "message": "Unable to commit database."
+        }), 500
+
 @app.route("/viewRoleSkills", methods=['GET'])
 def viewRoleSkills():
     search_skill = request.args.get('role_id')
@@ -332,6 +325,7 @@ def viewRoleSkills():
             "message": "Unable to commit to database."
         }), 500
 
+#helper function only - to get skills details of the assigned skill of a role
 def viewSkillsByRole(RoleSkills=[]):
     try:
         if RoleSkills:
@@ -350,20 +344,11 @@ def viewSkillsByRole(RoleSkills=[]):
             "message": "Unable to commit to database."
         }), 500
 
-# need to add skill name 
+#view team members' skills acquired
 @app.route("/viewTeamMembersSkills", methods=['GET'])
 def managerViewTeamMembersSkills(dept='',staffid=''):
 
     from learning_journey import viewTeamMembers
-    # {
-    #     dept:'Ops'
-    # }
-
-    # if request.get_json():
-    #     data = request.get_json()
-    #     dept =  data['dept']
-    #     staffid = data['staff_id']
-
     
     if "dept" in request.args:
         dept = request.args.get("dept")
@@ -405,6 +390,7 @@ def managerViewTeamMembersSkills(dept='',staffid=''):
             "message": "Unexpected Error."
         }), 500
 
+#helper function only - to get skill name
 def viewSkillsByCodes(skill_code_list):
     try:
         print("h1")
@@ -418,25 +404,20 @@ def viewSkillsByCodes(skill_code_list):
             "message": "Unexpected Error."
         }), 500
 
-#Admin views Learner's Skills Function
+#views a learner's skills 
 @app.route("/viewLearnersSkills", methods=['GET'])
 def viewLearnersSkills():
-    # from learning_journey import Staff
-    # receivedRequest = request.json
-    # staff_id = receivedRequest["staff_id"]
     staff_id = request.args.get('staff_id')
     skill_list = []
-    # my_dict = {}
+
     try:
         
-        # staff = Staff.query.filter_by(Staff_ID=staff_id).first()
-        # staff_role = staff.Role
         temp = Skills_acquired.query.filter_by(staff_id=staff_id).all()
         for item in temp:
             skill = item.skill_code
             skill_dict=viewSkillsByCodes([skill])
             skill_list.append(skill_dict)
-        # my_dict = viewSkillsByCodes(skill_list)
+
         if skill_list:
             return jsonify({
                 "data" : skill_list
@@ -450,6 +431,7 @@ def viewLearnersSkills():
             "message": "Unable to commit to database"
         }), 500
 
+#view the courses taken by team member
 @app.route("/viewTeamMembersCourses", methods=['GET'])
 def managerViewTeamMembersCourses(dept='',staffid=''):
 
@@ -465,7 +447,6 @@ def managerViewTeamMembersCourses(dept='',staffid=''):
         team_members_skills_json = managerViewTeamMembersSkills(dept, staffid)
         team_members_skill = json.loads(team_members_skills_json[0].data)
         team_members_skill_obj = team_members_skill["data"]
-        # return jsonify(team_members_skill_obj)
 
         empty_dict = {}
         for member_id in team_members_skill_obj.keys():
@@ -508,29 +489,12 @@ def course_remove_skills():
     
     skills = data['skills'] #list
 
-    # courseSkillsRecords = Course_skills.query.filter_by(course_id=course_id).all()
-    # numOfRecords = len(courseSkillsRecords)
-    # # for record in courseSkillsRecords:
-    # #     numOfRecords +=1
-
-    # if(numOfRecords == len(skills)):
-    #         return jsonify(
-    #             {
-    #                 "code": 400,
-    #                 "data": {
-    #                     "skill_code": skills,
-    #                     "course_id": course_id
-    #                 },
-    #                 "message": "Skill cannot be removed. A course must have at least one skill."
-    #             }
-    #         ), 400
     for skill in skills:            
         courseSkill = Course_skills.query.filter_by(skill_code=skill, course_id=course_id).first()
         if (courseSkill):
             try:
                 db.session.delete(courseSkill)
                 db.session.commit()
-                # numOfRecords -= 1
 
             except SQLAlchemyError as e:
                 print(e)

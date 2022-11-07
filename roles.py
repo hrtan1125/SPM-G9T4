@@ -61,11 +61,11 @@ class Role_Skills(db.Model):
         self.skill_code = skill_code
 
 
-# admin create role
+#admin create role
 @app.route("/createrole", methods=['POST'])
 def createRole():
     data = request.get_json()
-    # print(data)
+
     # check if data format is correct
     if not "role_name" in data.keys() or not "skills" in data.keys():
         return jsonify(
@@ -89,19 +89,9 @@ def createRole():
     try:
         db.session.add(role)
         db.session.flush()
-
-        # add the role with skills
-        # if not "skills" in data.keys():
-        #     return jsonify({
-        #         "message": "missing skills to be assigned."
-        #     })
             
         skillsList = data['skills']
         assignSkill(skillsList,role.role_id)
-
-        # commit everything together, to the role table and the skill table
-        # this can be moved to the assignSkills function instead
-        # db.session.commit()
 
         return jsonify(role.to_dict()), 200
     except Exception:
@@ -109,7 +99,7 @@ def createRole():
             "message": "Unable to commit to database."
         }), 500
 
-# admin read all roles
+#admin view roles
 @app.route("/viewroles")
 def viewRoles():
     try: 
@@ -131,23 +121,6 @@ def viewRoles():
         return jsonify({
             "message": "Unable to commit to database."
         }), 500
-
-    # admin read all roles
-@app.route("/viewselectedrole")
-def viewSelectedRole():
-    try:
-        # data = request.get_json()
-        # role_id = data["role_id"]
-
-        role_id = request.args["role_id"]
-        selectedRole = Roles.query.filter_by(role_id=role_id).first()
-        return jsonify(selectedRole.to_dict()), 201
-    except Exception:
-        return jsonify(
-            {
-                "message": "Unexpected Error."
-            }
-        ),500
 
 # admin update a role
 @app.route("/updaterole", methods=['PUT'])
@@ -212,7 +185,7 @@ def removeRole():
         ), 500
 
 
-#assign skills to role
+# assign skills to role
 @app.route("/assignSkills", methods=['POST'])
 def assignSkill(skillslist=[], role_id=0):
     data = request.get_json()
@@ -265,8 +238,20 @@ def assignSkill(skillslist=[], role_id=0):
         }
     ), 201
 
+# admin read role details of a selected role
+@app.route("/viewselectedrole")
+def viewSelectedRole():
+    try:
 
-
+        role_id = request.args["role_id"]
+        selectedRole = Roles.query.filter_by(role_id=role_id).first()
+        return jsonify(selectedRole.to_dict()), 201
+    except Exception:
+        return jsonify(
+            {
+                "message": "Unexpected Error."
+            }
+        ),500
 
 #Admin remove skills from role
 @app.route("/removeSkills", methods=['DELETE'])
@@ -287,23 +272,6 @@ def removeSkill(skillslist=[], role_id=0):
             "message": "No skill removed from role"
         }
     ), 201
-
-    # roleSkillsRecords = Role_Skills.query.filter_by(role_id=role_id).all()
-    # numOfRecords = 0
-    # for record in roleSkillsRecords:
-    #     numOfRecords +=1
-
-    # if(numOfRecords == len(skillslist)):
-    #     return jsonify(
-    #         {
-    #             "code": 400,
-    #             "data": {
-    #                 "skill_code": skillslist,
-    #                 "role_id": role_id
-    #             },
-    #             "message": "Skill(s) cannot be removed. A role must have at least one skill"
-    #         }
-    #     ), 400
 
     for skill in skillslist:            
         roleSkill = Role_Skills.query.filter_by(skill_code=skill, role_id=role_id).first()
