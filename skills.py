@@ -125,7 +125,7 @@ def create_skill():
     new_skill = data["skill_name"]
     new_code = data['skill_code']
     check_skill = Skills.query.filter_by(skill_name=new_skill, deleted="no").first()
-    check_skill_code = Skills.query.filter_by(skill_code=new_code, deleted="no").first()
+    check_skill_code = Skills.query.filter_by(skill_code=new_code).first()
     if check_skill and check_skill_code:
             return jsonify(
                 {

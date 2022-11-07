@@ -24,8 +24,15 @@ import styled from "@emotion/styled";
 const Cards = ({ljs,staff})=>{
   console.log("staff is", staff)
   console.log(ljs)
-  const {setOpen, setLid, setLTitle, setToAddCName} = useGlobalContext()
+  const {setOpen, setLid, setLTitle, setToAddCName, setActiveStep, setljCourses, setRoleId} = useGlobalContext()
   const navigate = useNavigate()
+
+  useEffect(()=>{
+    setActiveStep(0)
+    setljCourses({})
+    setRoleId('')
+  },[])
+
   const deleteLJ = (id,title) =>{
     console.log("deleting in progress")
     setLTitle(title)
